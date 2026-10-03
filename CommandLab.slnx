@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CommandLab.Core/CommandLab.Core.csproj" />
+    <Project Path="src/CommandLab.Simulation/CommandLab.Simulation.csproj" />
+    <Project Path="src/CommandLab.Telemetry/CommandLab.Telemetry.csproj" />
+    <Project Path="src/CommandLab.BannerlordProbe/CommandLab.BannerlordProbe.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CommandLab.Tests/CommandLab.Tests.csproj" />
+  </Folder>
+</Solution>

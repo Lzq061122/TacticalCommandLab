@@ -1,0 +1,6 @@
+# REL-2 — 释放前重发最后一次观测到的原生 MovementOrder
+t=1.0   policy level=Full ttl=30 autorenew=true restore=ReapplyLastNativeOrder restoreBeforeRelease=true
+t=3.0   acquire N0 Movement Full 30
+t=3.5   cmd N0 Movement HOLD
+t=28.0  release N0 Movement
+t=38.0  dump rel-reapply

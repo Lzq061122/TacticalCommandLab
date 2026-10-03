@@ -1,0 +1,265 @@
+﻿
+=== CommandLab Phase 7 · E1–E11 实验执行 ===
+
+================================================================================
+E1 · Last Writer Wins（Baseline）— H0：终值取决于执行顺序，不可由语义决定
+================================================================================
+    E1a AB/phase0.00/60s     终值=ADVANCE  chg/s=2.0167 osc/s=1.9833 lifetime=0.4996s grade=Oscillating det=True
+      hash=4f17096758977708a3b53fe75c90e1ba0fa5181205b6110866bce3523c0801a2
+    E1b AB/phase0.35/60s     终值=ADVANCE  chg/s=2.0167 osc/s=1.9833 lifetime=0.4996s grade=Oscillating det=True
+      hash=fae30f0e48a8542ebc06b73e3ae6a135ce414f79060b6e28cd7e08fe7a237191
+    E1c BA/phase0.00/60s     终值=ADVANCE  chg/s=2.0333 osc/s=2.0000 lifetime=0.4955s grade=Oscillating det=True
+      hash=bca2ec98fb36b088fb285f454e24e4d5187f49015a1d5e59195d491150ca67ff
+    E1d BA/phase0.35/60s     终值=ADVANCE  chg/s=2.0167 osc/s=1.9833 lifetime=0.4996s grade=Oscillating det=True
+      hash=fae30f0e48a8542ebc06b73e3ae6a135ce414f79060b6e28cd7e08fe7a237191
+    4 组终值集合 = [ADVANCE, ADVANCE, ADVANCE, ADVANCE]  相异=False
+    4 组 hash   相异=True   （终值全同且 hash 全同 => 不敏感，须重做：False）
+    [Failure-Criteria 触发] 4 组终值全同 => 追加一组「终值对齐到同刻碰撞点」的变体重做
+      E1e AB/tie 终值=RETREAT   E1f BA/tie 终值=ADVANCE
+      重做后终值分叉 => 顺序敏感性被证实
+      [判据口径] 4 组 60s 变体的终值收敛到同一值，是因为周期结构使最后一 tick 无碰撞；
+      顺序敏感性须在「最后一 tick 恰为两源同刻提交」的对齐变体上才能被终值口径观测到。
+  [PASS] E1-① 至少一组 order_changes_per_second > 0 :: anyChange=True
+  [PASS] E1-② 同配置三次重放 replay_hash 全同（装置确定） :: allDeterministic=True
+  [PASS] E1-③ 改变注册序/相位后至少一组终值不同 :: 终值集合=[ADVANCE,ADVANCE,ADVANCE,ADVANCE]
+  [PASS] E1-④ average_command_lifetime < 1.0s（远短于任一源的意图周期） :: 见上方各行 lifetime
+
+================================================================================
+E2 · Priority Arbitration — H-E：仲裁可使重放确定，但不能消除权限侧抖动，且固定优先级会产生饥饿
+================================================================================
+  [2a] 固定优先级 A(3) > B(2) > Ns(1)
+    chg/s=0.0333 osc/s=0.0000 unauthW=1 grade=Marginal
+    hash1=d979c81b4ff3bcac7fae0868c78967d80d84b821f14339cdf4f6cee1000d7758
+  [PASS] E2-2a 三次重放 hash 全同（仲裁是确定的） :: d979c81b4ff3bcac…
+    仲裁落败原因分布：LostArbitrationx252
+  [2b] Utility 带噪 Δu(A,B)=0.02 Δu(A,Ns)=0.01 (<0.05)，噪声 σ=0.03
+    chg/s=1.1833 osc/s=0.7333 oscPairs=44 grade=Oscillating det=True
+  [PASS] E2-2b oscillation_frequency >= 0.5/s（噪声抖动被证实） :: osc/s=0.7333
+  [PASS] E2-2b 仲裁本身仍确定（同 seed 重放一致） :: hash 一致
+  [2c] A 提交 30s 长期任务；B 每 4s 提交 1s 短任务；A 优先级恒高
+    task_starvation=15 max_pending=58.00s chg/s=0.0333 osc/s=0.0000
+    任务终态：Pendingx16, Activex1, Donex1
+    B 侧写入被拒原因：LostArbitrationx252
+  [PASS] E2-2c task_starvation >= 1 :: starvation=15
+  [PASS] E2-2c 最长 Pending >= 25s :: max_pending=58.00s
+  [2d] t=20s Ns 插入优先级 99 的一次性写入
+    reaction_latency=0.0000s (2*dt=0.20s)  紧急写入生效=True
+  [PASS] E2-2d reaction_latency <= 2*dt :: latency=0.0000s
+    [口径说明] E2 无 Ownership 语义：EnforceAuthorityOnGated=false，故不存在 NotOwner 拒绝。
+  [PASS] E2 无 NotOwner 拒绝（仲裁与归属未串味） :: NotOwner 拒绝数 = 0
+
+================================================================================
+E3 · Ownership — H-F：Ownership + 写入口 Reject 可把 unauthorized_writes 降到 0；仅在决策器侧自查则无效
+================================================================================
+  [3a] Lab 未 Acquire 直接写；Owner=Native
+    unauthorized_write_attempts=31 unauthorized_writes=0 native_ov=0 拒绝原因=NotOwnerx31
+  [PASS] E3-3a 违规行为能被看到（越权尝试 >= 1 且每条带 RejectReason） :: attempts=31, allReasoned=True
+  [3b] Reject 在写入口（EnforceAuthorityOnGated=true；Lab 决策器不自查）
+    unauthW=0 native_ov=0 chg/s=0.1333 osc/s=0.0333 grade=Stable
+    Movement: att=92 rej=56 chg=3 unauthAtt=56 unauthW=0 nativeOv=0 labOv=0 gated=92 nonGated=0
+  [3c] Reject 在决策器（写入口不校验；Lab 自查，Ns 无自查通道）
+    unauthW=24 native_ov=24 chg/s=1.6667 osc/s=1.5667 grade=Oscillating
+    Movement: att=85 rej=0 chg=49 unauthAtt=50 unauthW=24 nativeOv=24 labOv=0 gated=85 nonGated=0
+  [PASS] E3-3b unauthorized_writes == 0 且 native_overrides == 0 且分级=稳定 :: unauthW=0 nativeOv=0 grade=Stable
+  [PASS] E3-3c unauthorized_writes > 0（决策器侧校验不够） :: unauthW=24
+  [PASS] E3 3b 与 3c 必须分叉（否则实现位置无差别） :: 0 vs 24
+  [3d] Lab Release -> Ns 重新 Acquire，逐 tick 采样归属
+    owner 变更序列：Native@0.2 -> Lab@5.0 -> Native@15.0
+    auth_invariant_violation(空 owner)=0 同 tick 多 owner 帧=0 transfers=2
+    reaction_latency(Release -> Ns 首次生效写入)=0.0000s
+  [PASS] E3-3d auth_invariant_violation == 0 且无同 tick 多 owner 帧 :: violations=0, multiOwnerTicks=0
+  [PASS] E3-3d reaction_latency <= 2*dt :: latency=0.0000s
+  [Telemetry 样例 · 3b 被拒写入，05 §1.4 格式]
+      t=0.10  E0  Domain=Movement  Owner=Native  Level=5  Lease=-  Token=0  Expiry=-
+      Writer=Lab  Path=Gated  OriginalMethodExecuted=false  OrderChanged=false
+      Command=HOLD  PrevValue=Unset  NewValue=Unset
+      Rejected=true  Reason=NotOwner  max_seen_token=0  gen=0/0
+      Decision: reject write
+      Reason: Movement authority owned by Native under Full lease
+
+================================================================================
+E4 · Lease — H-F 配套：Lease 解决『拿不回来』，Token/Fencing 才能拦住『假死后复活』的在途写入
+================================================================================
+  [4a] TTL=4s，不续约
+    回收时延=4.00s（判据 <= TTL+2*dt = 4.20s）leaseId=-
+  [PASS] E4-4a 回收时延 <= TTL + 2*dt :: reclaim=4.00s
+  [4b] TTL=4s，每 1.5s 续约
+    renew_ok=18 renew_denied=0 expire=0 unauthW=0 grade=Stable
+  [PASS] E4-4b 全程 Owner 不变且分级稳定 :: expire=0 denied=0 grade=Stable
+  [4c] t=10 显式 Release，观测窗口 2*T_eval=1.0s
+    release@10.00 恢复失败数=0 备注=[4c] ok
+  [PASS] E4-4c 回收时延 <= 2*dt 且 release_recovery_failures == 0 :: failures=0
+  [4d] Lab Acquire(TTL=4) -> 停滞 6s -> Ns 接管 -> Lab 携带旧 LeaseId/Token 苏醒再写
+    fencing=ON  : stale_command_execution=0 rejected=29 原因=StaleLeasex29
+    fencing=OFF : stale_command_execution=29 rejected=0
+  [PASS] E4-4d 无 Token 变体 stale_command_execution >= 1（漏洞可复现） :: off=29
+  [PASS] E4-4d 有 Token 变体 stale_command_execution == 0（漏洞被堵住） :: on=0
+  [PASS] E4-4d 两个变体必须分叉 :: 0 vs 29
+  [Telemetry 样例 · 4d 无 fencing 漏过的旧 token 写入]
+      t=7.00  E0  Domain=Movement  Owner=Native  Level=5  Lease=L1  Token=1  Expiry=27.00
+      Writer=Lab  Path=Gated  OriginalMethodExecuted=true  OrderChanged=true
+      Command=HOLD  PrevValue=ADVANCE  NewValue=HOLD
+      Rejected=false  Reason=-  max_seen_token=2  gen=1/3
+      Decision: apply write
+      Reason: lab source under L1
+
+================================================================================
+E5 · Preemption 恢复语义 — H-G：选择依据是『执行体是否持有宿主内部状态』，不是『哪个更快』
+================================================================================
+  [S-Cancel    ] release_recovery_failures=0 timers=2 orphans=0 created=0 cps=7.500 restarts=0 state=Cancelled
+      [E5] ok
+  [S-Resume    ] release_recovery_failures=0 timers=2 orphans=0 created=0 cps=8.000 restarts=0 state=Active
+      [E5] ok
+  [S-Restart   ] release_recovery_failures=0 timers=2 orphans=0 created=0 cps=13.050 restarts=1 state=Active
+      [E5] ok
+  [T-Cancel    ] release_recovery_failures=1 timers=5 orphans=5 created=3 cps=11.100 restarts=0 state=Cancelled
+      [E5] FAIL orphanTimers:5
+  [T-Resume    ] release_recovery_failures=0 timers=5 orphans=0 created=3 cps=11.600 restarts=0 state=Active
+      [E5] ok
+  [T-Restart   ] release_recovery_failures=0 timers=5 orphans=0 created=6 cps=16.650 restarts=1 state=Active
+      [E5] ok
+  [PASS] E5-① (S,Cancel) release_recovery_failures == 0 且无残留 :: fails=0
+  [PASS] E5-② (T,Cancel) release_recovery_failures >= 1（H-G 预测并被证实） :: fails=1, orphans=5
+  [PASS] E5-③ (T,Resume) 与 (T,Restart) 均无残留 :: Resume=0, Restart=0
+  [PASS] E5-④ Restart 相对 Resume 的 commands_per_second 增量 >= 20% :: increment=43.5% (11.600 -> 16.650)
+      [建模说明] Restart 的重放成本用一条周期 0.1s 的 replay 源量化；周期取值是建模选择，不是实测值。
+
+================================================================================
+E6 · Generation / Fencing — H-J：只有写入口侧代次校验能把 stale_command_execution 压到 0
+================================================================================
+    变体：6a 无机制 / 6b 仅决策器侧校验 / 6c 仅写入口校验
+    Lab 周期 1.0s，ActiveUntil=3.5（隔离变量：只有代次变更【前】发出的命令才可能在途）
+    代次变更时刻 t=3.6（Ns force-acquire；刻意落在两次发射 3.1 与 4.1 之间）
+
+    delay    6a stale   6b stale   6c stale   6a chg/s   6c rej  
+    0.10     0          0          0          0.8333     0       
+    0.50     0          0          0          0.8333     0       
+    1.00     1          1          0          0.8333     1       
+    1.50     1          1          0          0.8333     1       
+    2.00     2          2          0          0.8333     2       
+
+    6a 出现 stale 的延迟档位：1, 1.5, 2
+    6b 出现 stale 的延迟档位：1, 1.5, 2
+    阈值推导：Lab 最后一次发射在 t=3.1，代次变更在 t=3.6 => 需要 delay > 0.5s 才会跨越变更点
+  [PASS] E6-① 6a stale >= 1（漏洞可复现） :: 6a 合计=4
+  [PASS] E6-① 6a 阈值可被定出（延迟 >= 1.0s 档必现） :: 最低必现档=1
+  [PASS] E6-② 6b 至少一个延迟档位 stale >= 1（决策器侧不够） :: 6b 合计=4, 档位=1,1.5,2
+  [PASS] E6-③ 6c 所有延迟档位 stale == 0 :: 6c 合计=0
+  [PASS] E6 6b 与 6c 必须分叉（否则未产生真实在途语义） :: 4 vs 0
+  [Telemetry 样例 · 6c 写入口拦下的在途旧命令]
+      t=4.00  E0  Domain=Movement  Owner=Native  Level=5  Lease=L1  Token=1  Expiry=23.60
+      Writer=Lab  Path=Gated  OriginalMethodExecuted=false  OrderChanged=false
+      Command=MOVE_A  PrevValue=ADVANCE  NewValue=ADVANCE
+      Rejected=true  Reason=StaleLease  max_seen_token=2  gen=1/2
+      Decision: reject write
+      Reason: stale lease: token 1 < max_seen 2
+
+================================================================================
+E7 · Oscillation 五手段对照 — H-F：只有 Ownership+Lease 能把 unauthorized_writes 降到 0
+================================================================================
+    固定冲突强度：Ns（gated Movement/Facing + non-gated Arrangement）vs Lab(Movement, HOLD)
+    注册序统一为 [Lab, Ns]（7f 额外跑 [Ns, Lab] 变体以观察采样口径造成的表观差异）
+
+    组                    unauthW   unauthAtt  osc/s     chg/s     life(s)   c/s       grade       
+    7a-无措施               61        61         2.0000    2.0667    1.4610    7.900     Oscillating 
+    7b-迟滞15%             1         61         0.0000    0.0500    59.9000   7.900     Marginal    
+    7c-最短驻留2s            1         61         0.0000    0.0667    40.7333   7.900     Marginal    
+    7d-Ownership+Lease   0         120        0.0000    0.0667    40.2333   7.900     Stable      
+    7e-状态去抖              1         1          0.0000    0.0667    39.9333   6.900     Marginal    
+    7f-高频(Lab先)          121       600        4.0000    4.0667    0.7395    16.883    Oscillating 
+    7f-高频(Lab后)          121       600        4.0000    4.0667    0.7395    16.883    Oscillating 
+
+    300s 长时（疲劳效应检查）：
+    组                    unauthW   osc/s     chg/s     grade(300s)    grade(60s)     一致    
+    7a-无措施               301       2.0000    2.0133    Oscillating    Oscillating    yes   
+    7b-迟滞15%             1         0.0000    0.0100    Marginal       Marginal       yes   
+    7c-最短驻留2s            1         0.0000    0.0133    Marginal       Marginal       yes   
+    7d-Ownership+Lease   0         0.0000    0.0133    Stable         Stable         yes   
+    7e-状态去抖              1         0.0000    0.0133    Marginal       Marginal       yes   
+    7f-高频(Lab先)          601       4.0000    4.0133    Oscillating    Oscillating    yes   
+    7f-高频(Lab后)          601       4.0000    4.0133    Oscillating    Oscillating    yes   
+  [PASS] E7-① 仅 7d 满足 unauthorized_writes == 0 且分级=稳定 :: 7d=0/Stable; 其余组 unauthW=7a-无措施:61,7b-迟滞15%:1,7c-最短驻留2s:1,7e-状态去抖:1,7f-高频(Lab先):121,7f-高频(Lab后):121
+  [PASS] E7-② 7b-迟滞15% osc 相对 7a 下降 >= 50% 但 unauthorized_writes > 0 :: drop=100.0% (2.0000->0.0000), unauthW=1
+  [PASS] E7-② 7c-最短驻留2s osc 相对 7a 下降 >= 50% 但 unauthorized_writes > 0 :: drop=100.0% (2.0000->0.0000), unauthW=1
+  [PASS] E7-② 7e-状态去抖 osc 相对 7a 下降 >= 50% 但 unauthorized_writes > 0 :: drop=100.0% (2.0000->0.0000), unauthW=1
+
+    [7f 反例演示组] 提高写入频率（周期 1.0s -> 0.1s）：
+      unauthorized_write_attempts: 61 -> 600
+      unauthorized_writes       : 61 -> 121
+      oscillation_frequency     : 2.0000 -> 4.0000
+      order_changes_per_second  : 2.0667 -> 4.0667
+  [PASS] E7-③ 7f 的 unauthorized_writes 不下降（竞速未消除越权写入者） :: 61 -> 121
+  [PASS] E7-③' 7f 的 oscillation_frequency 亦不下降（05 预测『表观变稳』未成立，实际更强） :: 2.0000 -> 4.0000
+  [PASS] E7-④ 所有组 300s 与 60s 分级一致（无疲劳效应） :: consistent=True
+
+    [7f-stall 补充] 高频一方在 t=30~31s 停止写入 1s：
+      Ns 生效变更数 [29,30)=2  vs  停止期间 [30,31)=2
+      解读：Ns 的写入【始终】在生效，高频一方从未真正阻止它 —— 高频只是让 tick 末的采样值偏向自己。
+      一旦高频方掉一帧，Ns 的值立刻可见 => 这是竞速而非 Authority。
+
+================================================================================
+E8 · Domain Ownership 三级递进 — H-C（弱证据）：分域授权 vs 整实体授权（条件式预测，不得越权回答宿主实测问题）
+================================================================================
+  [8a Movement=Lab]
+      Movement     Lab 接管     att=84 rej=41 chg=3 unauthAtt=41 unauthW=0 nativeOv=0 labOv=0 gated=84 nonGated=0
+      Facing       Ns 保留      att=61 rej=0 chg=1 unauthAtt=0 unauthW=0 nativeOv=0 labOv=0 gated=61 nonGated=0
+      Arrangement  Ns 保留      att=86 rej=0 chg=1 unauthAtt=0 unauthW=0 nativeOv=0 labOv=0 gated=0 nonGated=86
+      release_recovery_failures(手工探针)=0 grade=Stable
+  [8b Movement+Facing=Lab]
+      Movement     Lab 接管     att=84 rej=41 chg=3 unauthAtt=41 unauthW=0 nativeOv=0 labOv=0 gated=84 nonGated=0
+      Facing       Lab 接管     att=84 rej=41 chg=3 unauthAtt=41 unauthW=0 nativeOv=0 labOv=0 gated=84 nonGated=0
+      Arrangement  Ns 保留      att=86 rej=0 chg=1 unauthAtt=0 unauthW=0 nativeOv=0 labOv=0 gated=0 nonGated=86
+      release_recovery_failures(手工探针)=0 grade=Marginal
+  [8c Full=Lab]
+      Movement     Lab 接管     att=84 rej=41 chg=3 unauthAtt=41 unauthW=0 nativeOv=0 labOv=0 gated=84 nonGated=0
+      Facing       Lab 接管     att=84 rej=41 chg=3 unauthAtt=41 unauthW=0 nativeOv=0 labOv=0 gated=84 nonGated=0
+      Arrangement  Lab 接管     att=109 rej=1 chg=43 unauthAtt=58 unauthW=21 nativeOv=21 labOv=0 gated=23 nonGated=86
+      release_recovery_failures(手工探针)=0 grade=Oscillating
+  [PASS] E8-① 8a/8b 被 Lab 接管的域 unauthorized_writes == 0 :: 8a.Mv=0, 8b.Mv=0, 8b.Fa=0
+  [PASS] E8-② 8a 保留给 Ns 的域 lab_overrides == 0 :: Facing lab_ov=0, Arrangement lab_ov=0, 未接管域的 Lab 写入尝试=0
+  [PASS] E8-③ Arrangement 域仍出现 non-gated 自维护写入（复现 02 门控矩阵，证明 Ns 模型保真） :: 8a non_gated=86, 8c non_gated=86
+      跨域副作用（Lab 已接管域内仍发生的越权生效写入）：8a=0 8b=0 8c=21
+  [PASS] E8-④ 接管面扩大时跨域副作用单调不减（8a <= 8b <= 8c） :: 0 <= 0 <= 21
+      [结论形式] 以上均为『若宿主行为如 Ns 模型，则……』的条件式预测；不得用于回答 02 §8.1 / HANDOFF §10.6 的宿主实测问题。
+
+================================================================================
+E9 · Replace vs Append Writer — 承接 03 的 H-B 修正：『替换 Writer』而非『并列新增 Writer』能否被量化
+================================================================================
+  [9a Replace] 写入点数量不变（仅 Ns），Movement 产出被替换为 Lab 的值
+    Movement: att=121 rej=0 chg=1 unauthAtt=0 unauthW=0 nativeOv=0 labOv=0 gated=121 nonGated=0
+    unauthW=0 chg/s=0.0500 osc/s=0.0000 grade=Stable
+  [9b Append] 保留原路径 + 并列追加 Lab 写入者（周期 0.5s，相位错开 0.25s）
+    Movement: att=241 rej=0 chg=241 unauthAtt=120 unauthW=120 nativeOv=0 labOv=120 gated=241 nonGated=0
+    unauthW=120 chg/s=4.0500 osc/s=3.9833 grade=Oscillating
+    Writer 集合：9a=[Native] 9b=[Native,Lab]
+  [PASS] E9 9a unauthorized_writes == 0 且 Writer 净增 = 0 :: unauthW=0, writers=1
+  [PASS] E9 9b unauthorized_writes > 0 或 Writer 净增 >= 1，且分级劣于 9a :: unauthW=120, writers=2, grade Stable -> Oscillating
+  [PASS] E9 9b 与 9a 指标必须分叉（否则 03 的『替换而非并列』失去实验支撑） :: 0 vs 120
+
+================================================================================
+E10 · Value Transform 层 — 04 §6.1 立场：Transformation 不改变『谁在写』，故不解决任何一类 Authority 冲突
+================================================================================
+  [10a 单写者] 终值=MOVE_A（期望 MOVE_A，即 ADVANCE 被变换）
+  [PASS] E10-① 10a 功能成立（值确实被改写） :: final=MOVE_A
+  [10b 双写者冲突]
+    transform=ON : unauthW=61 unauthAtt=61 osc/s=2.0000 chg/s=2.0500
+    transform=OFF: unauthW=61 unauthAtt=61 osc/s=2.0000 chg/s=2.0500
+  [PASS] E10-② 10b 的 unauthorized_writes 与无 Transform 时相同（未解决权限问题） :: 61 vs 61
+  [10c 与 Ownership 组合]
+    transform=ON : unauthW=0 nativeOv=0 grade=Stable 终值=HOLD
+    transform=OFF: unauthW=0 nativeOv=0 grade=Stable 终值=HOLD
+  [PASS] E10-③ 10c Ownership 的 unauthorized_writes 仍为 0（两者正交、可共存） :: unauthW=0
+
+================================================================================
+E11 · Blackboard vs Command Bus — H-H（04 C7）：Blackboard 语义下归因不完整；Command Bus 语义下归因完整率 100%
+================================================================================
+  [11a Blackboard] 多源共享可变状态，无 owner，无单点入口；观测方只能事后比对快照
+    注入写入=60 值变更=40 可归因=20 归因完整率=50.0%
+    （仅自愿留痕的 Lab 可归因；Ns 的写入在 trace 中查不到来源）
+  [11b Command Bus] 所有变更经单一写入口，入口记录 writer + reason + token
+    注入写入=62 值变更=42 可归因=42 归因完整率=100.0%
+  [PASS] E11 11a 归因完整率 < 100%（存在无法归因事件） :: rate=50.0% (20 条不可归因)
+  [PASS] E11 11b 归因完整率 = 100% :: rate=100.0%
+    [不可归因样例] 11a 中 Ns 发起的变更共 20 条，均无 writer/reason 记录
+
+=== 判据汇总：51/51 通过，失败 0 项 ===

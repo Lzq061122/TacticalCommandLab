@@ -1,0 +1,60 @@
+﻿
+=== CommandLab Phase 8 · E12 Authority Level 谱系对照（H-I）===
+
+================================================================================
+E12 · Authority Level 谱系对照（补 H-I）— 04 §3.2.8 推论：『要么 2 要么 5，不要停在 4』
+================================================================================
+  装置：Lab 于 t=2 取得 Movement 授权（ttl=25），t=22 释放；Ns 每 0.5s 写 ADVANCE（gated）。
+  竞争者仲裁优先级标定为 3（介于 Level 2 与 Level 4 之间）—— 否则谱系不可观测，见 E12-C 对照组。
+  新增口径：hold = 归属窗口内『实体值 == Lab 意图值(HOLD)』时长占比；deliver = Lab 生效变更 / Lab 尝试。
+
+  [A] 主矩阵（Arbitration=Priority, nsPriority=3, Movement 单域）
+  L1 Monitor   unauthMv=0    unauthAr=0    osc= 0.0000/s ocps=0.0333 life= 29.900s hold=   0.0% deliver=   0.0% grade=Stable
+        rejects(Mv): LostArbitration=21
+  L2 Recommend unauthMv=0    unauthAr=0    osc= 0.0000/s ocps=0.0333 life= 29.900s hold=   0.0% deliver=   0.0% grade=Stable
+        rejects(Mv): LostArbitration=21
+  L3 Approval  unauthMv=20   unauthAr=0    osc= 1.3000/s ocps=1.3667 life=  0.535s hold=  50.0% deliver=  95.2% grade=Oscillating
+        rejects(Mv): LostArbitration=21, NotOwner=1
+  L4 Override  unauthMv=20   unauthAr=0    osc= 1.3000/s ocps=1.3667 life=  0.535s hold=  50.0% deliver=  95.2% grade=Oscillating
+        rejects(Mv): LostArbitration=21, NotOwner=1
+  L5 Full      unauthMv=0    unauthAr=0    osc= 0.0333/s ocps=0.1000 life= 11.200s hold= 100.0% deliver=   4.8% grade=Stable
+        rejects(Mv): LostArbitration=21, NotOwner=21
+      ⚠ 口径登记：deliver 在 L5 下仅 4.8% 是口径缺陷而非控制失败 —— 21 次尝试中 20 次因『值已是 HOLD』不产生 OrderChanged，故不计入生效变更。该口径不得单独用作控制权判据，一律以 hold 为准。
+
+  [判据]
+  [PASS] E12-① L5(Full) 越权生效写入 == 0 且分级为 Stable :: unauthMv=0, grade=Stable
+  [PASS] E12-② L5 意图在位率 >= 95%（控制权真的落地） :: hold=100.0%
+  [PASS] E12-③ L4(Override) 越权生效写入 > 0 且不为 Stable（非独占级挡不住写入） :: unauthMv=20, grade=Oscillating
+  [PASS] E12-④ H-I 核心：L4 振荡频率 > L2 振荡频率 :: oscL4=1.3000/s > oscL2=0.0000/s
+  [PASS] E12-⑤ L2 是『伪稳定』：unauthMv == 0 且 Stable，但意图在位率 <= 5% :: unauthMv=0, grade=Stable, hold=0.0%
+  [PASS] E12-⑥ 部分控制带：L2 < L4 意图在位率 < L5 :: 0.0% < 50.0% < 100.0%
+  [PASS] E12-⑦ L1(Monitor) 授权方自身生效写入 == 0（Level 不给写权限） :: lab_effective=0
+  [PASS] E12-⑧ 指标陷阱：L2 与 L5 在 unauthorized_writes / 分级上不可区分，仅 hold 可区分 :: unauthMv 0 vs 0, grade Stable vs Stable, hold 0.0% vs 100.0%
+      [旁证] L3(Approval) 与 Ns 同为优先级 3 -> 同分，胜负由 WriterId 字典序决定（无语义基础）：osc=1.3000/s hold=50.0%
+
+  [B] 写入口覆盖率检验：Lab 以 Level 5 同时接管 Movement + Arrangement（Arbitration=None，对齐 E8 装置）
+  L5 Full      unauthMv=0    unauthAr=20   osc= 1.3333/s ocps=1.4667 life=  1.019s hold= 100.0% deliver=   4.8% grade=Oscillating
+        rejects(Mv): NotOwner=41
+  [PASS] E12-⑨ Level 5 下 gated 域 unauth == 0，但 non-gated 域 unauth > 0（Level 上限由写入口覆盖率决定） :: Movement=0, Arrangement(non-gated)=20
+
+  [C] 判别力对照：竞争者优先级 = 0（Ns 默认值）时，L2 与 L4 是否仍可区分
+  L2 Recommend unauthMv=20   unauthAr=0    osc= 1.3000/s ocps=1.3667 life=  0.535s hold=  50.0% deliver=  95.2% grade=Oscillating
+        rejects(Mv): LostArbitration=21, NotOwner=1
+  L4 Override  unauthMv=20   unauthAr=0    osc= 1.3000/s ocps=1.3667 life=  0.535s hold=  50.0% deliver=  95.2% grade=Oscillating
+        rejects(Mv): LostArbitration=21, NotOwner=1
+  [PASS] E12-⑩ 判别力边界：竞争者优先级为 0 时 L2 与 L4 行为一致（谱系语义依赖同级竞争者存在） :: unauthMv 20 vs 20, osc 1.3000 vs 1.3000
+
+  [释放恢复] 各 Level 在 t=22 Release、t=26 比对基线：
+        L1 Monitor   failures=0 :: recovery ok
+        L2 Recommend failures=0 :: recovery ok
+        L3 Approval  failures=0 :: recovery ok
+        L4 Override  failures=0 :: recovery ok
+        L5 Full      failures=0 :: recovery ok
+        L5 Full      failures=0 :: recovery ok
+      ⚠ 本装置下恢复失败全为 0，属平凡成立 —— 不作为判据，仅登记（同 E8 判据④的陷阱）。
+
+  [H-I 裁决] 成立，且强于 04 原表述：osc L2=0.0000 < L4=1.3000 > L5=0.0333
+      修正表述：04 的『要么 2 要么 5』须加限定 —— L2 的稳定是『意图零落地』的伪稳定（hold≈0%），L4 是真实抖动（hold≈50%），只有 L5 同时满足『稳定 + 落地』。故：若目标是取得控制权，Level 2 不构成 L5 的替代方案。
+      方法论结论：unauthorized_writes==0 且 Stable 是『取得控制权』的必要非充分条件，必须与 intent_hold_share 同表判读；否则『从未抢到』与『完全控制』在指标上同形。
+
+=== 判据汇总：10/10 通过，失败 0 项 ===

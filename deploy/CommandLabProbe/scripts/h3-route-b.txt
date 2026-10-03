@@ -1,0 +1,19 @@
+# H3 — Route B：夺取时同步 SetControlledByAI(false)（既有 Charter 遗留 PoC 路线）
+#
+# 与 H2 的差别只有一条：controlledByAiRoute=true
+#   → Acquire 时先 SetControlledByAI(false, IsSplittableByAI)
+#
+# 静态取证（IL，v1.3.4）已知：
+#   * SetControlledByAI(false) 分支本身不写 MovementOrder（只置 _enforceNotSplittableByAI=0
+#     并调用 ActiveBehavior?.OnLostAIControl()）
+#   * Formation::Tick 的 AI.Tick 门控：IsAIControlled=false 且 Team 非 PlayerSergeant
+#     → 该 formation 的 FormationAI 完全不 tick（既不选 Behavior 也不写 Movement/Facing）
+# 因此预期：Route B 下原生 Movement 写入量显著下降（甚至为 0），
+#           但 Arrangement 自维护 timer 仍可能继续（不受 IsAIControlled 门控）。
+# 判据：H3-a SetControlledByAI 被观测到 / H3-b unauthorized_writes == 0 / G2 hold
+
+t=1.0   policy level=Full ttl=30 autorenew=true controlledByAiRoute=true restore=RestoreControlledByAi restoreBeforeRelease=true
+t=3.0   acquire N0 Movement Full 30
+t=3.5   cmd N0 Movement HOLD
+t=28.0  release N0 Movement
+t=33.0  dump h3-route-b

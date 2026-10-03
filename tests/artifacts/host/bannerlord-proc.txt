@@ -1,0 +1,9 @@
+﻿Name            = Bannerlord
+StartTime       = 09/22/2026 12:06:27
+WorkingSet64    = 0.25 MB
+Responding      = True
+MainWindowTitle = ''
+Path            = E:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\bin\Win64_Shipping_Client\Bannerlord.exe
+--- loaded CommandLab/Harmony modules (0) ---
+total modules   = 197
+

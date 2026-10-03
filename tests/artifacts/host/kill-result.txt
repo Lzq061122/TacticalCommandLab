@@ -1,0 +1,3 @@
+﻿still alive after kill
+remaining Bannerlord processes = 1
+

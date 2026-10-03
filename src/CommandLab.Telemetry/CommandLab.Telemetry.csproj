@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;netstandard2.0</TargetFrameworks>
+    <RootNamespace>CommandLab.Telemetry</RootNamespace>
+    <AssemblyName>CommandLab.Telemetry</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommandLab.Core\CommandLab.Core.csproj" />
+  </ItemGroup>
+
+  <!-- 与 Core 共享同一份编译期 polyfill（internal 可见，不对外暴露） -->
+  <ItemGroup>
+    <Compile Include="..\CommandLab.Core\Compat\Polyfills.cs" Link="Compat\Polyfills.cs" />
+  </ItemGroup>
+
+</Project>

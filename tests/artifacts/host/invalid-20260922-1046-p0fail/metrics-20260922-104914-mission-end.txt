@@ -1,0 +1,41 @@
+﻿[config]
+level=Full ttl=8s autoRenew=True enforceGated=True enforceNonGated=False patch(mv/fa/ar)=True/True/True arrangementPath=NonGated controlledByAiRoute=False restore=None restoreBeforeRelease=True tEval=0.5
+
+[metrics]
+simulation_seconds            = 163.28
+commands_per_second           = 0.0000
+order_changes_per_second      = 0.0000
+unauthorized_write_attempts   = 0
+unauthorized_writes           = 0
+native_overrides              = 0
+lab_overrides                 = 0
+authority_transfers           = 0
+preemptions                   = 0
+average_command_lifetime      = 0.0000
+oscillation_pairs             = 0
+oscillation_frequency         = 0.0000
+reaction_latency              = 0.0000
+stale_command_execution       = 0
+task_starvation               = 0
+max_pending_seconds           = 0.00
+release_recovery_failures     = 0
+stability_grade               = Stable
+
+[verdict]
+P0     harmony patched methods > 0                actual=0              FAIL
+P0b    write-port traffic > 0                     actual=0              FAIL
+X1     release_recovery_failures                  actual=0              PASS
+X2     oscillation_frequency                      actual=0.0000         PASS
+X3     order_changes_per_second                   actual=0.0000         PASS
+X4     reaction_latency                           actual=0.0000         PASS
+X5     unobserved_writes (采样到但写入口没记录)             actual=0              PASS
+
+[hold]
+
+[census]
+
+[coverage]
+
+[patches]
+
+[projection]

@@ -1,0 +1,101 @@
+﻿=== CommandLab Phase 6 · D0 装置门禁 ===
+
+[D0-1] 同一 scenario 跑 3 次，replay_hash 必须逐字节相同
+    run1 hash = d9853e282f033d16b7b67a958797e0c345be1d7e16d39b22a30dc9ca833d8199
+    run2 hash = d9853e282f033d16b7b67a958797e0c345be1d7e16d39b22a30dc9ca833d8199
+    run3 hash = d9853e282f033d16b7b67a958797e0c345be1d7e16d39b22a30dc9ca833d8199
+  [PASS] replay determinism 3/3 :: attempts=147, sim=60.0s
+  [PASS] scenario 确有写入（装置不是空转） :: effective_changes=121, order_changes_per_second=2.0167
+
+[D0-2] 置换 Source 注册序 (A,B) -> (B,A)，记录本 scenario 是否对顺序敏感
+    permuted hash = f2e842300da02ae8d99e6a31fa7afb5d7b92dd91dbdeb4cab56942a0d7dbdb63
+    permuted 重跑  = f2e842300da02ae8d99e6a31fa7afb5d7b92dd91dbdeb4cab56942a0d7dbdb63
+  [PASS] 置换后自身仍可复现 :: permuted run 2/2 identical
+    ORDER_SENSITIVE = True  (基础序终值=ADVANCE, 置换序终值=ADVANCE)
+  [PASS] 顺序敏感性已记录（E1 需要该性质被观测到） :: A,B->终值 ADVANCE vs B,A->终值 ADVANCE
+
+[D0-3] 空跑 60s 无写入：分母型指标必须有限，不得 NaN/Infinity
+  [PASS] 无 NaN / Infinity :: grade=Stable
+  [PASS] 空跑零写入 :: attempts=0
+    simulation_seconds            = 60.00
+    commands_per_second           = 0.0000
+    order_changes_per_second      = 0.0000
+    unauthorized_write_attempts   = 0
+    unauthorized_writes           = 0
+    native_overrides              = 0
+    lab_overrides                 = 0
+    authority_transfers           = 0
+    preemptions                   = 0
+    average_command_lifetime      = 0.0000
+    oscillation_pairs             = 0
+    oscillation_frequency         = 0.0000
+    reaction_latency              = 0.0000
+    stale_command_execution       = 0
+    task_starvation               = 0
+    max_pending_seconds           = 0.00
+    release_recovery_failures     = 0
+    stability_grade               = Stable
+
+=== 施工自检（Phase 6 机械可用性，非 E1–E11 结论） ===
+    simulation_seconds            = 30.00
+    commands_per_second           = 7.9667
+    order_changes_per_second      = 0.1667
+    unauthorized_write_attempts   = 51
+    unauthorized_writes           = 0
+    native_overrides              = 0
+    lab_overrides                 = 0
+    authority_transfers           = 1
+    preemptions                   = 0
+    average_command_lifetime      = 21.1750
+    oscillation_pairs             = 1
+    oscillation_frequency         = 0.0333
+    reaction_latency              = 0.0000
+    stale_command_execution       = 0
+    task_starvation               = 0
+    max_pending_seconds           = 0.00
+    release_recovery_failures     = 0
+    stability_grade               = Stable
+    生效写入序列（前 12 条）：
+      t=0.10 Movement    Native   owner=Native   Unset -> ADVANCE (Gated)
+      t=0.10 Facing      Native   owner=Native   Unset -> ADVANCE (Gated)
+      t=0.10 Arrangement Native   owner=Native   Unset -> MOVE_A (NonGated)
+      t=5.00 Movement    Lab      owner=Lab      ADVANCE -> HOLD (Gated)
+      t=25.00 Movement    Native   owner=Native   HOLD -> ADVANCE (Gated)
+    越权生效写入明细：
+    被拒写入原因分布：
+      NotOwner           x51
+  [PASS] Ownership 生效期间无越权生效写入 :: unauthorized_writes=0, attempts=239
+  [PASS] 被拒写入都带 RejectReason（可归因） :: rejected=51
+  [PASS] Ns 双写入路径均存在且独立（建模红线） :: gated_attempts=153, non_gated_attempts=86
+
+    DecisionTrace 样例（被拒写入）：
+      t=0.10  E0  Domain=Movement  Owner=Native  Level=5  Lease=-  Token=0  Expiry=-
+      Writer=Lab  Path=Gated  OriginalMethodExecuted=false  OrderChanged=false
+      Command=HOLD  PrevValue=Unset  NewValue=Unset
+      Rejected=true  Reason=NotOwner  max_seen_token=0  gen=0/0
+      Decision: reject write
+      Reason: Movement authority owned by Native under Full lease
+
+[P6-SELFCHECK-fencing] 旧 Lease 持有者在被抢占后仍写入：开/关 Fencing 两个变体必须分叉
+    fencing=on  : stale_command_execution=0, rejected=9
+    fencing=off : stale_command_execution=9, rejected=0
+  [PASS] Fencing 开 -> 旧 token 写入被拦 :: stale_command_execution=0
+  [PASS] Fencing 关 -> 旧 token 写入漏过（漏洞可复现） :: stale_command_execution=9
+  [PASS] 两个变体必须分叉（否则 E4 4d 无判别力） :: 0 vs 9
+
+[P6-SELFCHECK-inflight] 延迟投递命令在代次变更后抵达：开/关代次校验必须分叉
+    gen-check=on  : stale_command_execution=0
+    gen-check=off : stale_command_execution=8
+  [PASS] 在途命令确实跨越了代次变更（延迟队列有效） :: off 变体 stale=8
+  [PASS] 代次校验开 -> 在途旧命令被拦 :: on 变体 stale=0
+  [PASS] 两个变体必须分叉（否则 E6 6b/6c 无判别力） :: 0 vs 8
+
+=== 汇总：15/15 通过，失败 0 项 ===
+D0-S1 replay_hash      = d9853e282f033d16b7b67a958797e0c345be1d7e16d39b22a30dc9ca833d8199
+D0-S1-permuted hash    = f2e842300da02ae8d99e6a31fa7afb5d7b92dd91dbdeb4cab56942a0d7dbdb63
+D0-S3-empty hash       = e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+P6-SELFCHECK hash      = facd79ee04d4532482dbd0ab19272a74f8137a5a25702ec3d844e26064247922
+P6-FENCING-ON hash     = c933c9f2a19a5366ae11638c0dc26877f68dc73a86687be2ee4214ce9f4ddf8a
+P6-FENCING-OFF hash    = cc34b0560479a8a68fab162575404865fd93855d427e879d7b82b396454d7607
+P6-INFLIGHT-ON hash    = 45b17f5f0e5ebb4d39a635f68e4e007e9ba79ddb23f765c690fb272a6f1790a0
+P6-INFLIGHT-OFF hash   = cee8ec67d82a3d89e677965e90bcd8791c691078e2a56e77d986b3ee2b165502

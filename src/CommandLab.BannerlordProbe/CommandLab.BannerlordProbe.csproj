@@ -1,0 +1,64 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- 宿主侧必须 net472：Bannerlord 加载的是 .NET Framework 程序集。
+         因此 Core / Telemetry 额外产出了 netstandard2.0 目标供本工程消费。 -->
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>CommandLab.BannerlordProbe</RootNamespace>
+    <AssemblyName>CommandLab.BannerlordProbe</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <NoWarn>NU1701;CS1591</NoWarn>
+    <!-- 不在输出目录复制宿主程序集：运行时由游戏提供，复制会导致加载冲突。 -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <BannerlordBin>E:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\bin\Win64_Shipping_Client</BannerlordBin>
+    <HarmonyBin>E:\SteamLibrary\steamapps\common\Mount &amp; Blade II Bannerlord\Modules\Bannerlord.Harmony\bin\Win64_Shipping_Client</HarmonyBin>
+    <ProbeDeployDir>$(MSBuildThisFileDirectory)..\..\deploy\CommandLabProbe\bin\Win64_Shipping_Client\</ProbeDeployDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="TaleWorlds.MountAndBlade">
+      <HintPath>$(BannerlordBin)\TaleWorlds.MountAndBlade.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="TaleWorlds.Core">
+      <HintPath>$(BannerlordBin)\TaleWorlds.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="TaleWorlds.Library">
+      <HintPath>$(BannerlordBin)\TaleWorlds.Library.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="TaleWorlds.ObjectSystem">
+      <HintPath>$(BannerlordBin)\TaleWorlds.ObjectSystem.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="TaleWorlds.DotNet">
+      <HintPath>$(BannerlordBin)\TaleWorlds.DotNet.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(HarmonyBin)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommandLab.Core\CommandLab.Core.csproj" />
+    <ProjectReference Include="..\CommandLab.Telemetry\CommandLab.Telemetry.csproj" />
+  </ItemGroup>
+
+  <!-- 产出直接落在可拷贝进 Modules 的目录结构里。 -->
+  <Target Name="CopyProbeToDeploy" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProbeDeployDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(TargetDir)CommandLab.Core.dll;$(TargetDir)CommandLab.Telemetry.dll"
+          DestinationFolder="$(ProbeDeployDir)" SkipUnchangedFiles="true"
+          Condition="Exists('$(TargetDir)CommandLab.Core.dll')" />
+  </Target>
+
+</Project>

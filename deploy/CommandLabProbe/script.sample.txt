@@ -1,0 +1,29 @@
+# CommandLabProbe 时间线脚本样例
+# 放置位置：%USERPROFILE%\Documents\CommandLabProbe\script.txt
+# 时间单位 = 任务时间（秒，从第一次 OnMissionTick 起累加，非墙钟）
+# entity 形如 P1 / N3：P=玩家队，N=非玩家队，数字 = Formation.Index
+# domain  = Movement | Facing | Arrangement
+
+# 例 1（H1 基线：只写不夺取，看原生多久覆盖一次）
+t=2.0   cmd P1 Movement HOLD
+t=30.0  dump h1-baseline
+
+# 例 2（H2：夺取 Movement 归属后同样的指令是否被覆盖）
+# t=2.0  acquire P1 Movement Full 30
+# t=2.5  cmd P1 Movement HOLD
+# t=25.0 release P1 Movement
+# t=30.0 dump h2-suppress
+
+# 例 3（覆盖率对照：把 Arrangement 也纳入门控）
+# t=1.0  policy enforceNonGated=true arrangementPath=Gated
+# t=2.0  acquire P1 Movement Full 30
+# t=2.5  cmd P1 Movement HOLD
+# t=25.0 release P1 Movement
+# t=30.0 dump h2-coverage
+
+# 恢复语义对照（Release 时是否必须重置权重）
+# t=1.0  policy restore=ReapplyLastNativeOrder,ResetBehaviorWeights restoreBeforeRelease=true
+
+# 逐域观察（不夺取，只统计原生写入量）
+# t=1.0  policy patchFacing=true patchArrangement=true
+# t=30.0 dump native-write-census

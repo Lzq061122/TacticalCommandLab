@@ -1,0 +1,15 @@
+CommandLabProbe boot marker
+at            = 2026-09-22 12:19:32.617
+harmonyId     = com.commandlab.probe
+patchedCount  = 7
+patchFailure  = (none)
+--- patched methods ---
+TaleWorlds.MountAndBlade.Formation.SetArrangementOrder(ArrangementOrder)
+TaleWorlds.MountAndBlade.Formation.SetControlledByAI(Boolean, Boolean)
+TaleWorlds.MountAndBlade.Formation.SetFacingOrder(FacingOrder)
+TaleWorlds.MountAndBlade.Formation.SetFiringOrder(FiringOrder)
+TaleWorlds.MountAndBlade.Formation.SetFormOrder(FormOrder, Boolean)
+TaleWorlds.MountAndBlade.Formation.SetMovementOrder(MovementOrder)
+TaleWorlds.MountAndBlade.Formation.SetRidingOrder(RidingOrder)
+--- pending notes ---
+NOTE|t=0.0000|HARMONY_PATCHED count=7

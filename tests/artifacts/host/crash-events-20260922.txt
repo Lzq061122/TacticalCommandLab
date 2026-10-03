@@ -1,0 +1,14 @@
+﻿=== 2026-09-22 11:57:30 | Application Error | 1000 ===
+出错应用程序名称： Bannerlord.exe，版本： 1.0.0.0，时间戳： 0x6a732508
+出错模块名称： KERNELBASE.dll， 版本： 10.0.26100.9444，时间戳： 0x28606b21
+异常代码： 0xe0434352
+错误偏移： 0x00000000000c41ca
+出错进程 ID： 0x7EC4
+出错应用程序开始时间： 0x1DD4A45E873E09D
+Faulting 应用程序路径： E:\SteamLibrary\steamapps\common\Mount & Blade II Bannerlord\bin\Win64_Shipping_Client\Bannerlord.exe
+Faulting 模块路径： C:\WINDOWS\System32\KERNELBASE.dll
+Report ID： faa58d6a-563c-4830-9afc-e680a9ad6f3a
+Faulting 包全名： 
+Faulting 程序包相对应用程序 ID：  个
+
+

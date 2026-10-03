@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>CommandLab.Simulation</RootNamespace>
+    <AssemblyName>CommandLab.Simulation</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CommandLab.Core\CommandLab.Core.csproj" />
+    <ProjectReference Include="..\CommandLab.Telemetry\CommandLab.Telemetry.csproj" />
+  </ItemGroup>
+
+</Project>

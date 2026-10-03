@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>CommandLab.Tests</RootNamespace>
+    <AssemblyName>CommandLab.Tests</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CommandLab.Core\CommandLab.Core.csproj" />
+    <ProjectReference Include="..\..\src\CommandLab.Simulation\CommandLab.Simulation.csproj" />
+    <ProjectReference Include="..\..\src\CommandLab.Telemetry\CommandLab.Telemetry.csproj" />
+  </ItemGroup>
+
+</Project>
