@@ -9,7 +9,9 @@
 //   t=15.0 release <entity> <domain>
 //   t=1.0  policy  enforceNonGated=true
 //   t=20.0 dump    <tag>
-// entity 形如 P1 / N3（P=玩家队，N=非玩家队，数字为 Formation.Index）
+// entity 可写两种：短名 P1 / N3（P=玩家队，N=非玩家队，数字为 Formation.Index）或全名 T1F0（t=Team 序号，i=Formation.Index）。
+// 短名是 Alias，只在本轮只有一个 Team 落在它上面时才唯一；多 Team 场景撞名时脚本会拒绝执行并留痕
+// SCRIPT_ALIAS_AMBIGUOUS，此时改用全名 T{t}F{i}（[projection] 段里两个名字都列了）。
 // domain 取 Movement / Facing / Arrangement
 
 using System.Globalization;
@@ -100,12 +102,26 @@ public sealed class ScriptRunner
     /// 按实体名解析绑定。解析失败必须留痕：
     /// 静默 return 会让"实体名写错 / 编队不存在 / 绑定未建立"与"指令被执行了但没有效果"
     /// 在产物上完全同形（2026-09-22 实测踩过：census 全空却查不到原因）。
+    ///
+    /// 先按 EntityId 全名（T{t}F{i}，全局唯一）匹配；没命中再按短名 Alias 匹配。
+    /// Alias 命中多个时必须拒绝执行：短名只在单 Team 内唯一，多 Team 下"N0"指谁是不确定的，
+    /// 挑第一个会让指令打在错误的编队上而不留任何痕迹。
     /// </summary>
-    private FormationBinding? Resolve(string entityId)
+    private FormationBinding? Resolve(string name)
     {
-        var binding = _runtime.FindBinding(entityId);
-        if (binding is null) _runtime.Note("SCRIPT_ENTITY_UNRESOLVED " + entityId);
-        return binding;
+        var byId = _runtime.FindBinding(name);
+        if (byId is not null) return byId;
+
+        var hits = _runtime.ResolveByAlias(name);
+        if (hits.Count == 1) return hits[0];
+        if (hits.Count > 1)
+        {
+            _runtime.Note("SCRIPT_ALIAS_AMBIGUOUS " + name + " candidates=" +
+                hits.Count.ToString(CultureInfo.InvariantCulture));
+            return null;
+        }
+        _runtime.Note("SCRIPT_ENTITY_UNRESOLVED " + name);
+        return null;
     }
 
     private static bool TryDomain(string text, out CommandDomain domain) =>

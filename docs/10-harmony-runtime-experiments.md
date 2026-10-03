@@ -197,6 +197,7 @@ if (Team.HasTeamAi) {
 |---|---|---|---|
 | **P0** | `harmony patched methods > 0` | >0 | 前置门禁。FAIL ⇒ 本轮全部结论作废 |
 | **P0b** | 写入口流量 > 0 | >0 | FAIL ⇒ "没有原生写入"是假象 |
+| **P0c** | EntityId 唯一性 | 唯一数 == 绑定总数 | FAIL ⇒ 同一 EntityId 挂了多个 Formation，除 `[patches]`/`[census]` 外全部指标失真 |
 | H1-a | `native_overrides` | >0 | 不夺取必被覆盖 |
 | H1-c | 首次覆盖延迟 | 记录值 | H1 核心量 |
 | H1-d | `lab_overrides` | 记录值 | Lab 反覆盖原生的次数 |
@@ -317,7 +318,7 @@ B. 游戏侧设置（一次性）：
 
 | 序 | 脚本 | 看什么 | 门禁 |
 |---|---|---|---|
-| 1 | `census-baseline` | P0（patch 打上了）、P0b（有流量） | **P0 或 P0b FAIL ⇒ 停，先修装置，后面全部作废** |
+| 1 | `census-baseline` | P0（patch 打上了）、P0b（有流量）、X5（无覆盖率缺口）、P0c（EntityId 唯一） | **P0 / P0b / X5 / P0c 任一 FAIL ⇒ 停，先修装置，后面全部作废** |
 | 2 | `h1-external-write` | H1-a `native_overrides` > 0、H1-c 首次覆盖延迟 | H1-a FAIL ⇒ 说明 N0 没被原生流转，先查 P0b |
 | 3 | `h2-suppression` | **G1 ∧ G2 必须同表读** | 仅 G1 PASS 而 G2 FAIL = E12 ⑤「伪稳定」，不是成功 |
 | 4 | `h2-coverage` | `[coverage]` 段 Arrangement 域 `unobserved` | 两种结果都记，不当作"实现有误" |

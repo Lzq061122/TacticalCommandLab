@@ -1,3 +1,9 @@
 bin/
 obj/
 deploy/*/bin/
+
+# Agent / Harness 工作记忆（具体会话过程，非项目权威历史）
+.workbuddy/
+
+# 审计目录：保留 *.md 报告，忽略临时脚本/输出/截图
+_audit/_*

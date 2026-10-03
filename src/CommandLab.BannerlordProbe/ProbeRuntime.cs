@@ -19,16 +19,21 @@ public sealed class FormationBinding
 {
     private readonly string[] _lastRaw = new string[3];
 
-    public FormationBinding(Formation formation, string entityId, ControlledEntity entity)
+    public FormationBinding(Formation formation, string entityId, string alias, ControlledEntity entity)
     {
         Formation = formation;
         EntityId = entityId;
+        Alias = alias;
         Entity = entity;
         for (int i = 0; i < _lastRaw.Length; i++) _lastRaw[i] = "-";
     }
 
     public Formation Formation { get; }
     public string EntityId { get; }
+
+    /// <summary>脚本里用的短名（P0/N0…）。只用于解析，不唯一：多 Team 会撞名。</summary>
+    public string Alias { get; }
+
     public ControlledEntity Entity { get; }
 
     public HostOrderProjection MovementProjection { get; } = new HostOrderProjection();
@@ -221,7 +226,19 @@ public sealed class ProbeRuntime
 
     // ---------------- 绑定 ----------------
 
-    public string EntityIdOf(Formation formation)
+    /// <summary>
+    /// 全局唯一实体名。为什么不再用 P/N + Index：Formation.Index 只在**单个 Team 内**唯一，
+    /// 于是所有非玩家 Team 的 Index 0 全塌缩成同一个 "N0"，Core 侧被当成同一个实体（D1）。
+    /// </summary>
+    public string EntityIdOf(Formation formation, int teamSeq = -1)
+    {
+        if (teamSeq < 0) teamSeq = TeamSeqOf(formation);
+        return "T" + teamSeq.ToString(CultureInfo.InvariantCulture)
+             + "F" + formation.Index.ToString(CultureInfo.InvariantCulture);
+    }
+
+    /// <summary>脚本用的短名。不唯一（多 Team 会撞名），仅供解析，歧义时拒绝执行。</summary>
+    public string AliasOf(Formation formation)
     {
         string side;
         try { side = formation.Team is not null && formation.Team.IsPlayerTeam ? "P" : "N"; }
@@ -229,13 +246,37 @@ public sealed class ProbeRuntime
         return side + formation.Index.ToString(CultureInfo.InvariantCulture);
     }
 
-    public FormationBinding Bind(Formation formation)
+    /// <summary>Team 在 Mission.Current.Teams 里的序号（引用相等）。定位不到返回 -1。</summary>
+    private static int TeamSeqOf(Formation formation)
+    {
+        try
+        {
+            var team = formation.Team;
+            var mission = Mission.Current;
+            if (team is null || mission is null) return -1;
+            var teams = mission.Teams;
+            if (teams is null) return -1;
+            var seq = 0;
+            foreach (var t in teams)
+            {
+                if (ReferenceEquals(t, team)) return seq;
+                seq++;
+            }
+            return -1;
+        }
+        catch
+        {
+            return -1;
+        }
+    }
+
+    public FormationBinding Bind(Formation formation, int teamSeq = -1)
     {
         if (_bindings.TryGetValue(formation, out var existing)) return existing;
-        var id = EntityIdOf(formation);
+        var id = EntityIdOf(formation, teamSeq);
         var entity = new ControlledEntity(id);
         _port.RegisterEntity(entity);
-        var binding = new FormationBinding(formation, id, entity);
+        var binding = new FormationBinding(formation, id, AliasOf(formation), entity);
         _bindings[formation] = binding;
         return binding;
     }
@@ -551,16 +592,18 @@ public sealed class ProbeRuntime
             var mission = Mission.Current;
             if (mission is null) return;
 
+            var ti = 0;
             foreach (var team in mission.Teams)
             {
-                if (team is null) continue;
+                if (team is null) { ti++; continue; }
                 var formations = team.FormationsIncludingEmpty;
-                if (formations is null) continue;
+                if (formations is null) { ti++; continue; }
 
                 foreach (var formation in formations)
                 {
-                    if (formation is not null) Bind(formation);
+                    if (formation is not null) Bind(formation, ti);
                 }
+                ti++;
             }
         }
         catch
@@ -714,6 +757,15 @@ public sealed class ProbeRuntime
         return null;
     }
 
+    /// <summary>按短名解析。可能命中多个（多 Team 同 Index），由调用方决定是拒绝还是取唯一解。</summary>
+    public IReadOnlyList<FormationBinding> ResolveByAlias(string alias)
+    {
+        var hits = new List<FormationBinding>();
+        foreach (var kv in _bindings)
+            if (string.Equals(kv.Value.Alias, alias, StringComparison.Ordinal)) hits.Add(kv.Value);
+        return hits;
+    }
+
     /// <summary>读取宿主当前真值（不是镜像）—— hold 必须按真值算，否则会高估控制权。</summary>
     public CommandValue ActualValue(FormationBinding binding, CommandDomain domain)
     {
@@ -793,6 +845,32 @@ public sealed class ProbeRuntime
         foreach (var v in _census.Values) totalCalls += v;
         rows.Add(Row("P0b", "write-port traffic > 0", totalCalls.ToString(CultureInfo.InvariantCulture),
             totalCalls > 0));
+
+        // P0c：EntityId 唯一性自检。重复会让多个 Formation 在 Core 侧塌缩成同一个实体，
+        // 该轮所有 lease / hold / unauthorized 统计随之失真，所以必须让装置自己报警而不是靠人眼对账。
+        var counts = new Dictionary<string, int>(StringComparer.Ordinal);
+        var dupOrder = new List<string>();
+        foreach (var kv in _bindings)
+        {
+            var id = kv.Value.EntityId;
+            counts.TryGetValue(id, out var n);
+            counts[id] = n + 1;
+            if (n == 1) dupOrder.Add(id);   // 第二次见到才算重复
+        }
+        var uniqueCount = counts.Count;
+        var bindingCount = _bindings.Count;
+        rows.Add(Row("P0c", "entity_id unique",
+            uniqueCount.ToString(CultureInfo.InvariantCulture) + "/" + bindingCount.ToString(CultureInfo.InvariantCulture),
+            uniqueCount == bindingCount));
+        if (dupOrder.Count > 0)
+        {
+            var shown = new List<string>();
+            for (int i = 0; i < dupOrder.Count && i < 12; i++)
+                shown.Add(dupOrder[i] + " x" + counts[dupOrder[i]].ToString(CultureInfo.InvariantCulture));
+            var extra = dupOrder.Count - shown.Count;
+            if (extra > 0) shown.Add("…(+" + extra.ToString(CultureInfo.InvariantCulture) + ")");
+            rows.Add("P0c    duplicated entity_id: " + string.Join(", ", shown));
+        }
 
         var prefix = tag.Split('-')[0].ToLowerInvariant();
 
@@ -919,8 +997,9 @@ public sealed class ProbeRuntime
                 w.WriteLine("[projection]");
                 foreach (var kv in _bindings)
                 {
-                    w.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0}  mv={1}  fa={2}  ar={3}",
+                    w.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0}  alias={1}  mv={2}  fa={3}  ar={4}",
                         kv.Value.EntityId,
+                        kv.Value.Alias,
                         kv.Value.MovementProjection.Describe(),
                         kv.Value.FacingProjection.Describe(),
                         kv.Value.ArrangementProjection.Describe()));
