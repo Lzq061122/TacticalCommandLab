@@ -156,6 +156,9 @@ public sealed class ProbeRuntime
     private readonly List<KeyValuePair<string, HoldMeter>> _holdHistory = new List<KeyValuePair<string, HoldMeter>>();
     private readonly ScriptRunner _script;
 
+    // 已留过痕的孤儿 Formation（Team 为 null 或 Index < 0，无法唯一标识）。按引用去重。
+    private readonly HashSet<Formation> _orphans = new HashSet<Formation>(ByReference.Instance);
+
     // ---- 覆盖率取证（Phase 10 新增）----
     // census：每个写入口 hook 的调用次数（含放行）。0 次 = 无流量或 patch 未生效，两者由 Patches.Applied 列表区分。
     private readonly Dictionary<string, int> _census = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -270,15 +273,57 @@ public sealed class ProbeRuntime
         }
     }
 
-    public FormationBinding Bind(Formation formation, int teamSeq = -1)
+    /// <summary>
+    /// 唯一绑定收口点。**返回 null 表示拒绝了绑定**：该 Formation 无法被唯一标识，
+    /// 调用方必须处理，不得继续把它当成实体使用。
+    ///
+    /// 为什么必须拒绝（2026-10-03 实测）：EntityId = T{teamSeq}F{index}，而 Team 为 null 的
+    /// Formation 的 teamSeq 推导为 -1、Index 又多为 -1 ⇒ 12 个不同对象全部塌缩成同一个 "T-1F-1"。
+    /// SampleShadow 按 EntityId 聚合 key，于是它们互相把对方的值变化当成自己的，
+    /// 一次性造出 15036 条假 unobserved。拒绝绑定比给重复名加自增后缀更安全 —— 后缀会让实体的
+    /// 名字取决于遍历顺序，违反可重放原则。
+    /// </summary>
+    public FormationBinding? Bind(Formation formation, int teamSeq = -1)
     {
+        if (formation is null) return null;
         if (_bindings.TryGetValue(formation, out var existing)) return existing;
+
+        // Team / Index 必须都可读且 Index >= 0，否则 EntityId 必然撞名。
+        var teamDesc = "throw";
+        var idx = -1;
+        try
+        {
+            teamDesc = formation.Team is null ? "null" : "set";
+            idx = formation.Index;
+        }
+        catch
+        {
+            // 保持已赋的 teamDesc="throw" / idx=-1，下面按不可标识处理。
+        }
+
+        if (teamDesc != "set" || idx < 0)
+        {
+            NoteOrphan(formation, teamDesc, idx);
+            return null;
+        }
+
         var id = EntityIdOf(formation, teamSeq);
         var entity = new ControlledEntity(id);
         _port.RegisterEntity(entity);
         var binding = new FormationBinding(formation, id, AliasOf(formation), entity);
         _bindings[formation] = binding;
         return binding;
+    }
+
+    /// <summary>
+    /// 被跳过的孤儿 Formation 留痕，**每个对象只留一次**（BindAll 每 tick 都会走一遍，
+    /// 不去重会每帧刷屏并写爆 dump）。
+    /// </summary>
+    private void NoteOrphan(Formation formation, string teamDesc, int idx)
+    {
+        if (!_orphans.Add(formation)) return;
+        Note("ORPHAN_FORMATION_SKIPPED team=" + teamDesc
+             + " idx=" + idx.ToString(CultureInfo.InvariantCulture));
     }
 
     // ---------------- 写入口闸门 ----------------
@@ -322,6 +367,7 @@ public sealed class ProbeRuntime
         if (!Enabled(domain, path)) return true;
 
         var binding = Bind(formation);
+        if (binding is null) { Bump(hook); return true; }   // 无法唯一标识 ⇒ 放行原方法，绝不把异常抛到宿主
         var rec = _authority.GetOrCreate(binding.EntityId, domain);
         var lease = ActiveLease(binding.EntityId, domain);
         bool isLab = _inLabWrite;
@@ -390,6 +436,7 @@ public sealed class ProbeRuntime
         }
 
         var binding = Bind(formation);
+        if (binding is null) return null;
         _inLabWrite = true;
         try
         {
@@ -415,6 +462,7 @@ public sealed class ProbeRuntime
     public WriteAttempt? ReapplyLastNative(Formation formation)
     {
         var binding = Bind(formation);
+        if (binding is null) return null;
         if (binding.LastNativeMovement is null) return null;
 
         _inLabWrite = true;
@@ -435,6 +483,7 @@ public sealed class ProbeRuntime
     public Lease? Acquire(Formation formation, CommandDomain domain, double now)
     {
         var binding = Bind(formation);
+        if (binding is null) return null;
 
         if (_config.UseControlledByAiRoute && domain == CommandDomain.Movement)
         {
@@ -467,6 +516,7 @@ public sealed class ProbeRuntime
     public bool Renew(Formation formation, CommandDomain domain, double now)
     {
         var binding = Bind(formation);
+        if (binding is null) return false;
         var lease = ActiveLease(binding.EntityId, domain);
         return lease is not null && _authority.Renew(lease, _config.RenewExtendSeconds, now);
     }
@@ -475,6 +525,8 @@ public sealed class ProbeRuntime
     public int Release(Formation formation, CommandDomain domain, double now)
     {
         var binding = Bind(formation);
+        // 孤儿 Formation 无法定位其租约，与"没有活跃租约"同样计一次恢复失败。
+        if (binding is null) { ReleaseRecoveryFailures++; return 1; }
         var lease = ActiveLease(binding.EntityId, domain);
         if (lease is null) { ReleaseRecoveryFailures++; return 1; }
 
@@ -648,6 +700,7 @@ public sealed class ProbeRuntime
         {
             Bump(hook);
             var binding = Bind(formation);
+            if (binding is null) return;   // census 已计；孤儿不写 CENSUS 行
             _hostLines.Add(string.Format(CultureInfo.InvariantCulture,
                 "CENSUS|t={0:F4}|E={1}|hook={2}|raw={3}", _clock.Now, binding.EntityId, hook, raw));
         }

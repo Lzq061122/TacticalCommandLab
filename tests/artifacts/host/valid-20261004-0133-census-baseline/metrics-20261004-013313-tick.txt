@@ -1,0 +1,174 @@
+﻿[config]
+level=Full ttl=8s autoRenew=True enforceGated=True enforceNonGated=False patch(mv/fa/ar)=True/True/True arrangementPath=NonGated controlledByAiRoute=False restore=None restoreBeforeRelease=True tEval=0.5
+
+[metrics]
+simulation_seconds            = 40.01
+commands_per_second           = 48.7143
+order_changes_per_second      = 3.5742
+unauthorized_write_attempts   = 0
+unauthorized_writes           = 0
+native_overrides              = 0
+lab_overrides                 = 0
+authority_transfers           = 0
+preemptions                   = 0
+average_command_lifetime      = 13.9570
+oscillation_pairs             = 47
+oscillation_frequency         = 1.1747
+reaction_latency              = 0.0000
+stale_command_execution       = 0
+task_starvation               = 0
+max_pending_seconds           = 0.00
+release_recovery_failures     = 0
+stability_grade               = Oscillating
+
+[verdict]
+P0     harmony patched methods > 0                actual=7              PASS
+P0b    write-port traffic > 0                     actual=2393           PASS
+P0c    entity_id unique                           actual=29/29          PASS
+X1     release_recovery_failures                  actual=0              PASS
+X2     oscillation_frequency                      actual=1.1747         PASS
+X3     order_changes_per_second                   actual=3.5742         PASS
+X4     reaction_latency                           actual=0.0000         PASS
+X5     unobserved_writes (采样到但写入口没记录)             actual=0              PASS
+
+[hold]
+
+[census]
+Formation.SetArrangementOrder            calls=332
+Formation.SetControlledByAI              calls=58
+Formation.SetFacingOrder                 calls=567
+Formation.SetFiringOrder                 calls=58
+Formation.SetFormOrder                   calls=291
+Formation.SetMovementOrder               calls=1050
+Formation.SetRidingOrder                 calls=37
+
+[coverage]
+T-1F0|Arrangement        sampled_changes=0    port_changes=1    unobserved=0    
+T-1F0|Facing             sampled_changes=0    port_changes=0    unobserved=0    
+T-1F0|Movement           sampled_changes=0    port_changes=1    unobserved=0    
+T-1F1|Arrangement        sampled_changes=0    port_changes=1    unobserved=0    
+T-1F1|Facing             sampled_changes=0    port_changes=0    unobserved=0    
+T-1F1|Movement           sampled_changes=0    port_changes=1    unobserved=0    
+T-1F2|Arrangement        sampled_changes=0    port_changes=1    unobserved=0    
+T-1F2|Facing             sampled_changes=0    port_changes=0    unobserved=0    
+T-1F2|Movement           sampled_changes=0    port_changes=1    unobserved=0    
+T-1F3|Arrangement        sampled_changes=0    port_changes=1    unobserved=0    
+T-1F3|Facing             sampled_changes=0    port_changes=0    unobserved=0    
+T-1F3|Movement           sampled_changes=0    port_changes=1    unobserved=0    
+T-1F4|Arrangement        sampled_changes=0    port_changes=1    unobserved=0    
+T-1F4|Facing             sampled_changes=0    port_changes=0    unobserved=0    
+T-1F4|Movement           sampled_changes=0    port_changes=1    unobserved=0    
+T-1F5|Arrangement        sampled_changes=0    port_changes=1    unobserved=0    
+T-1F5|Facing             sampled_changes=0    port_changes=0    unobserved=0    
+T-1F5|Movement           sampled_changes=0    port_changes=1    unobserved=0    
+T-1F6|Arrangement        sampled_changes=0    port_changes=1    unobserved=0    
+T-1F6|Facing             sampled_changes=0    port_changes=0    unobserved=0    
+T-1F6|Movement           sampled_changes=0    port_changes=1    unobserved=0    
+T-1F7|Arrangement        sampled_changes=0    port_changes=1    unobserved=0    
+T-1F7|Facing             sampled_changes=0    port_changes=0    unobserved=0    
+T-1F7|Movement           sampled_changes=0    port_changes=1    unobserved=0    
+T-1F8|Arrangement        sampled_changes=0    port_changes=1    unobserved=0    
+T-1F8|Facing             sampled_changes=0    port_changes=0    unobserved=0    
+T-1F8|Movement           sampled_changes=0    port_changes=1    unobserved=0    
+T-1F9|Arrangement        sampled_changes=0    port_changes=1    unobserved=0    
+T-1F9|Facing             sampled_changes=0    port_changes=0    unobserved=0    
+T-1F9|Movement           sampled_changes=0    port_changes=1    unobserved=0    
+T0F0|Arrangement         sampled_changes=0    port_changes=1    unobserved=0    
+T0F0|Facing              sampled_changes=1    port_changes=1    unobserved=0    
+T0F0|Movement            sampled_changes=1    port_changes=9    unobserved=0    
+T0F1|Arrangement         sampled_changes=1    port_changes=2    unobserved=0    
+T0F1|Facing              sampled_changes=1    port_changes=1    unobserved=0    
+T0F1|Movement            sampled_changes=1    port_changes=9    unobserved=0    
+T0F2|Arrangement         sampled_changes=0    port_changes=1    unobserved=0    
+T0F2|Facing              sampled_changes=1    port_changes=1    unobserved=0    
+T0F2|Movement            sampled_changes=1    port_changes=9    unobserved=0    
+T0F3|Arrangement         sampled_changes=0    port_changes=1    unobserved=0    
+T0F3|Facing              sampled_changes=2    port_changes=2    unobserved=0    
+T0F3|Movement            sampled_changes=3    port_changes=11   unobserved=0    
+T0F4|Arrangement         sampled_changes=0    port_changes=1    unobserved=0    
+T0F4|Facing              sampled_changes=1    port_changes=1    unobserved=0    
+T0F4|Movement            sampled_changes=1    port_changes=3    unobserved=0    
+T0F5|Arrangement         sampled_changes=0    port_changes=0    unobserved=0    
+T0F5|Facing              sampled_changes=1    port_changes=1    unobserved=0    
+T0F5|Movement            sampled_changes=1    port_changes=3    unobserved=0    
+T0F6|Arrangement         sampled_changes=0    port_changes=0    unobserved=0    
+T0F6|Facing              sampled_changes=1    port_changes=1    unobserved=0    
+T0F6|Movement            sampled_changes=1    port_changes=3    unobserved=0    
+T0F7|Arrangement         sampled_changes=0    port_changes=0    unobserved=0    
+T0F7|Facing              sampled_changes=1    port_changes=1    unobserved=0    
+T0F7|Movement            sampled_changes=1    port_changes=3    unobserved=0    
+T0F8|Arrangement         sampled_changes=0    port_changes=1    unobserved=0    
+T0F8|Facing              sampled_changes=0    port_changes=1    unobserved=0    
+T0F8|Movement            sampled_changes=0    port_changes=1    unobserved=0    
+T1F0|Arrangement         sampled_changes=2    port_changes=3    unobserved=0    
+T1F0|Facing              sampled_changes=1    port_changes=2    unobserved=0    
+T1F0|Movement            sampled_changes=2    port_changes=2    unobserved=0    
+T1F1|Arrangement         sampled_changes=3    port_changes=3    unobserved=0    
+T1F1|Facing              sampled_changes=1    port_changes=2    unobserved=0    
+T1F1|Movement            sampled_changes=1    port_changes=1    unobserved=0    
+T1F2|Arrangement         sampled_changes=3    port_changes=3    unobserved=0    
+T1F2|Facing              sampled_changes=1    port_changes=2    unobserved=0    
+T1F2|Movement            sampled_changes=3    port_changes=4    unobserved=0    
+T1F3|Arrangement         sampled_changes=0    port_changes=1    unobserved=0    
+T1F3|Facing              sampled_changes=1    port_changes=2    unobserved=0    
+T1F3|Movement            sampled_changes=15   port_changes=15   unobserved=0    
+T1F4|Arrangement         sampled_changes=3    port_changes=4    unobserved=0    
+T1F4|Facing              sampled_changes=1    port_changes=2    unobserved=0    
+T1F4|Movement            sampled_changes=3    port_changes=4    unobserved=0    
+T1F5|Arrangement         sampled_changes=0    port_changes=0    unobserved=0    
+T1F5|Facing              sampled_changes=0    port_changes=0    unobserved=0    
+T1F5|Movement            sampled_changes=0    port_changes=0    unobserved=0    
+T1F6|Arrangement         sampled_changes=0    port_changes=0    unobserved=0    
+T1F6|Facing              sampled_changes=0    port_changes=0    unobserved=0    
+T1F6|Movement            sampled_changes=0    port_changes=0    unobserved=0    
+T1F7|Arrangement         sampled_changes=0    port_changes=0    unobserved=0    
+T1F7|Facing              sampled_changes=0    port_changes=0    unobserved=0    
+T1F7|Movement            sampled_changes=0    port_changes=0    unobserved=0    
+T1F8|Arrangement         sampled_changes=0    port_changes=1    unobserved=0    
+T1F8|Facing              sampled_changes=0    port_changes=1    unobserved=0    
+T1F8|Movement            sampled_changes=0    port_changes=1    unobserved=0    
+T1F9|Arrangement         sampled_changes=0    port_changes=0    unobserved=0    
+T1F9|Facing              sampled_changes=0    port_changes=0    unobserved=0    
+T1F9|Movement            sampled_changes=0    port_changes=2    unobserved=0    
+
+[patches]
+failure = (none)
+count   = 7
+TaleWorlds.MountAndBlade.Formation.SetArrangementOrder(ArrangementOrder)
+TaleWorlds.MountAndBlade.Formation.SetControlledByAI(Boolean, Boolean)
+TaleWorlds.MountAndBlade.Formation.SetFacingOrder(FacingOrder)
+TaleWorlds.MountAndBlade.Formation.SetFiringOrder(FiringOrder)
+TaleWorlds.MountAndBlade.Formation.SetFormOrder(FormOrder, Boolean)
+TaleWorlds.MountAndBlade.Formation.SetMovementOrder(MovementOrder)
+TaleWorlds.MountAndBlade.Formation.SetRidingOrder(RidingOrder)
+
+[projection]
+T0F0  alias=P0  mv=distinct=1 wrap=0  fa=distinct=2 wrap=0  ar=distinct=1 wrap=0
+T0F1  alias=P1  mv=distinct=1 wrap=0  fa=distinct=2 wrap=0  ar=distinct=2 wrap=0
+T0F2  alias=P2  mv=distinct=1 wrap=0  fa=distinct=2 wrap=0  ar=distinct=1 wrap=0
+T0F3  alias=P3  mv=distinct=3 wrap=0  fa=distinct=2 wrap=0  ar=distinct=1 wrap=0
+T0F4  alias=P4  mv=distinct=1 wrap=0  fa=distinct=2 wrap=0  ar=distinct=1 wrap=0
+T0F5  alias=P5  mv=distinct=1 wrap=0  fa=distinct=2 wrap=0  ar=distinct=1 wrap=0
+T0F6  alias=P6  mv=distinct=1 wrap=0  fa=distinct=2 wrap=0  ar=distinct=1 wrap=0
+T0F7  alias=P7  mv=distinct=1 wrap=0  fa=distinct=2 wrap=0  ar=distinct=1 wrap=0
+T1F0  alias=N0  mv=distinct=1 wrap=0  fa=distinct=2 wrap=0  ar=distinct=2 wrap=0
+T1F1  alias=N1  mv=distinct=1 wrap=0  fa=distinct=2 wrap=0  ar=distinct=2 wrap=0
+T1F2  alias=N2  mv=distinct=2 wrap=0  fa=distinct=2 wrap=0  ar=distinct=3 wrap=0
+T1F3  alias=N3  mv=distinct=3 wrap=0  fa=distinct=2 wrap=0  ar=distinct=1 wrap=0
+T1F4  alias=N4  mv=distinct=2 wrap=0  fa=distinct=2 wrap=0  ar=distinct=3 wrap=0
+T1F5  alias=N5  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T1F6  alias=N6  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T1F7  alias=N7  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T-1F0  alias=N0  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T-1F1  alias=N1  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T-1F2  alias=N2  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T-1F3  alias=N3  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T-1F4  alias=N4  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T-1F5  alias=N5  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T-1F6  alias=N6  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T-1F7  alias=N7  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T-1F8  alias=N8  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T-1F9  alias=N9  mv=distinct=0 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T1F8  alias=N8  mv=distinct=1 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T1F9  alias=N9  mv=distinct=2 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0
+T0F8  alias=P8  mv=distinct=1 wrap=0  fa=distinct=1 wrap=0  ar=distinct=1 wrap=0

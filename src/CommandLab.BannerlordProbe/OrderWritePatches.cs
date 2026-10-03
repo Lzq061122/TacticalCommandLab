@@ -118,9 +118,14 @@ internal static class Patches
                 // OrderType 是值类型（编译器已证：不可用 ?.），直接 ToString 即可。
                 var raw = input.OrderType.ToString();
 
+                // Bind 返回 null = 该 Formation 无法唯一标识（Team 为 null 或 Index < 0），
+                // 此时不投影、不进 Gate，直接放行原方法。
+                var binding = runtime.Bind(__instance);
+                if (binding is null) return true;
+
                 var value = NeutralOrders.TryDecode(input, out var decoded)
                     ? decoded
-                    : runtime.Bind(__instance).MovementProjection.Project(raw);
+                    : binding.MovementProjection.Project(raw);
 
                 return runtime.Gate(__instance, CommandDomain.Movement, WritePath.Gated,
                                     "Formation.SetMovementOrder", value, raw);
@@ -144,7 +149,9 @@ internal static class Patches
                 if (runtime is null) return true;
 
                 var raw = order.OrderEnum.ToString();
-                var value = runtime.Bind(__instance).FacingProjection.Project(raw);
+                var binding = runtime.Bind(__instance);
+                if (binding is null) return true;
+                var value = binding.FacingProjection.Project(raw);
                 return runtime.Gate(__instance, CommandDomain.Facing, WritePath.Gated,
                                     "Formation.SetFacingOrder", value, raw);
             }
@@ -168,6 +175,7 @@ internal static class Patches
 
                 var raw = order.OrderEnum.ToString();
                 var binding = runtime.Bind(__instance);
+                if (binding is null) return true;
                 var value = binding.ArrangementProjection.Project(raw);
                 return runtime.Gate(__instance, CommandDomain.Arrangement, runtime.Config.ArrangementPath,
                                     "Formation.SetArrangementOrder", value, raw);

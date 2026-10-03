@@ -1,0 +1,8 @@
+CommandLabProbe boot marker
+at            = 2026-10-04 01:32:22.581
+harmonyId     = com.commandlab.probe
+patchedCount  = 0
+patchFailure  = (none)
+--- patched methods ---
+--- pending notes ---
+NOTE|t=0.0000|HARMONY_PATCH_DEFERRED to first mission tick

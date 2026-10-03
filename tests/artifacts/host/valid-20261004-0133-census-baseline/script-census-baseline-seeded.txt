@@ -1,0 +1,21 @@
+# C0 写入口普查（Phase 10 前置 / P0 + P0b 门禁）
+#
+# 目的：①证明 Harmony patch 真的打上了（P0）②证明写入口真的有原生流量（P0b）
+#       ③量化 6 个写入口各自的调用量，作为后续 H1/H2/H3 的对照基数。
+#
+# 本脚本**零干预**：只有 policy 与 dump，不下达任何指令、不夺取任何归属。
+#
+# 观测对象由装置的「全量镜像」保证（ProbeRuntime.BindAll，每 tick 遍历
+# Mission.Teams → Team.FormationsIncludingEmpty → Bind），不依赖脚本触发。
+# 因此 [census] / [coverage] 两段必然有内容，除非 patch 没打上（那时 P0 会 FAIL）。
+#
+# ⚠ 修订记录：
+#   2026-09-21 曾用三行 `cmd P0|N0|N1 Movement HOLD` 试图"建立绑定" —— 该修法**无效且已撤销**。
+#     原因：ScriptRunner.TryCommand 先用 FindBinding 解析实体，找不到就静默 return；
+#     而绑定当时只在 patch 触发时创建 ⇒ 鸡生蛋死锁，cmd 永远执行不到。
+#     现改由 ProbeRuntime.BindAll 每 tick 主动全量绑定（不依赖任何脚本动作）。
+#   2026-09-22 首次实测暴露 P0 FAIL：Harmony Prefix 形参名笔误
+#     （SetMovementOrder 的形参是 input、SetControlledByAI 的是 isControlledByAI）。
+
+t=0.5   policy patchMovement=true patchFacing=true patchArrangement=true
+t=30.0  dump census-baseline

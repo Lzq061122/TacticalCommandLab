@@ -925,3 +925,122 @@ CrashDoctor 统计：签名 `b1dfded2` 共崩 **4 次** —— 11:56:56 / 12:06:
    `patchFailure = (none)` 与"游戏能跑"都不是充分证据。
 3. **一台机器上装着的崩溃诊断 mod 是宝贵证据源** —— 当事件日志与游戏日志都不给堆栈时，
    `CrashDoctor` 的 `managed_crashes.jsonl` 直接给出了完整托管堆栈。**排查卡住时应优先检查这类工具是否已有记录。**
+
+---
+
+## 13. 第三次实测：EntityId 塌缩修复验证（2026-10-04 01:33）
+
+### 13.1 背景：为什么还要再跑一次
+
+§12.9 已定位并修掉崩溃根因（patch 推迟到第一次 Mission tick），装置可以进战斗取数了。
+但 **2026-10-03 23:58 的第一次成功实跑门禁 FAIL**：
+
+| 判据 | 实测 | 判定 |
+|---|---|---|
+| P0 harmony patched methods | 7 | PASS |
+| P0b write-port traffic | 2002 | PASS |
+| **P0c entity_id unique** | **30/41** | **FAIL**（dup `T-1F-1 x12`） |
+| **X5 unobserved_writes** | **15036** | **FAIL** |
+
+见 `_audit\_run2-artifacts-fail\metrics-20261003-235812-census-baseline.txt`。
+
+### 13.2 根因：12 个 Formation 塌缩成同一个 EntityId
+
+三面交叉证据：
+
+1. **`[projection]` 41 行里 `T-1F-1 alias=N-1` 重复 12 次**（行 176-179、182-189）。
+2. **`[coverage]` 唯一 FAIL 行就是这一条**：
+   `T-1F-1|Arrangement sampled_changes=15052 port_changes=16 unobserved=15036`，其余 40 行全 0。
+3. **HOST 行分组**（telemetry 里 1562 条 `HOST|`）：`T-1F-1` 全部是 `team=- idx=-1`，
+   即 `formation.Team == null` 且 `formation.Index == -1`。
+
+机制：`EntityIdOf` = `"T" + teamSeq + "F" + formation.Index`。这 12 个对象的 `Team` 为 null
+⇒ `TeamSeqOf` 只能返回 -1，`Index` 又恰好是 -1 ⇒ 12 个不同对象得到同一个 `"T-1F-1"`。
+而 `SampleShadow` 按 `Key(binding.EntityId, domain)` 聚合 `_sampledLast` / `_sampledChanges`，
+于是 12 个对象**共享一个采样 key，各自独立采样、互相把对方的值变化当成自己的变化**，
+在 `Unset ↔ Obs0` 之间乒乓，一次性造出 15036 条假 unobserved。
+
+> 与 2026-09-23 归档的 `N-1|Arrangement` 乒乓对称是**同一性质**：都是"多个 Formation 共用一个 key"。
+
+### 13.3 修复：Bind 拒绝为无法唯一标识的 Formation 建绑定
+
+改动落在 `ProbeRuntime.cs` 与 `OrderWritePatches.cs`（Core / Simulation / Telemetry / tests 零 diff）：
+
+- `Bind` 返回类型改为 `FormationBinding?`。**三条拒绝路径都在 `_port.RegisterEntity` 之前 return null**：
+  `formation is null` / 读 `formation.Team` 得到 null 或抛异常 / `formation.Index < 0`。
+- 新增 `_orphans`（`HashSet<Formation>(ByReference.Instance)`）+ `NoteOrphan`，
+  每个**不同**对象只在**首次**跳过时留痕一行
+  `NOTE|t=…|ORPHAN_FORMATION_SKIPPED team={null|throw|set} idx={原值}`（不去重会每 tick 刷屏）。
+- 七个 `Bind` 调用点全部处理 null：`GateCore` 先 `Bump(hook)` 再放行原方法、
+  `Command`/`ReapplyLastNative`/`Acquire` 返回 null、`Renew` 返回 false、
+  `Release` 计 `ReleaseRecoveryFailures++`、`Observe` 不写 CENSUS 行。
+- `OrderWritePatches.cs` 三处加 `var binding = runtime.Bind(__instance); if (binding is null) return true;`
+  （**形参名、参数顺序、try/catch 结构一字未动**）。不加会在宿主 patch 里 NRE → 被 try/catch 吞掉
+  → `RecordFatal` 落假崩溃报告，淹没真实取证。
+
+**为什么不用"给重复名加自增后缀"（`T-1F-1#2`）**：那样实体的名字会取决于遍历顺序，
+实验对象不再可重放。派单已明确否决。
+
+**为什么不在 `BindAll` 里单独过滤**：`Gate` / `Observe` / `OrderWritePatches` 都会建绑定，
+只有 `Bind()` 这一个收口点才能挡住全部路径。
+
+### 13.4 第三次实测结果（2026-10-04 01:33，门禁全 PASS）
+
+产物：`tests/artifacts/host/valid-20261004-0133-census-baseline/`。
+进战斗方式：**CBATH 全自动**（`_audit\_tcl-step5.ps1`，Custom Battle `battle_terrain_biome_096`，
+team0 4 编队 / team1 5 编队，挂机 55s）。
+
+| 判据 | 目标 | 实测 | 判定 |
+|---|---|---|---|
+| P0 | 7 | `actual=7` | **PASS** |
+| P0b | >0 | `actual=1957` | **PASS** |
+| P0c | 分子==分母 | `actual=29/29` | **PASS** |
+| X1 | 0 | `actual=0` | PASS |
+| X2 | — | `actual=1.3664` | PASS |
+| X3 | — | `actual=4.5325` | PASS |
+| X4 | — | `actual=0.0000` | PASS |
+| **X5** | **==0** | **`actual=0`** | **PASS** |
+
+时间序列（同一组 29 个绑定从第 1 tick 就固定，全程无漂移）：
+
+| dump | P0c | X5 |
+|---|---|---|
+| 013232 mission-start | 0/0 | 0 |
+| 013243 tick | 29/29 | 0 |
+| 013253 tick | 29/29 | 0 |
+| **013303 census-baseline** | **29/29** | **0** |
+| 013313 tick | 29/29 | 0 |
+| 013323 tick | 29/29 | 0 |
+
+**修复自证**：`telemetry-20261004-013303-census-baseline.txt` 里
+`ORPHAN_FORMATION_SKIPPED team=null idx=-1` **恰好 12 行**，与预测的 12 个孤儿完全吻合；
+`[projection]` 从 41 行降到 **29 行**；`T-1F-1` 不再出现。
+
+`patch-marker.txt`：`patchedCount = 7`、`patchFailure = (none)`、`missionCurrentNull = no`。
+
+### 13.5 一个需要记住的观测事实
+
+29 个绑定里仍有 10 个是 `T-1F0..T-1F9`（`alias=N0..N9`）—— 这批 Formation 的
+`Team` **非 null**（HOST 行是 `team=nonplayer`），但 `TeamSeqOf` 在 `Mission.Current.Teams`
+的引用枚举里定位不到，所以 seq 是 -1。它们**各自唯一、不撞名**，因此本轮不处理；
+P0c 门禁会继续守卫"万一将来出现两个定位失败的 Team 而撞名"的情况。
+
+这批同时也说明：**`[projection]` 里的 `T-1F*` 不是玩家/敌方任一方的编队**，
+从 `[projection]` 挑实验实体时应当挑 `T0F*` / `T1F*`。
+
+### 13.6 本轮装置变更清单
+
+| 文件 | 变更 |
+|---|---|
+| `ProbeRuntime.cs` | `Bind` 改可空返回 + 三条拒绝路径；新增 `_orphans` / `NoteOrphan`；七个调用点处理 null |
+| `OrderWritePatches.cs` | 三处加 Bind 结果的 null 判定（仅此一项，其余一字未动） |
+
+（Step 1-3 的 EntityId 唯一化 / Alias / P0c 门禁 / docs 门禁改动见 `_audit\2026-10-02-phase10-fixtool-qc.md`。）
+
+**回归**：Core / Simulation / Telemetry / tests 零改动 ⇒ D0 15/15、E1–E11 51/51、E12 10/10、
+`D0-S1 replay_hash = d9853e282f033d16b7b67a958797e0c345be1d7e16d39b22a30dc9ca833d8199` 逐字不变。
+
+### 13.7 下一步
+
+装置已可用，**census-baseline 门禁四项全 PASS**。之后可按 §4 表格开跑 H1 / H2 / H2b / H3 / REL，
+第一步先从本次的 `[projection]`（29 行）里挑明确实体：多 Team 时必须用 `T{t}F{i}` 全名，不用 `N0`。

@@ -1,0 +1,13 @@
+CommandLabProbe patch marker (deferred to first mission tick)
+at                 = 2026-10-04 01:32:32.494
+patchedCount       = 7
+patchFailure       = (none)
+missionCurrentNull = no
+--- patched methods ---
+TaleWorlds.MountAndBlade.Formation.SetArrangementOrder(ArrangementOrder)
+TaleWorlds.MountAndBlade.Formation.SetControlledByAI(Boolean, Boolean)
+TaleWorlds.MountAndBlade.Formation.SetFacingOrder(FacingOrder)
+TaleWorlds.MountAndBlade.Formation.SetFiringOrder(FiringOrder)
+TaleWorlds.MountAndBlade.Formation.SetFormOrder(FormOrder, Boolean)
+TaleWorlds.MountAndBlade.Formation.SetMovementOrder(MovementOrder)
+TaleWorlds.MountAndBlade.Formation.SetRidingOrder(RidingOrder)
