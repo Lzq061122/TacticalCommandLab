@@ -1,0 +1,8 @@
+# REL-4 — 恢复动作放在 Release 之后（此时 Lab 已不是 owner，恢复写入会被拒绝）
+# 目的：制造"交还后才恢复 → 写入被拒"的对照，验证 Release 与恢复的顺序敏感性。
+# 预期：release_recovery_failures > 0（恢复写入被写入口拒绝），即 REL 判据 FAIL —— 这是设计出来的反例。
+t=1.0   policy level=Full ttl=30 autorenew=true restore=ReapplyLastNativeOrder restoreBeforeRelease=false
+t=3.0   acquire T1F3 Movement Full 30
+t=3.5   cmd T1F3 Movement HOLD
+t=28.0  release T1F3 Movement
+t=38.0  dump rel-after-release

@@ -1,0 +1,18 @@
+# H2b — 写入口覆盖率对照（E12 ⑨ 的实测版 / HANDOFF §10.6 阻断级 PoC）
+#
+# 与 h2-suppression 的唯一差别：把 Arrangement 路径也纳入门控
+#   enforceNonGated=true arrangementPath=Gated
+#
+# 可证伪预测（IL 取证，2026-09-20 v1.3.4）：
+#   Formation::Tick 里 _arrangementOrderTickOccasionallyTimer 触发的是
+#   ArrangementOrder::TickOccasionally(formation)，它【不经过】Formation.SetArrangementOrder；
+#   _arrangementTickOccasionallyTimer 触发的是 IFormationArrangement::OnTickOccasionally。
+#   → 即使把 ArrangementPath 切到 Gated，这条自维护路径也拦不住。
+#   → 预期 [coverage] 段 Arrangement 域 unobserved > 0。
+# 若实测 unobserved == 0，则说明自维护 tick 不改 OrderEnum，或版本已变更预测不成立。
+
+t=1.0   policy level=Full ttl=30 autorenew=true enforceGated=true enforceNonGated=true arrangementPath=Gated
+t=3.0   acquire T1F3 Movement Full 30
+t=3.5   cmd T1F3 Movement HOLD
+t=28.0  release T1F3 Movement
+t=33.0  dump h2-coverage

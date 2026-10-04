@@ -198,9 +198,10 @@ if (Team.HasTeamAi) {
 | **P0** | `harmony patched methods > 0` | >0 | 前置门禁。FAIL ⇒ 本轮全部结论作废 |
 | **P0b** | 写入口流量 > 0 | >0 | FAIL ⇒ "没有原生写入"是假象 |
 | **P0c** | EntityId 唯一性 | 唯一数 == 绑定总数 | FAIL ⇒ 同一 EntityId 挂了多个 Formation，除 `[patches]`/`[census]` 外全部指标失真 |
-| H1-a | `native_overrides` | >0 | 不夺取必被覆盖 |
-| H1-c | 首次覆盖延迟 | 记录值 | H1 核心量 |
+| **H1-a** | `accepted_lab_writes`（获准的 Lab 写入） | >0 | 有可覆盖对象。原判据 `native_overrides > 0` 已废：未 acquire 时 Owner 恒为 Native，原生本就是所有者 ⇒ `differentOwner=false` ⇒ 该计数结构性恒 0（§14.5） |
+| **H1-c** | 首次覆盖延迟 | **有值**（`no-override` ⇒ FAIL） | H1 核心量。原为「记录值」，会把「根本没被覆盖」误报成成功（验收报告 ④） |
 | H1-d | `lab_overrides` | 记录值 | Lab 反覆盖原生的次数 |
+| H1-e | `native_overrides` | 记录值 | 仅统计「非所有者」的有效改动，本域恒 0，不参与判定 |
 | **G1** | `unauthorized_writes` | ==0 | 必要非充分（E12 ⑧） |
 | **G2** | `intent_hold_share` | ≥95% | 与 G1 必须同表读 |
 | G3 | `grade` | !=Oscillating | |
@@ -319,7 +320,7 @@ B. 游戏侧设置（一次性）：
 | 序 | 脚本 | 看什么 | 门禁 |
 |---|---|---|---|
 | 1 | `census-baseline` | P0（patch 打上了）、P0b（有流量）、X5（无覆盖率缺口）、P0c（EntityId 唯一） | **P0 / P0b / X5 / P0c 任一 FAIL ⇒ 停，先修装置，后面全部作废** |
-| 2 | `h1-external-write` | H1-a `native_overrides` > 0、H1-c 首次覆盖延迟 | H1-a FAIL ⇒ 说明 N0 没被原生流转，先查 P0b |
+| 2 | `h1-external-write` | H1-a 获准 Lab 写入 > 0、**H1-c 首次覆盖延迟有值** | H1-a FAIL ⇒ Lab 写入全被拒（先查 `enforceGated` 与 P0b）；H1-c 为 `no-override` ⇒ 本场没有覆盖事件，H1 未成立，不得记成功 |
 | 3 | `h2-suppression` | **G1 ∧ G2 必须同表读** | 仅 G1 PASS 而 G2 FAIL = E12 ⑤「伪稳定」，不是成功 |
 | 4 | `h2-coverage` | `[coverage]` 段 Arrangement 域 `unobserved` | 两种结果都记，不当作"实现有误" |
 | 5 | `h3-route-b` | H3-a `SetControlledByAI` 被观测到、原生 Movement 写入量是否下降 | 必须记录"Behavior 选择被一起停掉"这一代价 |
@@ -1044,3 +1045,228 @@ P0c 门禁会继续守卫"万一将来出现两个定位失败的 Team 而撞名
 
 装置已可用，**census-baseline 门禁四项全 PASS**。之后可按 §4 表格开跑 H1 / H2 / H2b / H3 / REL，
 第一步先从本次的 `[projection]`（29 行）里挑明确实体：多 Team 时必须用 `T{t}F{i}` 全名，不用 `N0`。
+
+---
+
+## 14. H1 · External Write 实测（2026-10-04，CBATH 无人值守）
+
+### 14.1 实验对象与脚本
+
+- 实体 **`T1F3`**：run3 census-baseline 的 telemetry 里 Movement 域 SHADOW 变化 9 条，为全场最高（次高 `T1F4`/`T1F2` 各 3 条）。
+- **必须把脚本里的 `N0` 换成 `T1F3`**。run3 `[projection]`（29 行）实测：
+
+  ```
+  T1F0..T1F7  alias=N0..N7      T-1F0..T-1F9  alias=N0..N9
+  T0F0..T0F8  alias=P0..P8
+  ```
+
+  ⇒ **所有 N 系 alias 均歧义**（`T1Fx` 与 `T-1Fx` 同名，各 2 个候选）。按 `N0` 寻址会命中 `SCRIPT_ALIAS_AMBIGUOUS` 并被拒绝执行；P 系 alias 仍唯一。
+- 新建 8 份 `-t1f3.txt` 副本（h1/h2-suppression/h2-coverage/h3-route-b + 4 个 rel-*），原 `N0` 版本保持不动；另建 `h1-external-write-rerun.txt`（见 14.4）。
+
+### 14.2 第一次实测（r1，`enforceGated` 取默认 true）：H1-a FAIL
+
+`metrics-20261004-121115-h1-external-write.txt`：
+
+```
+unauthorized_write_attempts   = 2
+unauthorized_writes           = 0
+native_overrides              = 0
+lab_overrides                 = 0
+P0=7 PASS  P0b=2113 PASS  P0c=29/29 PASS
+H1-a native_overrides > 0     actual=0   FAIL
+H1-b Movement 原生流量        actual=880  PASS
+H1-c 首次覆盖延迟             no-override
+H1-d lab_overrides            actual=0
+X1..X5 全 PASS（X5 = 0）
+```
+
+telemetry 里两次 `cmd` 都正确解析到 `T1F3`（无 `SCRIPT_ALIAS_AMBIGUOUS` / `SCRIPT_ENTITY_UNRESOLVED`），但：
+
+```
+t=3.0032|tick=349|E=T1F3|D=Movement|P=Gated|W=Lab|O=Native|...|cmd=HOLD|chg=0|rej=1|why=NotOwner
+t=8.0016|tick=959|E=T1F3|D=Movement|P=Gated|W=Lab|O=Native|...|cmd=HOLD|chg=0|rej=1|why=NotOwner
+```
+
+### 14.3 r1 根因：判据与 Core 归属语义冲突（非装置故障）
+
+1. `ProbeRuntime.cs:174` `_authority = new AuthorityService(_telemetry, ProbeConfig.NativeWriterId)`，即默认 Owner = `"Native"`。
+2. `src/CommandLab.Core/Authority.cs:118-128` `GetOrCreate` 对未 acquire 的 (实体,域) 建 `OwnerId = DefaultOwnerId, Level = AuthorityLevel.Full`。
+3. Movement 走 `WritePath.Gated`（`OrderWritePatches.cs:130`）且 `EnforceOnGated = true`（`ProbeConfig.cs:40`）⇒ `WritePort.cs:244-249`：`!isOwner && rec.Level.IsExclusive()` ⇒ `RejectReason.NotOwner`。
+4. `src/CommandLab.Telemetry/Metrics.cs:105` `if (a.Rejected) continue;` ⇒ 被拒写入完全不计入 `native_overrides`。
+
+H1 的设计就是**不 acquire**，于是 Lab 写入必被拒 —— **`native_overrides > 0` 与「不夺取」在 Core 语义里互斥**。装置本身健康（P0=7、P0b=2113、SetMovementOrder=880、X5=0 全 PASS），故 §4 的 Failure 解释（"原生没流转或 patch 没打上"）两条都不成立。
+
+### 14.4 第二次实测（r2，唯一差异 = policy 追加 `enforceGated=false`）
+
+脚本 `deploy\CommandLabProbe\scripts\h1-external-write-rerun.txt`，产物 `metrics-20261004-122457-h1-external-write.txt`：
+
+| 判据 | r1 (enforce=true) | r2 (enforce=false) | 阈值 |
+|---|---|---|---|
+| P0 | 7 PASS | 7 PASS | >0 |
+| P0b | 2113 PASS | 2078 PASS | >0 |
+| P0c | 29/29 PASS | 29/29 PASS | 唯一数==绑定数 |
+| **H1-a** `native_overrides` | **0 FAIL** | **0 FAIL** | >0 |
+| H1-b Movement 原生流量 | 880 PASS | 888 PASS | >0 |
+| **H1-c** 首次覆盖延迟 | no-override | **0.159 PASS** | 记录值 |
+| **H1-d** `lab_overrides` | 0 | **2 PASS** | 记录值 |
+| X1 / X2 / X3 / X4 / X5 | 0 / 1.3030 / 4.1514 / 0 / **0** | 0 / 1.7270 / 4.5750 / 0 / **0** | X5==0 |
+
+`[config]` 逐字：`level=Full ttl=8s autoRenew=True enforceGated=False enforceNonGated=False patch(mv/fa/ar)=True/True/True arrangementPath=NonGated controlledByAiRoute=False restore=None restoreBeforeRelease=True tEval=0.5`
+
+### 14.5 H1-a 仍为 0 的第二层根因（实测确证，与 enforce 无关）
+
+r2 telemetry 逐字：
+
+```
+t=3.0013|tick=400|E=T1F3|D=Movement|P=Gated|W=Lab   |O=Native|cmd=HOLD|prev=Obs0|new=HOLD|chg=1|rej=0
+t=3.1601|tick=424|E=T1F3|D=Movement|P=Gated|W=Native|O=Native|cmd=Obs0|prev=HOLD |new=Obs0|chg=1|rej=0
+t=8.0041|tick=1109|... W=Lab    cmd=HOLD prev=Obs0 new=HOLD chg=1 rej=0
+t=8.1644|tick=1130|... W=Native cmd=Obs0 prev=HOLD new=Obs0 chg=1 rej=0
+```
+
+⇒ **覆盖确实发生了**：原生在 **0.159s**（第二次 0.160s）内把 Lab 的 `HOLD` 改回 `Obs0`，H1-c 有值。
+
+但两条覆盖记录的 `O=Native`（`OwnerAtWrite`），而 `Metrics.cs:102` 定义 `differentOwner = WriterId != OwnerAtWrite` ⇒ `Native == Native` ⇒ **false**，进不了 `unauthWrites`，更不可能进 `native_overrides`（`Metrics.cs:127` 要求 `differentOwner && WriterId == NativeWriterId`）。
+
+⇒ **`native_overrides` 的语义是「非所有者改动」，而本装置 Movement 域的 Owner 恒为 Native，原生本来就是所有者 ⇒ 该计数结构性恒 0。**
+旁证：全仓 `tests\artifacts` 下所有 `metrics-*.txt` 的 `native_overrides` 无一条非零。
+
+真正证明"被覆盖"的量是 **H1-c 首次覆盖延迟 = 0.159s**（符合 §4 Hypothesis "≤ 一个 Behavior 决策周期 0.5s 量级"）与 **`lab_overrides = 2`**（Lab 以非所有者身份成功改值 2 次）。
+
+### 14.6 归因：被谁覆盖（HOST 行，r2 实测）
+
+```
+HOST|t=3.0013|E=T1F3|D=Movement|hook=Formation.SetMovementOrder|team=nonplayer|idx=3|behavior=BehaviorMountedSkirmish|weight=1|raw=StandYourGround|prev=Move|new=StandYourGround|chg=1
+HOST|t=3.1601|E=T1F3|D=Movement|hook=Formation.SetMovementOrder|team=nonplayer|idx=3|behavior=BehaviorMountedSkirmish|weight=1|raw=Move|prev=StandYourGround|new=Move|chg=1
+```
+
+`behavior` 字段取自 `HostContext.cs:19` 的 `formation.AI?.ActiveBehavior`，是**该 formation 当前的 ActiveBehavior**，不是真实调用栈 ⇒ **这两行只能说明「覆盖发生时 T1F3 的 ActiveBehavior 是 BehaviorMountedSkirmish（weight=1）」，不能证明调用就来自这个 Behavior**（验收报告 ②：原 §14.6 归因超出证据）。可确证的只有：
+- 覆盖经 `Formation.SetMovementOrder` 写入口发生（`hook=` 字段是 patch 点，确证）；
+- 覆盖是常规高频 tick，约每 0.5s 一次（t=0.6567 / 1.1565 / 1.6575 / 2.1548 / 2.6553 …）；
+- 写入口拦截生效（否则 Lab 的 HOLD 不会被记为 `chg=1` 再被改回）。
+⇒ RQ「被谁覆盖」**降级为部分回答**：行为主体是原生 Behavior 常规 tick（确证级别：写入口 + 频率），具体 Behavior 归属**待补证据**（可在 patch 内抓 `new StackTrace()`，属后续项，本轮未做）。
+
+### 14.7 结论与登记
+
+- H1 的 RQ（存活多久）已由 **H1-c = 0.159s** 回答；「被谁覆盖」仅回答到「原生 Behavior 常规 tick 经 SetMovementOrder 写入口」，具体 Behavior 归属待补调用栈证据（§14.6）。
+- **`H1-a native_overrides > 0` 判据缺陷已修复**（§14.10）：H1-a 改为「获准的 Lab 写入 > 0」，`native_overrides` 降级为 H1-e 记录值，H1-c 改为真门禁（`no-override` ⇒ FAIL）。只动 `ProbeRuntime.cs`（BannerlordProbe）与本文档，Core/Simulation/Telemetry/tests 仍零 diff。
+- **r1/r2 结论须按验收报告 ① 降级重读**：两次实测都加载了 CombatBrain，不满足 §7.0，不能验收为纯 Vanilla，须在 §7.0 合规入口重跑（§14.10 第 3 步）。
+- r1/r2 的 `H1-c = 0.159s` 是按**全局** `_lastLabChangeAt` 算的（未按实体+域关联，验收报告 ⑤）；本轮已改为 `Key(entityId, domain)` 字典，重跑时该值须重取。
+- 两次实测门禁四项 P0 / P0b / P0c / X5 均全 PASS，X5=0，`ORPHAN_FORMATION_SKIPPED` 仍为 12 行 → 13.3 的孤儿拒绝路径稳定。
+
+### 14.8 产物
+
+- `E:\MBmod\TacticalCommandLab\_audit\_runs\run4-h1-external-write-r1\`（14 文件）
+- `E:\MBmod\TacticalCommandLab\_audit\_runs\run5-h1-external-write-r2-enforceGatedFalse\`（15 文件，含 `script-seeded.txt`）
+
+### 14.9 本轮新增工程事实
+
+- **Steam 必须运行**：Steam 会话中断后，`games_start` 只会起一个标题为 `Warning`（"Unable to initialize Steam API"）的窗口，`cbath/ping` 永远不通，`rgl_log_<pid>.txt` 为 0 字节。已在 `_audit\_tcl-step5.ps1` preflight 补 Steam 守卫（无 `ProcessName -eq 'steam'` 时拉 `%SteamExe% -silent` 并等 25s）。`zero-touch-3x.ps1:96-133` 原本就有这段，我的驱动脚本漏抄。
+- **同一脚本可重复跑**：一脚本一重启的约束（§7.6）仍成立，r1 与 r2 是两次独立启动。
+### 14.10 按开发验收报告（2026-10-04）的修补与重跑计划
+
+验收报告：`E:\MBmod\TacticalCommandLab\_audit\2026-10-04-development-acceptance.md`。八条发现逐条处置：
+
+| # | 发现 | 处置 | 状态 |
+|---|---|---|---|
+| ① | 三次实测（run3/run4/run5）的 `active_modules` 均含 CombatBrain，违反 §7.0 | 在 `gabs-config\config.json` 新增入口 `bannerlord148-nocb`（load order 去掉 `*CombatBrain*`）；`_audit\_tcl-step5.ps1` 默认 `-GameId bannerlord148-nocb`，并在拿到 `get_build_identity` 后**硬校验** `active_modules` 不含 CombatBrain，命中即 ABORT | 已改，待重跑验证 |
+| ② | `HostContext.cs:19` 的 `behavior` 是 `formation.AI?.ActiveBehavior`，非真实调用栈 ⇒ §14.6 归因超出证据 | §14.6 已降级为「部分回答 + 待补 `new StackTrace()` 证据」 | 已改 |
+| ③ | H1-a `native_overrides > 0` 与归属语义不符（恒 0） | H1-a 改为 `accepted_lab_writes > 0`（新增 `AcceptedLabChanges` 计数）；`native_overrides` 降级为 **H1-e 记录值** | 已改（`ProbeRuntime.cs` VerdictRows + 本文档 §5） |
+| ④ | H1-c 无条件 PASS 会把 `no-override` 误报成功 | H1-c 改为 `NativeOverrideLatency >= 0` 才 PASS | 已改 |
+| ⑤ | `NativeOverrideLatency` 用全局 `_lastLabChangeAt`，未按实体+域关联 | 改为 `Dictionary<string,double> _lastLabChangeAt`，键 = `Key(entityId, domain)`；只有同实体同域的原生改动才算覆盖 | 已改 |
+| ⑥ | 部署 DLL 与重建产物同尺寸但 SHA256 不同（Cecil 逐项比对差异 0） | 判为**非确定性构建**（MDB/时间戳/GUID），不是部署错误；后续以"部署后重跑门禁"而非哈希一致性验收 | 已登记，不修 |
+| ⑦ | HANDOFF 未反映 H1 已跑 | 待重跑后一并回写 | 待办 |
+| ⑧ | 建议 5 步顺序 | 采纳，见下方 | 进行中 |
+
+**重跑计划（顺序不可换）**：
+
+1. ✅ §7.0 配置：`bannerlord148-nocb` 入口 + 驱动脚本硬校验。
+2. ✅ 修 H1 判据 / 脚本：H1-a→`accepted_lab_writes`、H1-c→真门禁、H1-e 记录值、延迟按实体+域关联；build 0W0E。
+3. ✅ **隔离重跑**：见 §14.11（run6 `census-baseline` + run7 `h1-external-write`，两次 `active_modules` 均无 CombatBrain）。
+4. ⬜ 回写 HANDOFF（§14.11 已落）。
+5. ⬜ 再推 H2 / H2b / H3 / REL。
+
+> ✅ 第 3 步已完成：run6 / run7 均为纯 Vanilla（无 CombatBrain）。§14.2–14.6 的 r1/r2 数值**仍只作装置自检**（它们加载了 CombatBrain，且 H1-c 用的是修复前的全局计时器）；**实验结论以 §14.11 为准**。
+
+### 14.11 纯 Vanilla 隔离重跑（run6 / run7，2026-10-04 19:52–19:56）
+
+入口 `bannerlord148-nocb`（load order 去掉 `*CombatBrain*`）；驱动脚本在 `get_build_identity` 后按模块 id **精确**校验 `active_modules` 不含 CombatBrain（`CombatBrainAutonomousTestHarness` 含子串，不能用 `-match`）。两次均打印 `pure-Vanilla check ok (CombatBrain absent)`：
+
+```
+active_modules = Bannerlord.Harmony,Bannerlord.ButterLib,Bannerlord.UIExtenderEx,Bannerlord.MBOptionScreen,Native,SandBoxCore,Sandbox,StoryMode,CustomBattle,CombatBrainAutonomousTestHarness,CommandLabProbe
+```
+
+#### run6 · census-baseline（装置基线复核）
+
+`metrics-20261004-195325-census-baseline.txt`：
+
+```
+P0     harmony patched methods > 0     actual=7      PASS
+P0b    write-port traffic > 0          actual=2090   PASS
+P0c    entity_id unique                actual=29/29  PASS
+X1     release_recovery_failures       actual=0      PASS
+X2     oscillation_frequency           actual=1.2332 PASS
+X3     order_changes_per_second        actual=4.2660 PASS
+X4     reaction_latency                actual=0.0000 PASS
+X5     unobserved_writes               actual=0      PASS
+```
+
+census：`SetMovementOrder 862` / `SetFacingOrder 499` / `SetFormOrder 305` / `SetArrangementOrder 270` / `SetControlledByAI 58` / `SetFiringOrder 59` / `SetRidingOrder 37`；`ORPHAN_FORMATION_SKIPPED` 12 行；`[projection]` 29 行。
+
+⇒ **去掉 CombatBrain 后装置仍健康**，与 run3（含 CombatBrain）同量级：P0=7、P0b 2090 vs 1957、P0c 29/29、X5=0。§7.0 合规基线成立。
+
+#### run7 · h1-external-write（H1 正式结论）
+
+脚本 `h1-external-write-rerun.txt`（`enforceGated=false`，`cmd T1F3 Movement HOLD` @ t=3.0 / t=8.0，dump @ t=33.0）。`metrics-20261004-195548-h1-external-write.txt`：
+
+```
+P0     harmony patched methods > 0              actual=7       PASS
+P0b    write-port traffic > 0                   actual=2244    PASS
+P0c    entity_id unique                         actual=29/29   PASS
+H1-a   lab writes accepted > 0 (有可覆盖对象)      actual=2       PASS
+H1-b   Movement 写入口有原生流量                     actual=939     PASS
+H1-c   first native override latency (s)         actual=0.149   PASS
+H1-d   lab_overrides (Lab 反覆盖原生)               actual=2       PASS
+H1-e   native_overrides (仅非所有者改动，本域恒 0)    actual=0       PASS
+X1..X4 0 / 1.1212 / 3.8786 / 0.0000              PASS
+X5     unobserved_writes                         actual=0       PASS
+```
+
+`unauthorized_write_attempts = 2`、`unauthorized_writes = 2`、`native_overrides = 0`、`lab_overrides = 2`。
+
+覆盖对的 telemetry 逐字（修复后按 `Key(entityId, domain)` 关联计时）：
+
+```
+t=3.0064|tick=401|E=T1F3|D=Movement|P=Gated|W=Lab   |O=Native|cmd=HOLD |prev=Obs0|new=HOLD |chg=1|rej=0
+t=3.1559|tick=423|E=T1F3|D=Movement|P=Gated|W=Native|O=Native|cmd=Obs0 |prev=HOLD |new=Obs0 |chg=1|rej=0
+t=8.0049|tick=1131|E=T1F3|D=Movement|P=Gated|W=Lab   |O=Native|cmd=HOLD |prev=Obs0|new=HOLD |chg=1|rej=0
+t=8.1549|tick=1152|E=T1F3|D=Movement|P=Gated|W=Native|O=Native|cmd=Obs1 |prev=HOLD |new=Obs1 |chg=1|rej=0
+```
+
+⇒ 首次覆盖延迟 **0.149s**，第二次 **0.150s**（r2 的 0.159/0.160 是修复前全局计时器算的，本值重取）。
+
+HOST 归因（与 r2 同构，仍受 §14.6 的降级约束）：
+
+```
+HOST|t=3.0064|E=T1F3|D=Movement|hook=Formation.SetMovementOrder|team=nonplayer|idx=3|behavior=BehaviorMountedSkirmish|weight=1|raw=StandYourGround|prev=Move|new=StandYourGround|chg=1
+HOST|t=3.1559|E=T1F3|D=Movement|hook=Formation.SetMovementOrder|team=nonplayer|idx=3|behavior=BehaviorMountedSkirmish|weight=1|raw=Move|prev=StandYourGround|new=Move|chg=1
+```
+
+#### 结论（H1 定案）
+
+- **RQ「外部写入能存活多久」→ 已回答：约 0.15 秒**（run7 0.149s / 0.150s），远小于 §4 Hypothesis 的「一个 Behavior 决策周期 0.5s 量级」，说明原生在**下一个常规 tick** 就把值改回去了。
+- **RQ「被谁覆盖」→ 仍为部分回答**（§14.6）：确证「经 `Formation.SetMovementOrder` 写入口、约 0.5s 周期的高频原生 tick」；`behavior=` 只反映当时的 ActiveBehavior，不做调用栈证据。
+- **H1-a / H1-c 判据修复生效**：修复前 r1/r2 的 H1-a 恒 0 FAIL、H1-c 无条件 PASS；修复后 H1-a=2 PASS、H1-c=0.149 PASS，且 H1-c 已是真门禁（`no-override` 会 FAIL）。
+- **`native_overrides` 恒 0 是语义使然**（§14.5）：Movement 域 Owner 恒为 Native，原生改自家值不算『非所有者改动』。已降级为 H1-e 记录值。
+- **纯 Vanilla 前提首次成立**（验收报告 ①）：run6/run7 是本文档第一批可作为实验结论（而非仅装置自检）的实测。
+
+#### 产物
+
+- `E:\MBmod\TacticalCommandLab\_audit\_runs\run6-census-baseline-nocb\`（20 文件，含 `runtime-identity.json` / `run-params.txt` / `driver-log.txt` / `script-seeded.txt`）
+- `E:\MBmod\TacticalCommandLab\_audit\_runs\run7-h1-external-write-nocb\`（34 文件）
+
+#### 本轮工程事实增补
+
+- **`_audit\_tcl-step5.ps1` 每次用 edit 工具改完都要补 BOM**：edit 会剥掉 UTF-8 BOM，PowerShell 5.1 按 ANSI 读中文注释 ⇒ 解析错误（`L7: Missing expression after ','`）。修法 `[System.IO.File]::WriteAllText($p, $t, (New-Object System.Text.UTF8Encoding($true)))`。
+- **首次冷启动（新 load order）到 bridge 可用需约 4 分钟**：`rgl_log_<pid>.txt` 会在 `reading sound_files` 与 `rglShader_manager::read_compressed_shader_cache_package` 之间出现 4 分钟空档（着色器/资源编译）。`PollTimeoutSec` 必须给到 300；之后同一 load order 再启动只要 ~7 秒。
+- **纯 Vanilla 校验必须精确匹配**：`-match 'CombatBrain'` 会把 `CombatBrainAutonomousTestHarness` 误判成 CombatBrain 并自伤 ABORT；改为按 `,` 拆分后 `-contains 'CombatBrain'`。

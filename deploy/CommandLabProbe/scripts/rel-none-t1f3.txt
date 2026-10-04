@@ -1,0 +1,6 @@
+# REL-1 — 释放后不做任何恢复动作（对照组：观察"不恢复会怎样"）
+t=1.0   policy level=Full ttl=30 autorenew=true restore=None restoreBeforeRelease=true
+t=3.0   acquire T1F3 Movement Full 30
+t=3.5   cmd T1F3 Movement HOLD
+t=28.0  release T1F3 Movement
+t=38.0  dump rel-none

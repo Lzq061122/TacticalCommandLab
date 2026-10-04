@@ -2,8 +2,9 @@
 
 > 生成时间：2026-09-19 01:50 GMT+8
 > 生成原因：本周期 Hy4 免费额度已用 **35,695,579 token**（撞顶区间 2,000–4,900 万），继续跑会被 429 中断且上下文全丢。
-> 最后更新：2026-10-04 01:33 GMT+8（会话 14，Phase 10 装置修复完成，`census-baseline` 门禁四项全 PASS）
-> **2026-10-04 状态更新（覆盖下方 09-22 的旧状态）**：会话 14 三轮工作 —— ①Step 0 建 git 基线；②Step 1-3 修 EntityId 唯一性并加 P0c 门禁；③Step 5 用 **CBATH 全自动**进战斗实测两轮。**最终实测 `metrics-20261004-013303-census-baseline.txt`：P0=7 PASS、P0b=1957 PASS、P0c=29/29 PASS、X5=0 PASS**。装置现已可用，可开跑 H1/H2/H2b/H3/REL。详见 `docs/10` §13。
+> 最后更新：2026-10-04 19:56 GMT+8（会话 15，H1 已完成并跑出结论；纯 Vanilla 前提首次成立）
+> **2026-10-04 晚 状态更新（覆盖下方 01:33 的旧状态）**：**H1 · External Write 已完成并给出结论 —— 不夺取控制权时外部写入仅存活约 0.15 秒**（run7 `h1-external-write`，纯 Vanilla，H1-c=0.149s / 0.150s）。过程中定位并修复了**两类判据缺陷**：① `native_overrides` 与「不 acquire」在 Core 归属语义里互斥（未 acquire ⇒ Owner=Native ⇒ Lab 写入必 `NotOwner` 拒，被拒写入不计入指标）② 即使放行，Movement 域 Owner 恒为 Native ⇒ `differentOwner=false` ⇒ 该计数结构性恒 0 ⇒ 已降级为记录值 H1-e。同时按验收报告补了 §7.0 合规入口 `bannerlord148-nocb`（去掉 CombatBrain）并**隔离重跑**：run6 `census-baseline` 与 run7 `h1-external-write` 两者 `active_modules` 均不含 CombatBrain，**这是本项目第一批可作为实验结论（而非仅装置自检）的实测**。剩余 H2/H2b/H3/REL 四组未跑。详见 `docs/10` §14.10–14.11 与本文件「会话 15」。
+> **旧（2026-10-04 01:33，会话 14）**：会话 14 三轮工作 —— ①Step 0 建 git 基线；②Step 1-3 修 EntityId 唯一性并加 P0c 门禁；③Step 5 用 **CBATH 全自动**进战斗实测两轮。**最终实测 `metrics-20261004-013303-census-baseline.txt`：P0=7 PASS、P0b=1957 PASS、P0c=29/29 PASS、X5=0 PASS**。装置现已可用，可开跑 H1/H2/H2b/H3/REL。详见 `docs/10` §13。
 > 状态：**Phase 10 进行中。四次实测均未走通，现终于拿到完整堆栈并定位真根因。** ①首次（10:46）：P0 门禁 FAIL（Harmony 形参名笔误）→ 已修。②③④（11:57 / 12:03 / 13:11）：**进战斗崩溃**。**真根因（有完整堆栈）**：`Harmony.PatchAll()` 处理 `Formation.SetMovementOrder` 时需解析参数类型 `MovementOrder`，**触发其静态构造函数**；而 `MovementOrder..ctor` 的 IL 里有 `Mission::get_Current` → `get_CurrentTime` ⇒ **`OnSubModuleLoad` 阶段 `Mission.Current` 为 null ⇒ NRE** ⇒ **该类型被 CLR 永久标记为不可初始化** ⇒ 进战斗时 `Team.Initialize → Formation.ResetAux` 一接触就抛 `TypeInitializationException` ⇒ 必崩。**证据链**：`MovementOrder` 签名 `b1dfded2` 4 次崩溃；每次致命崩溃前启动阶段都有一次 FirstChance NRE（11:53:29→11:56:56 等 4 对）；**而 10:46 那次 patch 全部失效、启动阶段无此 NRE**。异常被 Harmony 内部吞掉 ⇒ 所以 `patchFailure = (none)`、我们的兜底全部抓不到。**修复**：**把 patch 推迟到第一次 Mission tick**（此时 `Mission.Current` 必非 null）。**§12.8 的 `GetHashCode` 结论已撤回**（该风险真实、加固保留，但不是本次原因）。**当前阻塞：游戏进程 PID 46556（3.9 GB）正占用 DLL** —— 需用户先退出游戏才能部署。**回归：Core/Simulation/Telemetry/tests 本轮零改动 ⇒ D0 15/15、E1–E11 51/51、E12 10/10 逐字不变。** **版本号偏差**：实际 `v1.4.8.119303`，文档旧记 v1.3.4。根因已定位并修复：Harmony `Prefix` 形参名笔误两处（`SetMovementOrder` 的形参是 `input` 不是 `order`；`SetControlledByAI` 的是 `isControlledByAI` 不是 `isAIControlled`），导致 `PatchAll()` 整体中止、7 个 patch 生效 0 个。一并修掉三个装置缺陷：①异常被常量吞掉（现输出 `HARMONY_PATCH_CAUSE` 异常链）②`Applied` 在 `PatchAll()` 之后才清空（现无论成败都刷新 `GetPatchedMethods()`）③缺**全量镜像**导致 `[census]`/`[coverage]` 无观测对象（现 `BindAll()` 每 tick 绑定全部 formation）。**会话 12 那个"脚本 cmd 触碰建立绑定"的修复已被证实无效并撤销**——`ScriptRunner.TryCommand` 先用 `FindBinding` 解析实体、找不到即静默 return，而绑定只在 patch 触发时创建 ⇒ 鸡生蛋死锁。同时修掉构建部署陷阱：`CopyProbeToDeploy` 只拷到 `deploy\`，**必须手工拷进 `Modules\`**（此前构建了但游戏跑旧 DLL）。装置侧其余前置（会话 10 完成）：修 `HoldMeter` 从未 `Open()`；写入口普查 / 影子采样 / 覆盖率 / `[verdict]` 自检 / 4 个观测型 patch / 8 份脚本。**回归：Core/Simulation/Telemetry/tests 本轮零改动 ⇒ D0 15/15、E1–E11 51/51、E12 10/10 逐字不变。** 新工具 `E:\MBmod\CAI\.tools\sigscan`（Mono.Cecil 读方法签名含参数名，核对 Harmony 匹配用）。**当前无任何实测结论，§4 全部是 LEVEL C 预测。** 待办：重跑第 1 组 `census-baseline` 直到 P0/P0b 双 PASS，再跑 H1/H2/H2b/H3/REL。**
 
 ---
@@ -50,7 +51,7 @@
 | 7 | 运行 8 组实验（06-results.md） | ✅ **完成**（2026-09-20 会话 7，E1–E11 全跑，**判据 51/51**） |
 | 8 | Architecture A/B/C 对比 | ✅ **完成**（2026-09-20 会话 8，13 维度 + E12 补 H-I，判据 10/10） |
 | 9 | BannerlordProbe 实现 | ✅ **完成**（2026-09-20 会话 9，net472 离线可构建，红线自检通过） |
-| 10 | Harmony Runtime 实验 H1/H2/H3 | 🟨 **第 1 组门禁已全 PASS（2026-10-04 01:33）**：P0=7 / P0b=1957 / **P0c=29/29** / **X5=0**，四项全 PASS（详见 `docs/10` §13，归档 `tests/artifacts/host/valid-20261004-0133-census-baseline/`）。⬜ **下一步：跑 H1/H2/H2b/H3/REL** ← **当前** |
+| 10 | Harmony Runtime 实验 H1/H2/H3 | 🟨 **第 1 组门禁已全 PASS（2026-10-04 01:33）**：P0=7 / P0b=1957 / **P0c=29/29** / **X5=0**，四项全 PASS（详见 `docs/10` §13，归档 `tests/artifacts/host/valid-20261004-0133-census-baseline/`）。**H1 已完成（2026-10-04 19:56，run7 纯 Vanilla）：H1-a=2 / H1-c=0.149s / H1-d=2 全 PASS，结论「外部写入存活约 0.15 秒」**（详见 `docs/10` §14.11 + 本文件「会话 15」）。⬜ **下一步：跑 H2/H2b/H3/REL** ← **当前** |
 | 11 | 最终架构（07-final-architecture.md） | ⬜ 未开始 |
 | 12 | CombatBrain 集成（08-integration-report.md） | ⬜ 未开始 |
 
@@ -103,6 +104,87 @@
 - **一个反直觉的观测**：29 个绑定里有 10 个是 `T-1F0..T-1F9`（Team 非 null 但 `TeamSeqOf` 定位失败）。它们各自唯一、不撞名，故本轮不处理，但说明**从 `[projection]` 挑实验实体时应当挑 `T0F*` / `T1F*`，多 Team 必须用 `T{t}F{i}` 全名，不用 `N0`**。
 
 **回归**：Core / Simulation / Telemetry / tests **零改动** ⇒ D0 15/15、E1–E11 51/51、E12 10/10、`D0-S1 replay_hash = d9853e28…d8199` 逐字不变。
+### 会话 15（2026-10-04）：H1 实测 → 判据缺陷定位与修复 → 纯 Vanilla 隔离重跑（run6/run7）
+
+
+**H1（External Write）已跑出结论，但过程中暴露两类缺陷并已修复。**
+
+#### 1. H1 前两轮（r1/r2）：H1-a 恒 0
+
+- r1（`h1-external-write-t1f3.txt`，`enforceGated` 默认 true）：Lab 的 `cmd T1F3 Movement HOLD` **全部被拒**（`rej=1 why=NotOwner`）⇒ `native_overrides = 0` ⇒ H1-a FAIL。
+- r2（`h1-external-write-rerun.txt`，唯一差异 `enforceGated=false`）：Lab 写入**获准**（`lab_overrides = 2`）、覆盖真实发生（H1-c = 0.159s），但 `native_overrides` **仍为 0**。
+
+两层根因（源码实证，与装置健康无关）：
+
+1. r1：`ProbeRuntime.cs:174` 默认 Owner = `Native` 且 `Authority.GetOrCreate` 给 `Level = Full`（独占）⇒ 未 acquire 的 Lab 写入必 `NotOwner` 拒；`Metrics.cs:105` `if (a.Rejected) continue;` ⇒ 被拒写入完全不计数。H1 的设计是「不 acquire」，与 `native_overrides > 0` 在 Core 语义里**互斥**。
+2. r2（与 enforce 无关）：覆盖记录的 `OwnerAtWrite` 也是 `Native` ⇒ `Metrics.cs:102` `differentOwner = WriterId != OwnerAtWrite` = false ⇒ 进不了 `unauthWrites`，更进不了 `native_overrides`（`:127` 要求 `differentOwner && WriterId == NativeWriterId`）。**`native_overrides` 的语义是「非所有者改动」，而 Movement 域 Owner 恒为 Native ⇒ 该计数结构性恒 0。**
+
+#### 2. 验收报告（8 条）处置
+
+`_audit\2026-10-04-development-acceptance.md`。已改 6 条、登记 1 条、待办 1 条：
+
+| # | 发现 | 处置 |
+|---|---|---|
+| ① | r1/r2/r3 的 `active_modules` 均含 **CombatBrain**，违反 `docs/10` §7.0 | gabs `config.json` 新增入口 `bannerlord148-nocb`（load order 去掉 `*CombatBrain*`）；驱动脚本在 `get_build_identity` 后**硬校验**，命中即 ABORT |
+| ② | `HostContext.cs:19` 的 `behavior` 是 `formation.AI?.ActiveBehavior`，非调用栈 | §14.6 归因**降级**为「部分回答」：只确证写入口（`hook=`）与约 0.5s 频率，具体 Behavior 归属待补 `new StackTrace()` |
+| ③ | H1-a 判据与归属语义不符 | H1-a 改为 `accepted_lab_writes > 0`（新增 `AcceptedLabChanges`）；`native_overrides` 降级为 **H1-e 记录值** |
+| ④ | H1-c 无条件 PASS 会把 `no-override` 误报成功 | H1-c 改为 `NativeOverrideLatency >= 0` 才 PASS |
+| ⑤ | `NativeOverrideLatency` 用全局 `_lastLabChangeAt`，未按实体+域关联 | 改为 `Dictionary<string,double>`，键 = `Key(entityId, domain)` |
+| ⑥ | 部署 DLL 与重建产物同尺寸但 SHA256 不同（Cecil 逐项比对差异 0） | 判为**非确定性构建**，不是部署错误；以「部署后重跑门禁」验收，不以哈希一致性验收 |
+| ⑦ | HANDOFF 未反映 H1 已跑 | **本段** |
+| ⑧ | 建议 5 步顺序 | 采纳；第 1–3 步已完成，第 4 步本节，第 5 步（H2/H2b/H3/REL）待跑 |
+
+#### 3. 纯 Vanilla 隔离重跑（run6 / run7，2026-10-04 19:52–19:56）
+
+`active_modules` 两次均不含 CombatBrain（打印 `pure-Vanilla check ok (CombatBrain absent)`）。
+
+**run6 `census-baseline`**（基线复核，20 文件归档）：
+
+```
+P0=7 PASS  P0b=2090 PASS  P0c=29/29 PASS
+X1=0  X2=1.2332  X3=4.2660  X4=0.0000  X5=0   全 PASS
+```
+
+⇒ 去掉 CombatBrain 后装置仍健康（对比 run3：P0b 1957→2090，同量级）。
+
+**run7 `h1-external-write`**（H1 正式结论，34 文件归档）：
+
+```
+P0=7 PASS   P0b=2244 PASS   P0c=29/29 PASS
+H1-a accepted_lab_writes   actual=2      PASS
+H1-b Movement 原生流量       actual=939    PASS
+H1-c first override latency actual=0.149  PASS
+H1-d lab_overrides          actual=2      PASS
+H1-e native_overrides       actual=0      PASS（记录值，语义恒 0）
+X1..X5 全 PASS（X5=0）
+```
+
+覆盖对（修复后按实体+域关联计时）：
+
+```
+t=3.0064|tick=401|E=T1F3|D=Movement|W=Lab   |cmd=HOLD|prev=Obs0|new=HOLD|chg=1|rej=0
+t=3.1559|tick=423|E=T1F3|D=Movement|W=Native|cmd=Obs0|prev=HOLD |new=Obs0|chg=1|rej=0
+t=8.0049|tick=1131|...W=Lab...   →  t=8.1549|tick=1152|...W=Native...
+```
+
+#### 4. H1 结论（可作为实验结论，非仅装置自检）
+
+- **RQ「不夺取控制权时外部写入能存活多久」→ 约 0.15 秒**（run7 0.149s / 0.150s）。远小于 §4 Hypothesis 的「一个 Behavior 决策周期 0.5s 量级」⇒ **原生在下一个常规 tick 就把值改回去了**。
+- **RQ「被谁覆盖」→ 部分回答**：确证「经 `Formation.SetMovementOrder` 写入口、约 0.5s 周期的高频原生 tick」；`behavior=BehaviorMountedSkirmish|weight=1` **不是调用栈证据**，只说明覆盖发生时的 ActiveBehavior。
+- **H1 判据已修复并生效**：r1/r2 的 H1-a 恒 FAIL、H1-c 假 PASS；run7 的 H1-a=2 PASS、H1-c=0.149 PASS（已为真门禁）。
+
+#### 5. 本轮工程事实增补（复用价值高）
+
+- **纯 Vanilla 校验必须精确匹配**：`-match 'CombatBrain'` 会把 `CombatBrainAutonomousTestHarness` 误判 ⇒ 自伤 ABORT。改为按 `,` 拆分后 `-contains 'CombatBrain'`。
+- **首次冷启动（新 load order）到 bridge 可用需约 4 分钟**：`rgl_log_<pid>.txt` 在 `reading sound_files` 与 `rglShader_manager::read_compressed_shader_cache_package` 之间有 4 分钟空档（着色器/资源编译）⇒ `PollTimeoutSec` 必须给 300；同一 load order 再启动只要 ~7 秒。
+- **`_audit\_tcl-step5.ps1` 用 edit 工具改完必须补 BOM**：edit 剥掉 UTF-8 BOM，PowerShell 5.1 按 ANSI 读中文注释 ⇒ 解析错误 `L7: Missing expression after ','`。修法：`[System.IO.File]::WriteAllText($p, $t, (New-Object System.Text.UTF8Encoding($true)))`。
+- **脚本实体名**：多 Team 时所有 N 系/P 系 alias 都可能歧义（`T1Fx` 与 `T-1Fx` 同名）⇒ 脚本一律用 `T{t}F{i}` 全名（如 `T1F3`）。
+
+**回归**：Core / Simulation / Telemetry / tests 零改动 ⇒ D0 15/15、E1–E11 51/51、E12 10/10、`D0-S1 replay_hash = d9853e28…d8199` 逐字不变；`ProbeRuntime.cs` 改动 build **0 警告 0 错误**。
+
+**产物**：`_audit\_runs\run6-census-baseline-nocb\`（20 文件）、`_audit\_runs\run7-h1-external-write-nocb\`（34 文件）、`docs\10-harmony-runtime-experiments.md` §14.10–14.11。
+
+**下一步**：跑 H2（suppression / coverage）、H2b、H3、REL 四组；脚本 `-t1f3.txt` 副本已就位（8 份）。
 
 ### Phase 9 产出摘要（供 Phase 10 引用）
 

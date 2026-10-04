@@ -1,0 +1,47 @@
+﻿[19:52:37] steam already running (pid=39540)
+[19:52:37] preflight done; probe script seeded at C:\Users\Administrator\Documents\CommandLabProbe\script.txt
+[19:52:39] gabs pid=33092
+[19:52:47] games_start: 
+[19:52:47] games_connect: 
+[19:52:47] bridge pong ok, pid=34364, game_version=v1.4.8.119303
+[19:52:48] active_modules = Bannerlord.Harmony,Bannerlord.ButterLib,Bannerlord.UIExtenderEx,Bannerlord.MBOptionScreen,Native,SandBoxCore,Sandbox,StoryMode,CustomBattle,CombatBrainAutonomousTestHarness,CommandLabProbe
+[19:52:48] pure-Vanilla check ok (CombatBrain absent)
+[19:52:49] at main menu
+[19:52:49] h3_provider_start status=ok top_screen=TaleWorlds.MountAndBlade.View.Screens.GameLoadingScreen
+[19:52:53] h3_start_from_screen status=ok invoked=ExecuteStart
+[19:52:53] mission running: battle_terrain_biome_096
+[19:52:56] auto_finish_deployment status=ok
+[19:52:56] delegated player team to AI
+[19:52:56] team 0 player=True forms=4 : f0/24/Move f1/25/Move f2/25/Move f3/25/Move
+[19:52:56] team 1 player=False forms=5 : f0/20/Move f1/25/Move f2/13/Move f3/25/Move f4/12/Move
+[19:52:56] holding combat for 55 s (t=30.0 dump must fire)...
+[19:53:51] late team 0 forms=5 : f0/24 f1/25 f2/13 f3/24 f4/12
+[19:53:51] late team 1 forms=5 : f0/20 f1/25 f2/13 f3/25 f4/12
+[19:53:51] end_mission sent
+[19:53:56] stopping game...
+[19:54:07] residual game processes: 
+[19:54:07] steam after stop: 
+[19:54:07] --- probe artifacts in C:\Users\Administrator\Documents\CommandLabProbe ---
+
+LastWriteTime       Length Name                                         
+-------------       ------ ----                                         
+2026/9/22 10:53:10    1372 script.txt                                   
+2026/10/4 19:52:46     259 boot-marker.txt                              
+2026/10/4 19:52:55     687 patch-marker.txt                             
+2026/10/4 19:52:55     102 telemetry-20261004-195255-mission-start.txt  
+2026/10/4 19:52:55    2125 metrics-20261004-195255-mission-start.txt    
+2026/10/4 19:53:05  259882 telemetry-20261004-195305-tick.txt           
+2026/10/4 19:53:05   12017 metrics-20261004-195305-tick.txt             
+2026/10/4 19:53:15  450116 telemetry-20261004-195315-tick.txt           
+2026/10/4 19:53:15   12016 metrics-20261004-195315-tick.txt             
+2026/10/4 19:53:25  644826 telemetry-20261004-195325-census-baseline.txt
+2026/10/4 19:53:25   12017 metrics-20261004-195325-census-baseline.txt  
+2026/10/4 19:53:25  644826 telemetry-20261004-195325-tick.txt           
+2026/10/4 19:53:25   12017 metrics-20261004-195325-tick.txt             
+2026/10/4 19:53:35  844739 telemetry-20261004-195335-tick.txt           
+2026/10/4 19:53:35   12018 metrics-20261004-195335-tick.txt             
+2026/10/4 19:53:45 1051412 telemetry-20261004-195345-tick.txt           
+2026/10/4 19:53:45   12018 metrics-20261004-195345-tick.txt             
+
+
+

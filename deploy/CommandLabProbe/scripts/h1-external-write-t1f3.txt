@@ -1,0 +1,13 @@
+# H1 — External Write：Lab 只写 HOLD，不夺取归属
+#
+# RQ：不取得控制权时，外部写入能存活多久？被谁覆盖？
+# 判据：H1-a native_overrides > 0（必然被覆盖）
+#       H1-c 首次覆盖延迟（实测值，本实验的核心量）
+#       归因：看 telemetry 文件里紧跟在 Lab 写入之后的 HOST| 行 —— hook / behavior / weight
+#
+# 红线：这里不做任何"每 tick 重复写入"，只有两次 cmd。
+
+t=1.0   policy patchMovement=true patchFacing=true patchArrangement=true
+t=3.0   cmd T1F3 Movement HOLD
+t=8.0   cmd T1F3 Movement HOLD
+t=33.0  dump h1-external-write

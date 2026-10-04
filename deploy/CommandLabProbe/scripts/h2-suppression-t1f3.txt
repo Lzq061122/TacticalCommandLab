@@ -1,0 +1,13 @@
+# H2 — Native Suppression：Level 5 (Full) + Lease 夺取 Movement 归属
+#
+# RQ：夺取后能否把原生冲突写挡在写入口外，且意图真正落地？
+# 判据：G1 unauthorized_writes == 0
+#       G2 intent_hold_share >= 95%
+#       G3 stability grade != Oscillating
+# 注意：G1 单独成立不算"取得控制权"（E12 ⑧），必须与 G2 同表判读。
+
+t=1.0   policy level=Full ttl=30 autorenew=true enforceGated=true enforceNonGated=false
+t=3.0   acquire T1F3 Movement Full 30
+t=3.5   cmd T1F3 Movement HOLD
+t=28.0  release T1F3 Movement
+t=33.0  dump h2-suppression

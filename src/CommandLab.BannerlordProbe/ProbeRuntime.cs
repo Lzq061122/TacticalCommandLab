@@ -190,7 +190,15 @@ public sealed class ProbeRuntime
 
     /// <summary>Lab 生效写入 -> 第一次原生生效覆盖的时间差。H1 的"多久被覆盖"。</summary>
     public double NativeOverrideLatency { get; private set; } = -1.0;
-    private double _lastLabChangeAt = -1.0;
+
+    /// <summary>
+    /// 按 (实体,域) 记录最近一次 Lab 生效写入的时刻。
+    /// 覆盖延迟必须在同一实体、同一域内关联 —— 用单一全局时间戳会把别的实体/别的域的改动误算成覆盖。
+    /// </summary>
+    private readonly Dictionary<string, double> _lastLabChangeAt = new Dictionary<string, double>(StringComparer.Ordinal);
+
+    /// <summary>Lab 写入在本轮是否被写入口接受过。H1 没有获准的 Lab 写入时不能判"覆盖成功"。</summary>
+    public int AcceptedLabChanges { get; private set; }
 
     /// <summary>
     /// 已落盘的崩溃报告份数。用于去重：同一个异常每 tick 都会抛，不做去重会把磁盘写爆。
@@ -398,16 +406,21 @@ public sealed class ProbeRuntime
             ReactionLatency = attempt.Timestamp - at;
         }
 
-        // H1 的核心量：Lab 的意图值被原生覆盖需要多久。
+        // H1 的核心量：Lab 的意图值被原生覆盖需要多久。必须同实体、同域关联，
+        // 否则把别的 formation / 别的域的原生改动算进来，延迟值没有意义。
         if (!attempt.Rejected && attempt.OrderChanged)
         {
+            var k = Key(binding.EntityId, domain);
             if (isLab)
             {
-                _lastLabChangeAt = attempt.Timestamp;
+                _lastLabChangeAt[k] = attempt.Timestamp;
+                AcceptedLabChanges++;
             }
-            else if (_lastLabChangeAt >= 0 && NativeOverrideLatency < 0)
+            else if (NativeOverrideLatency < 0 &&
+                     _lastLabChangeAt.TryGetValue(k, out var labAt) &&
+                     attempt.Timestamp >= labAt)
             {
-                NativeOverrideLatency = attempt.Timestamp - _lastLabChangeAt;
+                NativeOverrideLatency = attempt.Timestamp - labAt;
             }
         }
 
@@ -929,16 +942,22 @@ public sealed class ProbeRuntime
 
         if (prefix == "h1")
         {
-            rows.Add(Row("H1-a", "native_overrides > 0 (不夺取必被覆盖)",
-                m.NativeOverrides.ToString(CultureInfo.InvariantCulture), m.NativeOverrides > 0));
+            // H1-a 曾经是 `native_overrides > 0`，但该指标只统计"非所有者"的有效改动；
+            // 本装置未 acquire 时 Owner 恒为 Native，原生本来就是所有者 ⇒ 该计数结构性恒 0。
+            // 现降级为记录值（与 H1-d 同级），改用"是否有获准的 Lab 写入"作为真正的前置门禁。
+            rows.Add(Row("H1-a", "lab writes accepted > 0 (有可覆盖对象)",
+                AcceptedLabChanges.ToString(CultureInfo.InvariantCulture), AcceptedLabChanges > 0));
             rows.Add(Row("H1-b", "Movement 写入口有原生流量",
                 CensusOf("Formation.SetMovementOrder").ToString(CultureInfo.InvariantCulture),
                 CensusOf("Formation.SetMovementOrder") > 0));
+            // H1-c 必须是真门禁：无覆盖时打印 no-override 并 FAIL，否则"没被覆盖"会被误报成成功。
             rows.Add(Row("H1-c", "first native override latency (s)",
                 NativeOverrideLatency < 0 ? "no-override" : NativeOverrideLatency.ToString("F3", CultureInfo.InvariantCulture),
-                true));
+                NativeOverrideLatency >= 0));
             rows.Add(Row("H1-d", "lab_overrides (Lab 反覆盖原生)",
                 m.LabOverrides.ToString(CultureInfo.InvariantCulture), true));
+            rows.Add(Row("H1-e", "native_overrides (仅非所有者改动，本域恒 0)",
+                m.NativeOverrides.ToString(CultureInfo.InvariantCulture), true));
         }
         else if (prefix == "h2")
         {

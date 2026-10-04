@@ -1,0 +1,8 @@
+# H1 rerun — 与 h1-external-write-t1f3 的唯一差异：policy 追加 enforceGated=false
+# 目的：把"原生以非所有者身份改值"记为 unauth 写而非拒绝，使 native_overrides 可测。
+# 除 policy 行外与 t1f3 版逐字一致：t=3.0 / t=8.0 各一次 cmd T1F3 Movement HOLD，t=33.0 dump。
+
+t=1.0   policy patchMovement=true patchFacing=true patchArrangement=true enforceGated=false
+t=3.0   cmd T1F3 Movement HOLD
+t=8.0   cmd T1F3 Movement HOLD
+t=33.0  dump h1-external-write
