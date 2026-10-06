@@ -302,6 +302,15 @@ public static class Program
         // 再跑 Phase 8 的 E12（Authority Level 谱系对照，补 H-I；结果写入 tests/artifacts/e12-level-spectrum.txt）
         int e12 = ArchitectureComparison.RunAll();
 
-        return e1to11 == 0 && e12 == 0 ? 0 : 1;
+        Log("");
+        Log("=== CommandLab Offline Measurements ===");
+        var measurementChecksBefore = _checks;
+        var measurementFailuresBefore = _failures;
+        MeasurementTests.Run(Check);
+        var measurementChecks = _checks - measurementChecksBefore;
+        var measurementFailures = _failures - measurementFailuresBefore;
+        Log($"=== Measurement 汇总：{measurementChecks - measurementFailures}/{measurementChecks} 通过，失败 {measurementFailures} 项 ===");
+
+        return e1to11 == 0 && e12 == 0 && _failures == 0 ? 0 : 1;
     }
 }
