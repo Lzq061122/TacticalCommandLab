@@ -1,5 +1,9 @@
 # 09 — BannerlordProbe 实现（Phase 9）
 
+> **2026-10-07 冻结补记**：运行源码在 e57e157 事后冻结，实际测量 HEAD 仍为 adab4cf+四文件 diff。加载 marker 的 MVID/Location 来自 CLR；SHA-256 是路径上的磁盘文件哈希，并非进程内存哈希。详见 [Phase 10 收口](phase10-closure-20261007.md)。
+
+> **2026-10-06 补记**：本文下面是 Phase 9 的历史实现记录。本机当前运行版本已确认为 Bannerlord v1.4.8.119303，新的宿主构建、实际部署及 Phase 10 数据见 [本地交付记录](local-phase10-verification-20261006.md)。本轮修复 REL 缓存把 Native Move 的 Obs 投影错误重建为 Stop 的缺陷；现在保存完整原始 MovementOrder 并原样重发，已由真实恢复类型/位置及拒绝反例验收。Phase 11/12 未推进。
+
 > 生成时间：2026-09-20 GMT+8（会话 9）
 > 状态：**Phase 9 完成**。工程可离线构建（`net472`，零 NuGet 三方包）；Core/Telemetry 新增 `netstandard2.0` 目标后 `replay_hash` 与全部判据无回归（见 §2.3）。
 > 尚未进游戏运行 —— **任何实测结论都必须等 Phase 10**，本文件不写任何 Telemetry 支撑之外的稳定性判断。

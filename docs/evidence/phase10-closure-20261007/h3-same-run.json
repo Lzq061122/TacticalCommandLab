@@ -1,0 +1,290 @@
+{
+  "telemetry": "_audit\\_local-phase10-20261006\\run07-h3-route-b\\telemetry-20261006-215927-h3-route-b.txt",
+  "sha256": "57205e643e42418a67ffaf1039a1acd5d05141df7045af104b4c88ca4d0d252b",
+  "flag_call_records": [
+    {
+      "line": 5134,
+      "t": "0.0050",
+      "input": "isControlledByAI=True",
+      "raw": "CENSUS|t=0.0050|E=T1F0|hook=Formation.SetControlledByAI|raw=isControlledByAI=True"
+    },
+    {
+      "line": 5476,
+      "t": "3.0039",
+      "input": "isControlledByAI=False",
+      "raw": "CENSUS|t=3.0039|E=T1F0|hook=Formation.SetControlledByAI|raw=isControlledByAI=False"
+    },
+    {
+      "line": 6647,
+      "t": "28.0049",
+      "input": "isControlledByAI=True",
+      "raw": "CENSUS|t=28.0049|E=T1F0|hook=Formation.SetControlledByAI|raw=isControlledByAI=True"
+    }
+  ],
+  "acquire_release_records": [
+    {
+      "line": 1557,
+      "raw": "AUTH|t=3.0039|Acquire|E=T1F0|D=Movement|own=Lab|prev=Native|L=5|lease=L1|tok=1|gen=1|why=level=Full ttl=30.00"
+    },
+    {
+      "line": 4946,
+      "raw": "AUTH|t=28.0049|Release|E=T1F0|D=Movement|own=Native|prev=Lab|L=5|lease=|tok=0|gen=2|why=released to Native"
+    }
+  ],
+  "off_t": "3.0039",
+  "on_t": "28.0049",
+  "segments": [
+    {
+      "phase": "before_off",
+      "attempts": 4,
+      "accepted": 4,
+      "rejected": 0,
+      "effective_changes": 1,
+      "OME_true": 4,
+      "records": [
+        {
+          "line": 27,
+          "t": "0.0050",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 30,
+          "t": "0.0050",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 119,
+          "t": "2.4515",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 143,
+          "t": "2.5110",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        }
+      ]
+    },
+    {
+      "phase": "off_timestamp_boundary",
+      "attempts": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "effective_changes": 0,
+      "OME_true": 0,
+      "records": []
+    },
+    {
+      "phase": "off_interior",
+      "attempts": 0,
+      "accepted": 0,
+      "rejected": 0,
+      "effective_changes": 0,
+      "OME_true": 0,
+      "records": []
+    },
+    {
+      "phase": "on_timestamp_boundary",
+      "attempts": 4,
+      "accepted": 1,
+      "rejected": 3,
+      "effective_changes": 1,
+      "OME_true": 1,
+      "records": [
+        {
+          "line": 1298,
+          "t": "28.0049",
+          "owner": "Lab",
+          "new": "HOLD",
+          "rej": "1",
+          "ome": "0",
+          "why": "NotOwner"
+        },
+        {
+          "line": 1300,
+          "t": "28.0049",
+          "owner": "Lab",
+          "new": "HOLD",
+          "rej": "1",
+          "ome": "0",
+          "why": "NotOwner"
+        },
+        {
+          "line": 1303,
+          "t": "28.0049",
+          "owner": "Lab",
+          "new": "HOLD",
+          "rej": "1",
+          "ome": "0",
+          "why": "NotOwner"
+        },
+        {
+          "line": 1304,
+          "t": "28.0049",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        }
+      ]
+    },
+    {
+      "phase": "after_on",
+      "attempts": 10,
+      "accepted": 10,
+      "rejected": 0,
+      "effective_changes": 0,
+      "OME_true": 10,
+      "records": [
+        {
+          "line": 1306,
+          "t": "28.0256",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 1331,
+          "t": "28.5224",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 1356,
+          "t": "29.0256",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 1381,
+          "t": "29.5251",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 1406,
+          "t": "30.0299",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 1431,
+          "t": "30.5272",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 1456,
+          "t": "31.0299",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 1481,
+          "t": "31.5262",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 1506,
+          "t": "32.0298",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        },
+        {
+          "line": 1531,
+          "t": "32.5254",
+          "owner": "Native",
+          "new": "Obs0",
+          "rej": "0",
+          "ome": "1",
+          "why": "-"
+        }
+      ]
+    }
+  ],
+  "snapshot_transitions": [
+    {
+      "previous_sample": null,
+      "first_sample_in_state": {
+        "mission_t": "1.033",
+        "is_ai_controlled": true,
+        "movement_order": "Move",
+        "unit_count": 20
+      }
+    },
+    {
+      "previous_sample": {
+        "mission_t": "2.036",
+        "is_ai_controlled": true,
+        "movement_order": "Move",
+        "unit_count": 20
+      },
+      "first_sample_in_state": {
+        "mission_t": "3.041",
+        "is_ai_controlled": false,
+        "movement_order": "Move",
+        "unit_count": 20
+      }
+    },
+    {
+      "previous_sample": {
+        "mission_t": "27.127",
+        "is_ai_controlled": false,
+        "movement_order": "StandYourGround",
+        "unit_count": 20
+      },
+      "first_sample_in_state": {
+        "mission_t": "28.127",
+        "is_ai_controlled": true,
+        "movement_order": "Move",
+        "unit_count": 20
+      }
+    }
+  ],
+  "sample_clock_note": "CBATH samples use Mission time, whereas canonical/CENSUS use ProbeClock; no exact inter-clock offset was recorded. Transition brackets are stated on their own clock, not treated as exact assignment times. CENSUS records setter input, not an independently instrumented field assignment.",
+  "boundary_note": "Events exactly at the setter-call timestamps are separated; cross-stream same-timestamp order cannot prove whether they precede or follow assignment/release.",
+  "causal_limit": "Same-run before/off/after association under Acquire+HOLD+AI switch; no isolated intervention or direct AI.Tick/Behavior-selection count."
+}

@@ -32,3 +32,15 @@ python3 tools/run_offline.py --dotnet /path/to/dotnet
 | [actions/setup-dotnet](https://github.com/actions/setup-dotnet/releases/tag/v6.0.0) | v6.0.0 | `a98b56852c35b8e3190ac28c8c2271da59106c68` |
 | [actions/setup-python](https://github.com/actions/setup-python/releases/tag/v7.0.0) | v7.0.0 | `5fda3b95a4ea91299a34e894583c3862153e4b97` |
 | [actions/upload-artifact](https://github.com/actions/upload-artifact/releases/tag/v7.0.1) | v7.0.1 | `043fb46d1a93c77aae656e7c1c64a875d1fc6a0a` |
+
+## 2026-10-06 Windows 本机复核
+
+本机 PowerShell 7.6.5、.NET SDK 10.0.400、Python 3.14.7 已实际执行入口。修补了控制台不能编码输出时的安全转发/子进程回收，以及 fake-dotnet 临时路径短名/长名比较问题；增加 GBK 控制台/UTF-8 日志回归。未跳过测试，也未修改验收阈值。入口可在未设置 `PYTHONIOENCODING` 或 `PYTHONUTF8` 的终端完成。
+
+最终本机报告 `tests/artifacts/offline-20261006T135059.876430Z-5638d296/`：六项构建 PASS，C# **102/102**；Python offline_runner **14/14**、offline_telemetry **9/9**，合计 **23/23，零跳过**，多出的一项为上述编码回归。HEAD 为 `adab4cf008a8dd6e83f8e12c03f1423483cb98f0`，working_tree=dirty；源码摘要 `313469e1b6519d2a88ae12eed08fe9db61d6a227ef7f178e1704af9c526a666b`。具体本轮修改由 Git diff 和逐场源码记录描述。
+
+离线 result.json 的 `runtime=NOT_RUN` 仍只指离线入口没有启动游戏。随后已单独实际构建并部署 BannerlordProbe net472，完成本地游戏采集；这部分记录在 [Phase 10 本地交付](local-phase10-verification-20261006.md)，不把宿主构建/实测结果混入离线入口结果。
+
+## 2026-10-07 版本冻结补记
+
+Windows runner/测试匹配测量快照的blob事后冻结于e57e157；原离线结果仍为adab4cf+dirty，不能改写成新提交上的运行。全场诊断引用原生产MetricsCalculator，原102项结果保留；本轮新增验收仅为只读重放和驱动cleanup修补的PS5.1/7各8例隔离回归，没有重跑游戏或宿主构建。版本和证据见 [Phase10收口报告](phase10-closure-20261007.md)。

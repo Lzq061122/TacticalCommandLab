@@ -30,7 +30,7 @@
     }
   ],
   "measured_driver_sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3",
-  "tracked_driver_at_this_freeze": "tools/run_phase10.ps1 (byte-identical measured snapshot; later cleanup correction must be a separate commit)",
+  "tracked_driver_at_this_freeze": "e57e157e839e334f532d7f875224491af6bd140d:tools/run_phase10.ps1 (byte-identical measured snapshot; current driver cleanup correction is a separate later commit)",
   "historical_driver_path": "_audit/_tcl-step5.ps1",
   "raw_data_policy": "Raw data remains local and is not added/rewritten. Hashes and repo-relative locations identify original records.",
   "raw_manifest_checked": {

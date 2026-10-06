@@ -1,5 +1,11 @@
 # Tactical Command Lab — 会话交接文件（Handoff）
 
+> **2026-10-07 Phase 10 收口**：本轮仅离线解释已有数据并冻结版本，没有新游戏采集。测量快照为 adab4cf+四文件 diff；匹配源码冻结于 e57e157，清理失败退出码修补于 0a0a594。G3 原样 FAIL，主要来自接管前初始化但目标也贡献 3/37、2/35，不能称全部由其他编队造成。H3 同场关闭内 Native Movement=0、释放边界4、之后10；实际 Tick/Behavior 调用次数未验证。H2b 完整覆盖/Arrangement 独占及 REL 普遍必要性/完整状态恢复未验证。详见 [收口报告](docs/phase10-closure-20261007.md) 和 [冻结索引](docs/evidence/phase10-closure-20261007/closure-index.json)。本轮停止交回验收，未推进 Phase 11/12。
+
+> **当前交接（2026-10-06，本轮本地 Phase 10 已交付并停止）**：真实工作区仍为 `E:\MBmod\TacticalCommandLab`。本地分支 `codex/local-phase10-verification-20261006`，HEAD `adab4cf008a8dd6e83f8e12c03f1423483cb98f0` **加本轮未提交修补**；未改写/合并 master，未推送。最终离线六项构建、C# 102/102、Python 23/23（新增编码回归一项）通过，net472 宿主构建 0 警告/0 错误，三份 DLL 已部署且实际加载身份吻合。最终八场 census/H2/H2b/H3/四组 REL 已跑完，所有装置门禁通过；**H2/H2b 的 G3 失败，不能汇总全 PASS；H3 通过现有判据；REL=0/0/0/1，最后一项是正确检出的预期失败**。完整覆盖率、实际 Behavior 选择调用计数与普遍恢复必要性仍未验证。详情：[本轮交付记录](docs/local-phase10-verification-20261006.md)。
+>
+> **下一步：等待用户决定如何处理失败/证据不足项。本轮不再执行新实验或开发，不进入 Phase 11/12。** 下方旧日期的环境、阻塞、状态和“下一步”均是历史记录，不能当作当前机器事实。
+
 > 生成时间：2026-09-19 01:50 GMT+8
 > 生成原因：本周期 Hy4 免费额度已用 **35,695,579 token**（撞顶区间 2,000–4,900 万），继续跑会被 429 中断且上下文全丢。
 > 最后更新：2026-10-04 19:56 GMT+8（会话 15，H1 已完成并跑出结论；纯 Vanilla 前提首次成立）
@@ -51,7 +57,7 @@
 | 7 | 运行 8 组实验（06-results.md） | ✅ **完成**（2026-09-20 会话 7，E1–E11 全跑，**判据 51/51**） |
 | 8 | Architecture A/B/C 对比 | ✅ **完成**（2026-09-20 会话 8，13 维度 + E12 补 H-I，判据 10/10） |
 | 9 | BannerlordProbe 实现 | ✅ **完成**（2026-09-20 会话 9，net472 离线可构建，红线自检通过） |
-| 10 | Harmony Runtime 实验 H1/H2/H3 | 🟨 **第 1 组门禁已全 PASS（2026-10-04 01:33）**：P0=7 / P0b=1957 / **P0c=29/29** / **X5=0**，四项全 PASS（详见 `docs/10` §13，归档 `tests/artifacts/host/valid-20261004-0133-census-baseline/`）。**H1 已完成（2026-10-04 19:56，run7 纯 Vanilla）：H1-a=2 / H1-c=0.149s / H1-d=2 全 PASS，结论「外部写入存活约 0.15 秒」**（详见 `docs/10` §14.11 + 本文件「会话 15」）。⬜ **下一步：跑 H2/H2b/H3/REL** ← **当前** |
+| 10 | Harmony Runtime 实验 H1/H2/H3 | 🟨 **本轮本地采集与交付完成（2026-10-06）**：最终 census 四门禁 PASS；H2/H2b G1∧G2 PASS、G3 FAIL；H3 现有判据 PASS；REL=0/0/0/1（反例正确识别）。完整覆盖率/实际 AI.Tick 调用次数/普遍恢复必要性仍未验证。**已停止，等待用户决定后续；详见 §14 和 docs/local-phase10-verification-20261006.md。** |
 | 11 | 最终架构（07-final-architecture.md） | ⬜ 未开始 |
 | 12 | CombatBrain 集成（08-integration-report.md） | ⬜ 未开始 |
 
@@ -391,6 +397,8 @@ t=8.0049|tick=1131|...W=Lab...   →  t=8.1549|tick=1152|...W=Native...
 
 ## 5. 未完成事项与下一步
 
+**2026-10-06 当前下一步（覆盖下方历史指令）**：本轮所要求的本地构建、真实部署及 Phase 10 剩余脚本采集已完成并停止。失败/证据不足项见 [本轮交付记录](docs/local-phase10-verification-20261006.md)：H2/H2b G3 FAIL、完整写入口覆盖率未证实、H3 实际 AI.Tick/Behavior 选择调用次数未直接测量、Reapply/Reset 的普遍必要性未证实。请等待用户决定后续工作；不要自行进入 Phase 11/12 或扩展 CombatBrain 集成。
+
 ### 👉 下一步（新会话第一个动作）
 
 > ✅ **2026-10-04 01:33 已完成**：第 1 组 `census-baseline` **门禁四项全 PASS**（`P0 7` / `P0b 1957` / `P0c 29/29` / `X5 0`）。
@@ -706,8 +714,26 @@ E:\MBmod\TacticalCommandLab\
 
 ## 13. 云端离线开发区验证（2026-10-06）
 
+本节为历史云端离线记录。后续本地实际构建和游戏结果在 §14，不能继续以本节的 NOT_RUN 或“仍待实机”作为当前状态。
+
 本节记录云端 Linux 离线验证，不改变 Phase 状态，也不替代 Bannerlord 实机实验。复跑入口：`python3 tools/run_offline.py`；需要时可用 `--dotnet /path/to/dotnet` 指定 .NET 10 SDK。SDK 版本为 `10.0.401`。工具在临时净副本按原 csproj 目标逐项构建 Core、Telemetry、Simulation、Tests（共 6 个目标，含 Core/Telemetry 的 `netstandard2.0`），然后执行 C# 门禁、离线测量和 Python 遥测工具测试；每次运行均生成唯一的 `tests/artifacts/offline-<run-id>/` 报告目录，不覆盖历史 artifacts。
 
 本次冻结版云端验收报告：`tests/artifacts/offline-20261006T031840.425502Z-b7f0f0ed/`（云端运行产物，未纳入 Git）。六个构建目标均为 0 warnings / 0 errors；D0 **15/15**、E1–E11 **51/51**、E12 **10/10**、MEASURE **26/26**，C# 合计 **102/102**。D0-S1 `replay_hash` 仍为 `d9853e282f033d16b7b67a958797e0c345be1d7e16d39b22a30dc9ca833d8199`。冻结版验证源码 SHA-256：`8ca81d904c7ea52c7d911c9d1483a99f657e1f64f2b0dd4c73d27689dd81fe82`。Python 遥测工具测试 **9/9**。
 
 **本次 Bannerlord runtime = NOT_RUN**。Phase 10 已完成的 H1 证据保持原记录；H2、H2b、H3、REL 仍待有效实机验证，属于 Phase 10 后续工作。Phase 11 和 Phase 12 未推进。本云端验证仅证明跨目标构建与离线逻辑/遥测门禁通过，不产生新的宿主运行时或战术架构结论。
+
+## 14. 2026-10-06 本地 Phase 10 工作日志与交付
+
+已复核真实仓库、远端与云端提交，保持初始 master 不变并创建本地验证分支。主 Agent 派发/审查/验收，GPT-6 Luna 修补 Windows 离线入口、现有驱动证据归档、托管程序集身份 marker，以及 REL 把原生 Move 错存成 Stop 的缓存缺陷；未改实验脚本阈值、Core/Telemetry 测量逻辑或扩展集成。
+
+本机构建与验收：.NET SDK 10.0.400、Python 3.14.7；最终离线报告 `tests/artifacts/offline-20261006T135059.876430Z-5638d296/`：六项构建 PASS、D0 15/15、E1–E11 51/51、E12 10/10、MEASURE 26/26、Python 14+9=23/23 零跳过。replay_hash 仍为 `d9853e282f033d16b7b67a958797e0c345be1d7e16d39b22a30dc9ca833d8199`。依赖游戏 DLL 的 net472 宿主实际构建 0 警告/0 错误。
+
+最终探针 SHA-256 `6c5fed1b9b0964f2392ea4dc144678aee7d67d2fc4b846e4c48077fbd7be970a`，MVID `ec585f8a-0c3a-4fc0-a8e4-61c5987adbf9`；Core/Telemetry 和探针的构建/deploy/游戏 Modules 三处哈希均相同，运行 boot-marker 的三程序集身份吻合。游戏运行时 v1.4.8.119303，11 个活动模块无 CombatBrain 和相关 AI Mod。每脚本在启动前播种，完全退出/重启游戏；实体 T1F0 来自本次 census，目标为非玩家步兵。
+
+最终场次根目录 `_audit/_local-phase10-20261006/`，run04–run11 为同一最终部署版：census P0=7/P0b=2040/P0c=29/29/X5=0；H2 G1=0/G2=100% PASS、G3 FAIL；coverage 同样 G3 FAIL，Arrangement sampled=2/port=3/gap=0（完整覆盖率证据不足）；Route B 本目标同窗口 Native Movement 尝试 49→0，现有 H3 判据通过；REL=0/0/0/1，恢复前重发 Move 的即时类型/位置匹配，交还后重发被 NotOwner 拒绝，反例识别成功。无恢复对照也自然恢复，不能声称 Reapply 或 Reset 普遍必需。H1 约 0.15 秒继续仅作为历史记录。
+
+每场保存 HEAD/diff、实际脚本、运行身份、DLL 清单、原始 telemetry/metrics/引擎日志、CBATH 时间序列及 `assessment.json`；总 `experiment-results.json` 如实保留 FAIL。前期 run01–run03 排障数据单独保留。最终八场 cleanup=clean，Bannerlord/GABS 均退出。详情与范围限制见 [本轮交付记录](docs/local-phase10-verification-20261006.md)。**本轮交付完成并停止；Phase 11/12 未开始，等待用户决定下一阶段。**
+
+## 15. 2026-10-07 Phase 10 证据收口与版本冻结
+
+本轮按已有run05/06重放原MetricsCalculator，未修改原阈值或全场Oscillating verdict。每实体/域63键的变更、ABA、寿命和边界状态表已归档。run07同场分段与旗标采样加强H3证据，实际AI.Tick/Behavior选择调用数仍未验证。测量源码、原驱动与事后清理修补分开冻结；PS5.1/7各8例真实子进程退出码回归通过。原始724项清单和部署DLL复核记录见冻结索引。本轮下一步为用户验收；停止，不推进Phase11/12。

@@ -1,0 +1,241 @@
+{
+  "schema": 1,
+  "scope": "Phase 10 closure only; no new game run or host rebuild",
+  "baseline": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+  "measurement_head": "adab4cf plus four-file dirty diff in each run",
+  "source_freeze_A": "e57e157e839e334f532d7f875224491af6bd140d",
+  "cleanup_repair_B": "0a0a5949ca90e199578df1aac5abc5a302e13493",
+  "analysis_freeze_C": "Containing commit; exact HEAD is stored in ignored final-freeze-manifest.json after commit, to avoid self-reference",
+  "raw_index": {
+    "path": "docs/phase10-measurement-index.json",
+    "sha256": "e822176e213a4913bcfb9164c7110a1d0a4cc6b394031f7b30acb2b9e611f12b",
+    "bytes": 26488
+  },
+  "full_file_inventory": {
+    "path": "docs/evidence/phase10-closure-20261007/full-diff-files.csv",
+    "sha256": "3a7c42c747c7b2163ad1c7bbbfd025d176e58b62c4e07fa6beb608078cd5d936",
+    "bytes": 3429
+  },
+  "raw_manifest": {
+    "path": "_audit/_local-phase10-20261006/session-artifact-manifest.json",
+    "sha256": "c663462a2c3fa4dc8a4e81bc201b59d0131954a520e6fba2c38322b25eee3667",
+    "bytes": 137084
+  },
+  "raw_recheck": {
+    "checked": 724,
+    "mismatches": []
+  },
+  "binary_recheck": [
+    {
+      "path": "E:\\MBmod\\TacticalCommandLab\\src\\CommandLab.BannerlordProbe\\bin\\Debug\\net472\\CommandLab.BannerlordProbe.dll",
+      "expected": "6c5fed1b9b0964f2392ea4dc144678aee7d67d2fc4b846e4c48077fbd7be970a",
+      "actual": "6c5fed1b9b0964f2392ea4dc144678aee7d67d2fc4b846e4c48077fbd7be970a",
+      "matches": true,
+      "timestamp_unchanged": true
+    },
+    {
+      "path": "E:\\MBmod\\TacticalCommandLab\\deploy\\CommandLabProbe\\bin\\Win64_Shipping_Client\\CommandLab.BannerlordProbe.dll",
+      "expected": "6c5fed1b9b0964f2392ea4dc144678aee7d67d2fc4b846e4c48077fbd7be970a",
+      "actual": "6c5fed1b9b0964f2392ea4dc144678aee7d67d2fc4b846e4c48077fbd7be970a",
+      "matches": true,
+      "timestamp_unchanged": true
+    },
+    {
+      "path": "E:\\SteamLibrary\\steamapps\\common\\Mount & Blade II Bannerlord\\Modules\\CommandLabProbe\\bin\\Win64_Shipping_Client\\CommandLab.BannerlordProbe.dll",
+      "expected": "6c5fed1b9b0964f2392ea4dc144678aee7d67d2fc4b846e4c48077fbd7be970a",
+      "actual": "6c5fed1b9b0964f2392ea4dc144678aee7d67d2fc4b846e4c48077fbd7be970a",
+      "matches": true,
+      "timestamp_unchanged": true
+    },
+    {
+      "path": "E:\\MBmod\\TacticalCommandLab\\src\\CommandLab.BannerlordProbe\\bin\\Debug\\net472\\CommandLab.Core.dll",
+      "expected": "a45e234dae7c9234a7458f102bdfd7952372d5dac789e4c92bd0d93d4c2fcbb5",
+      "actual": "a45e234dae7c9234a7458f102bdfd7952372d5dac789e4c92bd0d93d4c2fcbb5",
+      "matches": true,
+      "timestamp_unchanged": true
+    },
+    {
+      "path": "E:\\MBmod\\TacticalCommandLab\\deploy\\CommandLabProbe\\bin\\Win64_Shipping_Client\\CommandLab.Core.dll",
+      "expected": "a45e234dae7c9234a7458f102bdfd7952372d5dac789e4c92bd0d93d4c2fcbb5",
+      "actual": "a45e234dae7c9234a7458f102bdfd7952372d5dac789e4c92bd0d93d4c2fcbb5",
+      "matches": true,
+      "timestamp_unchanged": true
+    },
+    {
+      "path": "E:\\SteamLibrary\\steamapps\\common\\Mount & Blade II Bannerlord\\Modules\\CommandLabProbe\\bin\\Win64_Shipping_Client\\CommandLab.Core.dll",
+      "expected": "a45e234dae7c9234a7458f102bdfd7952372d5dac789e4c92bd0d93d4c2fcbb5",
+      "actual": "a45e234dae7c9234a7458f102bdfd7952372d5dac789e4c92bd0d93d4c2fcbb5",
+      "matches": true,
+      "timestamp_unchanged": true
+    },
+    {
+      "path": "E:\\MBmod\\TacticalCommandLab\\src\\CommandLab.BannerlordProbe\\bin\\Debug\\net472\\CommandLab.Telemetry.dll",
+      "expected": "0aadd6234903bd55de5fec152f955f2e103b3a0b64cb989dcbc6ede89c1da316",
+      "actual": "0aadd6234903bd55de5fec152f955f2e103b3a0b64cb989dcbc6ede89c1da316",
+      "matches": true,
+      "timestamp_unchanged": true
+    },
+    {
+      "path": "E:\\MBmod\\TacticalCommandLab\\deploy\\CommandLabProbe\\bin\\Win64_Shipping_Client\\CommandLab.Telemetry.dll",
+      "expected": "0aadd6234903bd55de5fec152f955f2e103b3a0b64cb989dcbc6ede89c1da316",
+      "actual": "0aadd6234903bd55de5fec152f955f2e103b3a0b64cb989dcbc6ede89c1da316",
+      "matches": true,
+      "timestamp_unchanged": true
+    },
+    {
+      "path": "E:\\SteamLibrary\\steamapps\\common\\Mount & Blade II Bannerlord\\Modules\\CommandLabProbe\\bin\\Win64_Shipping_Client\\CommandLab.Telemetry.dll",
+      "expected": "0aadd6234903bd55de5fec152f955f2e103b3a0b64cb989dcbc6ede89c1da316",
+      "actual": "0aadd6234903bd55de5fec152f955f2e103b3a0b64cb989dcbc6ede89c1da316",
+      "matches": true,
+      "timestamp_unchanged": true
+    }
+  ],
+  "measured_driver": {
+    "git_object": "e57e157:tools/run_phase10.ps1",
+    "sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3"
+  },
+  "current_driver": {
+    "path": "tools/run_phase10.ps1",
+    "sha256": "61cdc49ed80d00de199c58951a30cd0ff8b1d092495b4ceb9e266d8e6c9b613b",
+    "bytes": 21398
+  },
+  "targeted_regression": {
+    "ps5": 8,
+    "ps7": 8,
+    "actual_child_exit_codes": true,
+    "new_game_run": false
+  },
+  "raw_and_diagnostic_records": [
+    {
+      "path": "_audit/_phase10-closure-20261007/cleanup-root-ps5.log",
+      "sha256": "0e4260a41c5ce40c1b029990fc4815ff8a2023f71da4d9630aba25528c1e368d",
+      "bytes": 543
+    },
+    {
+      "path": "_audit/_phase10-closure-20261007/cleanup-root-ps7.log",
+      "sha256": "0e4260a41c5ce40c1b029990fc4815ff8a2023f71da4d9630aba25528c1e368d",
+      "bytes": 543
+    },
+    {
+      "path": "_audit/_phase10-closure-20261007/g3-main-validation-console.json",
+      "sha256": "6e974c73f43be0bf3bf7a7841c55c03f666fbc2f420b6373ccbfd732e5e053b4",
+      "bytes": 12371
+    },
+    {
+      "path": "_audit/_phase10-closure-20261007/measurement-source-match.json",
+      "sha256": "e12ecd6a54ca925126c3b394f6da7af5dd5c4a45d140118b06e6404fdd2f762b",
+      "bytes": 14359
+    },
+    {
+      "path": "_audit/_phase10-closure-20261007/pre-freeze-tracked-diff.patch",
+      "sha256": "bf26c993846627d7c801c99ec0b941e6c337605b7cadea662a3bcccf79f61477",
+      "bytes": 26283
+    },
+    {
+      "path": "_audit/_phase10-closure-20261007/pre-freeze-status.txt",
+      "sha256": "11e571d2aa94b980faa419b404e4c5727dd5292942773165fce1d8fbb0c30868",
+      "bytes": 351
+    },
+    {
+      "path": "_audit/_phase10-closure-20261007/driver-fix-acceptance.md",
+      "sha256": "b7b9576987f9feddbee2e53c6000a0b2afea912efa47a1c7b2a93c62abd6f5ee",
+      "bytes": 2669
+    },
+    {
+      "path": "_audit/_phase10-closure-20261007/verified-output/run05-diagnostics.json",
+      "sha256": "0f439954883555afdabf977eefde7a9e967b35db207b3bc1132e27f7d0b52312",
+      "bytes": 502204
+    },
+    {
+      "path": "_audit/_phase10-closure-20261007/verified-output/run06-diagnostics.json",
+      "sha256": "35bf25cfbc31c699ec7f318055de527f655287c2dcc4b38368db3ccbdba75348",
+      "bytes": 497653
+    },
+    {
+      "path": "_audit/_phase10-closure-20261007/verified-output/results.json",
+      "sha256": "a29bd216c78df6b8a74fedb481f414a9fe17f9e7b0df37f539c92502adda87e6",
+      "bytes": 1085294
+    }
+  ],
+  "derived_outputs": [
+    {
+      "path": "docs/evidence/phase10-closure-20261007/g3-summary.json",
+      "sha256": "27fda22bea7bd685a3017a199671362bf9a80f55976b36b900808b174df79b78",
+      "bytes": 30937
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/h3-same-run.json",
+      "sha256": "7a1de2fb9ae641720eacf2373c5068ba9d6df46fe2af31a9c2453b7582217b76",
+      "bytes": 7420
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/run05-changes.csv",
+      "sha256": "d5ae2ae90b81ca3484b4e07b07e4d520baafa42d05fda23c6911dd5bf6b61028",
+      "bytes": 7037
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/run05-keys.csv",
+      "sha256": "b4f047c9baccec2593a3bddbae1a14adf33254dc94347969ff8c08e1140f5ade",
+      "bytes": 1607
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/run05-lifetimes.csv",
+      "sha256": "9129159ef07736445838080633eef31945b3a35aa3a433d9a21366c97a73ce58",
+      "bytes": 18389
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/run05-triples.csv",
+      "sha256": "adb20118edb3c30b64169bfd203701c7dc54fd6eb0beb6cda34a7d1cbc36bd24",
+      "bytes": 5165
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/run05-window-start-states.csv",
+      "sha256": "b8b79529abba9977768c0810b7c9015362032dc18221ad4854ed43a353b9caa9",
+      "bytes": 15431
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/run06-changes.csv",
+      "sha256": "4ce9e13fa63c17951f5eb2810a8270f3cd8d472de0a8631e2fedf988c9321666",
+      "bytes": 6679
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/run06-keys.csv",
+      "sha256": "c5af98ab3aa3e3299e0b8eb195846631b61d86ea577914730fa12d0fac98f9e2",
+      "bytes": 1605
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/run06-lifetimes.csv",
+      "sha256": "c79b56dc5d733741b3eee32f88eaa6ec0bf7248bb958463a26b48579d77c5715",
+      "bytes": 18757
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/run06-triples.csv",
+      "sha256": "9ca493b534b83b86ad0970861af5f4f054e8f9ba88acb0dd0696d9fbc6f3fabe",
+      "bytes": 4755
+    },
+    {
+      "path": "docs/evidence/phase10-closure-20261007/run06-window-start-states.csv",
+      "sha256": "7f7bbe7ff6f736b0e5ceaaefa6d03e4ad6b4e1a8e19372924f79cdcce9e4eebf",
+      "bytes": 15366
+    }
+  ],
+  "outside_scope_untracked_files": [
+    {
+      "path": "_dispatch/2026-10-07-phase11-development-prompt.md",
+      "sha256": "aadc20923744f7dd0ce603c107391cedcdc18919429b7be2029f871589707cfd",
+      "bytes": 11219
+    },
+    {
+      "path": "docs/phase11-design.md",
+      "sha256": "042ef0fbc5ed3eaa452cba67bd0b442ed442c33f00c531fe391519b6a3759a74",
+      "bytes": 17513
+    },
+    {
+      "path": "docs/phase11-handoff-template.md",
+      "sha256": "ba79c8d3574f7c39f16f99f9e853f7d6d66633fc84ccb8b5673f98a9676231bf",
+      "bytes": 4024
+    }
+  ],
+  "outside_scope_policy": "Preserved, excluded from Phase 10 commits; no instructions in these files used",
+  "final_full_patch": "_audit/_phase10-closure-20261007/final-vs-adab4cf.patch; generated after containing commit and hashed by final-freeze-manifest.json"
+}
