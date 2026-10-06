@@ -63,7 +63,7 @@ function Write-SourceManifest {
     @("--- unstaged ---",$diff,"--- staged ---",$cached) | Set-Content -LiteralPath (Join-Path $RunDir 'git-diff.txt') -Encoding UTF8
     (& git -C $RepoDir status --short --branch --untracked-files=all 2>&1 | Out-String) | Set-Content -LiteralPath (Join-Path $RunDir 'git-status.txt') -Encoding UTF8
     Copy-Item -LiteralPath $PSCommandPath -Destination (Join-Path $RunDir 'driver-script.ps1') -Force
-    Copy-Item -LiteralPath (Join-Path $RepoDir '_audit\_local-phase10-20261006\driver-acceptance.md') -Destination (Join-Path $RunDir 'driver-acceptance.md') -Force
+    Copy-Item -LiteralPath (Join-Path $RepoDir 'docs\phase10-driver-acceptance.md') -Destination (Join-Path $RunDir 'driver-acceptance.md') -Force
     $dlls = @(Get-ChildItem -LiteralPath (Join-Path $RepoDir 'deploy\CommandLabProbe') -Filter '*.dll' -Recurse -File -ErrorAction SilentlyContinue)
     $records = @()
     foreach ($dll in $dlls) { try { $records += Get-FileRecord $dll.FullName } catch { $records += [pscustomobject]@{ path=$dll.FullName; error=$_.Exception.Message } } }
@@ -100,6 +100,12 @@ function Invoke-Tool([string]$name, [int]$timeout = 30) {
         Add-Content -LiteralPath (Join-Path $RunDir 'exception.log') -Value $err -Encoding UTF8
         throw
     }
+}
+function Assert-McpCleanupResponse([string]$name, [string]$responseText) {
+    try { $response = $responseText | ConvertFrom-Json -ErrorAction Stop } catch { return }
+    $hasRpcError = $null -ne $response -and $null -ne $response.PSObject.Properties['error']
+    $hasToolError = $null -ne $response -and $null -ne $response.result -and $response.result.isError -eq $true
+    if ($hasRpcError -or $hasToolError) { throw "MCP cleanup call '$name' returned an error envelope." }
 }
 function Wait-For([string]$label, [scriptblock]$cond, [int]$seconds, [scriptblock]$poll) {
     $deadline = (Get-Date).AddSeconds($seconds)
@@ -257,7 +263,7 @@ catch {
 }
 finally {
     if ($missionStarted -and -not $missionEnded -and $gabsOpen) {
-        try { $null = Invoke-Tool 'cbath/end_mission' 40; $missionEnded = $true } catch { Add-Content -LiteralPath (Join-Path $RunDir 'exception.log') -Value ("end_mission cleanup`n" + ($_ | Out-String)) -Encoding UTF8 }
+        try { $endRaw = Invoke-Tool 'cbath/end_mission' 40; Assert-McpCleanupResponse 'cbath/end_mission' $endRaw; $missionEnded = $true } catch { $runFailed = $true; Add-Content -LiteralPath (Join-Path $RunDir 'exception.log') -Value ("end_mission cleanup`n" + ($_ | Out-String)) -Encoding UTF8 }
         if ($missionEnded) {
             try {
                 $runRaw = Invoke-Tool 'cbath/get_last_run' 30
@@ -266,11 +272,14 @@ finally {
         }
     }
     if ($startedGameIds.Count -gt 0 -and $gabsOpen) {
-        try { $stopRaw = Invoke-McpHttp -Tool 'games_stop' -Arguments @{ gameId = $GameId } -TimeoutSec 180; Set-Content -LiteralPath (Join-Path $RunDir 'games-stop.json') -Value $stopRaw -Encoding UTF8 } catch { Add-Content -LiteralPath (Join-Path $RunDir 'exception.log') -Value ("games_stop`n" + ($_ | Out-String)) -Encoding UTF8 }
+        try { $stopRaw = Invoke-McpHttp -Tool 'games_stop' -Arguments @{ gameId = $GameId } -TimeoutSec 180; Set-Content -LiteralPath (Join-Path $RunDir 'games-stop.json') -Value $stopRaw -Encoding UTF8; Assert-McpCleanupResponse 'games_stop' $stopRaw } catch { $runFailed = $true; Add-Content -LiteralPath (Join-Path $RunDir 'exception.log') -Value ("games_stop`n" + ($_ | Out-String)) -Encoding UTF8 }
         Start-Sleep -Seconds 8
         foreach ($pidValue in $startedGameIds) {
             $p = Get-Process -Id $pidValue -ErrorAction SilentlyContinue
-            if ($p -and -not $p.HasExited) { Stop-Process -Id $pidValue -Force -ErrorAction SilentlyContinue }
+            if ($p -and -not $p.HasExited) {
+                try { Stop-Process -Id $pidValue -Force -ErrorAction Stop }
+                catch { $runFailed = $true; Add-Content -LiteralPath (Join-Path $RunDir 'exception.log') -Value ("Stop-Process pid=$pidValue`n" + ($_ | Out-String)) -Encoding UTF8 }
+            }
         }
     }
     if ($gabsOpen) { Close-McpHttp }
@@ -292,6 +301,10 @@ finally {
     }
     foreach ($file in $changedProbe) { Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $RunDir $file.Name) -Force }
     $residual = @(Get-Process -Name 'Bannerlord','Bannerlord.Native' -ErrorAction SilentlyContinue | Where-Object { $startedGameIds -contains $_.Id -and -not $_.HasExited } | ForEach-Object { $_.Id })
+    if ($residual.Count -gt 0) {
+        $runFailed = $true
+        Add-Content -LiteralPath (Join-Path $RunDir 'exception.log') -Value ('Residual owned game PIDs after cleanup: ' + ($residual -join ',')) -Encoding UTF8
+    }
     Set-Content -LiteralPath (Join-Path $RunDir 'cleanup-result.txt') -Value $(if ($residual.Count -eq 0) { 'clean' } else { 'residual_owned_pids=' + ($residual -join ',') }) -Encoding ASCII
     $runEnd = Get-Date
     Save-Json ([pscustomobject]@{ status=$(if ($runFailed) { 'FAIL' } else { 'COMPLETE' }); script=$ScriptName; entity_id=$EntityId; game_id=$GameId; started_pids=$startedGameIds; ended_utc=$runEnd.ToUniversalTime().ToString('o') }) (Join-Path $RunDir 'run-result.json')
