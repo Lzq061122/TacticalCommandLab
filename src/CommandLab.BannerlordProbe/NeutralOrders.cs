@@ -3,8 +3,8 @@
 // 红线：本工程只支持 HOLD / ADVANCE / RETREAT 三条中性指令，不承载任何战术语义。
 // Facing / Arrangement 只做"观察 + 是否可拦截"，probe 从不主动下达这两域的指令。
 
-using System.Globalization;
 using CommandLab.Core;
+using CommandLab.Telemetry;
 using TaleWorlds.MountAndBlade;
 
 namespace CommandLab.BannerlordProbe;
@@ -43,38 +43,4 @@ public static class NeutralOrders
             default: value = CommandValue.Unset; return false;
         }
     }
-}
-
-/// <summary>
-/// 把宿主原生 Order 值投影到中性观察槽（CommandValue.Obs0..Obs15）。
-/// 目的只有一个：让"值是否发生了变化"在 Core 侧可被判定（OrderChanged / oscillation 依赖值不等）。
-/// 槽位按首次出现顺序分配，超过 16 个不同值后回绕 —— 回绕会低估变化次数，故计数并可告警。
-/// </summary>
-public sealed class HostOrderProjection
-{
-    private static readonly CommandValue[] Slots =
-    {
-        CommandValue.Obs0, CommandValue.Obs1, CommandValue.Obs2, CommandValue.Obs3,
-        CommandValue.Obs4, CommandValue.Obs5, CommandValue.Obs6, CommandValue.Obs7,
-        CommandValue.Obs8, CommandValue.Obs9, CommandValue.Obs10, CommandValue.Obs11,
-        CommandValue.Obs12, CommandValue.Obs13, CommandValue.Obs14, CommandValue.Obs15
-    };
-
-    private readonly Dictionary<string, CommandValue> _map = new(StringComparer.Ordinal);
-    private int _next;
-
-    /// <summary>槽位回绕次数。>0 意味着该域出现过 16 个以上不同值，变化次数会被低估。</summary>
-    public int WrapCount { get; private set; }
-
-    public CommandValue Project(string rawKey)
-    {
-        if (_map.TryGetValue(rawKey, out var v)) return v;
-        if (_next >= Slots.Length) { _next = 0; WrapCount++; }
-        v = Slots[_next++];
-        _map[rawKey] = v;
-        return v;
-    }
-
-    public string Describe() => string.Format(CultureInfo.InvariantCulture,
-        "distinct={0} wrap={1}", _map.Count, WrapCount);
 }

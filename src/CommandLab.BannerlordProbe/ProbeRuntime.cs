@@ -63,81 +63,6 @@ public sealed class FormationBinding
     };
 }
 
-/// <summary>
-/// intent_hold_share 采样器：归属窗口内按 Mission tick 累加"实际值 == 意图值"的时长。
-/// 支持多窗口累计（一条时间线里可能有多次 cmd）。窗口从 Open 起算，到 Close 结束。
-/// </summary>
-public sealed class HoldMeter
-{
-    private double _windowStart = -1.0;
-    private double _lastSample = -1.0;
-    private double _held;
-    private double _cumHeld;
-    private double _cumWindow;
-    private bool _open;
-    private CommandValue _lastActual = CommandValue.Unset;
-
-    public CommandValue Intent { get; private set; } = CommandValue.Unset;
-    public int Samples { get; private set; }
-    public int Matches { get; private set; }
-    public int Windows { get; private set; }
-    public bool IsOpen => _open;
-
-    /// <summary>当前（未关闭）窗口的时长；已关闭窗口计入 Cumulative。</summary>
-    public double WindowSeconds { get; private set; }
-    public double CumulativeSeconds => _cumWindow;
-    public double HeldSeconds => _cumHeld + _held;
-
-    public void Open(double now, CommandValue intent)
-    {
-        if (_open) Close(now);
-        _windowStart = now;
-        _lastSample = now;
-        _held = 0.0;
-        _open = true;
-        Intent = intent;
-        WindowSeconds = 0.0;
-    }
-
-    public void Sample(double now, CommandValue actual)
-    {
-        if (!_open || now <= _lastSample) return;
-        var dt = now - _lastSample;
-        Samples++;
-        if (actual == Intent) { _held += dt; Matches++; }
-        _lastSample = now;
-        _lastActual = actual;
-        WindowSeconds = Math.Max(0.0, now - _windowStart);
-    }
-
-    /// <summary>
-    /// 末段处理：最后一次采样到 Close 之间没有新采样点，按"状态未变"把这段时长计入同一判定。
-    /// 等价假设是 Order 只会在采样间隔内发生变化 —— 采样频率高于 FormationAI 周期（0.5s）时成立。
-    /// </summary>
-    public double Close(double now)
-    {
-        if (_open)
-        {
-            if (now > _lastSample && Samples > 0) Sample(now, _lastActual);
-            var w = Samples > 0 ? Math.Max(0.0, Math.Max(now, _lastSample) - _windowStart) : 0.0;
-            _cumWindow += w;
-            _cumHeld += _held;
-            _held = 0.0;
-            WindowSeconds = w;
-            Windows++;
-            _open = false;
-        }
-        return Share();
-    }
-
-    /// <summary>窗口内"实体值 == 意图值"的时长占比。窗口为 0 时返回 0（不得当作 100%）。</summary>
-    public double Share()
-    {
-        var total = _cumWindow + (_open ? WindowSeconds : 0.0);
-        return total > 0 ? (_cumHeld + _held) / total : 0.0;
-    }
-}
-
 public sealed class ProbeRuntime
 {
     [ThreadStatic] private static bool _inLabWrite;
@@ -153,6 +78,7 @@ public sealed class ProbeRuntime
     private readonly Dictionary<string, Lease> _leases = new Dictionary<string, Lease>(StringComparer.Ordinal);
     private readonly Dictionary<string, double> _acquiredAt = new Dictionary<string, double>(StringComparer.Ordinal);
     private readonly Dictionary<string, HoldMeter> _holds = new Dictionary<string, HoldMeter>(StringComparer.Ordinal);
+    private readonly NativeOverrideTracker _nativeOverrideTracker;
     private readonly List<KeyValuePair<string, HoldMeter>> _holdHistory = new List<KeyValuePair<string, HoldMeter>>();
     private readonly ScriptRunner _script;
 
@@ -172,6 +98,7 @@ public sealed class ProbeRuntime
         _clock = new ProbeClock();
         _telemetry = new TelemetryCollector();
         _authority = new AuthorityService(_telemetry, ProbeConfig.NativeWriterId);
+        _nativeOverrideTracker = new NativeOverrideTracker(ProbeConfig.LabWriterId, ProbeConfig.NativeWriterId);
         _port = new WritePort(_clock, _authority, _telemetry, config.ToPolicy());
         _script = new ScriptRunner(this, config.ScriptPath);
         Current = this;
@@ -189,16 +116,10 @@ public sealed class ProbeRuntime
     public double ReactionLatency { get; private set; } = -1.0;
 
     /// <summary>Lab 生效写入 -> 第一次原生生效覆盖的时间差。H1 的"多久被覆盖"。</summary>
-    public double NativeOverrideLatency { get; private set; } = -1.0;
-
-    /// <summary>
-    /// 按 (实体,域) 记录最近一次 Lab 生效写入的时刻。
-    /// 覆盖延迟必须在同一实体、同一域内关联 —— 用单一全局时间戳会把别的实体/别的域的改动误算成覆盖。
-    /// </summary>
-    private readonly Dictionary<string, double> _lastLabChangeAt = new Dictionary<string, double>(StringComparer.Ordinal);
+    public double NativeOverrideLatency => _nativeOverrideTracker.FirstNativeOverrideLatency;
 
     /// <summary>Lab 写入在本轮是否被写入口接受过。H1 没有获准的 Lab 写入时不能判"覆盖成功"。</summary>
-    public int AcceptedLabChanges { get; private set; }
+    public int AcceptedLabChanges => _nativeOverrideTracker.AcceptedLabChanges;
 
     /// <summary>
     /// 已落盘的崩溃报告份数。用于去重：同一个异常每 tick 都会抛，不做去重会把磁盘写爆。
@@ -408,21 +329,7 @@ public sealed class ProbeRuntime
 
         // H1 的核心量：Lab 的意图值被原生覆盖需要多久。必须同实体、同域关联，
         // 否则把别的 formation / 别的域的原生改动算进来，延迟值没有意义。
-        if (!attempt.Rejected && attempt.OrderChanged)
-        {
-            var k = Key(binding.EntityId, domain);
-            if (isLab)
-            {
-                _lastLabChangeAt[k] = attempt.Timestamp;
-                AcceptedLabChanges++;
-            }
-            else if (NativeOverrideLatency < 0 &&
-                     _lastLabChangeAt.TryGetValue(k, out var labAt) &&
-                     attempt.Timestamp >= labAt)
-            {
-                NativeOverrideLatency = attempt.Timestamp - labAt;
-            }
-        }
+        _nativeOverrideTracker.Observe(attempt);
 
         _hostLines.Add(HostContext.Line(
             attempt.Timestamp, binding.EntityId, domain, hook, formation,
@@ -946,14 +853,15 @@ public sealed class ProbeRuntime
             // 本装置未 acquire 时 Owner 恒为 Native，原生本来就是所有者 ⇒ 该计数结构性恒 0。
             // 现降级为记录值（与 H1-d 同级），改用"是否有获准的 Lab 写入"作为真正的前置门禁。
             rows.Add(Row("H1-a", "lab writes accepted > 0 (有可覆盖对象)",
-                AcceptedLabChanges.ToString(CultureInfo.InvariantCulture), AcceptedLabChanges > 0));
+                AcceptedLabChanges.ToString(CultureInfo.InvariantCulture),
+                ExperimentVerdicts.H1AcceptedLabChanges(AcceptedLabChanges)));
             rows.Add(Row("H1-b", "Movement 写入口有原生流量",
                 CensusOf("Formation.SetMovementOrder").ToString(CultureInfo.InvariantCulture),
                 CensusOf("Formation.SetMovementOrder") > 0));
             // H1-c 必须是真门禁：无覆盖时打印 no-override 并 FAIL，否则"没被覆盖"会被误报成成功。
             rows.Add(Row("H1-c", "first native override latency (s)",
                 NativeOverrideLatency < 0 ? "no-override" : NativeOverrideLatency.ToString("F3", CultureInfo.InvariantCulture),
-                NativeOverrideLatency >= 0));
+                ExperimentVerdicts.H1ObservedNativeOverride(NativeOverrideLatency)));
             rows.Add(Row("H1-d", "lab_overrides (Lab 反覆盖原生)",
                 m.LabOverrides.ToString(CultureInfo.InvariantCulture), true));
             rows.Add(Row("H1-e", "native_overrides (仅非所有者改动，本域恒 0)",
@@ -966,7 +874,7 @@ public sealed class ProbeRuntime
             var hold = BestHold();
             rows.Add(Row("G2", "intent_hold_share >= 95%",
                 hold is null ? "no-window" : (hold.Share() * 100.0).ToString("F1", CultureInfo.InvariantCulture) + "%",
-                hold is not null && hold.Share() >= 0.95));
+                ExperimentVerdicts.HoldTargetMet(hold)));
             rows.Add(Row("G3", "stability grade != Oscillating",
                 m.Grade.ToString(), m.Grade != StabilityGrade.Oscillating));
         }
@@ -980,12 +888,13 @@ public sealed class ProbeRuntime
             var hold3 = BestHold();
             rows.Add(Row("G2", "intent_hold_share >= 95%",
                 hold3 is null ? "no-window" : (hold3.Share() * 100.0).ToString("F1", CultureInfo.InvariantCulture) + "%",
-                hold3 is not null && hold3.Share() >= 0.95));
+                ExperimentVerdicts.HoldTargetMet(hold3)));
         }
         else if (prefix == "rel")
         {
             rows.Add(Row("REL", "release_recovery_failures == 0",
-                ReleaseRecoveryFailures.ToString(CultureInfo.InvariantCulture), ReleaseRecoveryFailures == 0));
+                ReleaseRecoveryFailures.ToString(CultureInfo.InvariantCulture),
+                ExperimentVerdicts.ReleaseRecoveryPassed(ReleaseRecoveryFailures)));
         }
 
         rows.Add(Row("X1", "release_recovery_failures", ReleaseRecoveryFailures.ToString(CultureInfo.InvariantCulture), true));
