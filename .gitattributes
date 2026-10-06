@@ -1,1 +1,2 @@
 tests/offline_telemetry/fixtures/*.txt -text
+tools/run_phase10.ps1 -text

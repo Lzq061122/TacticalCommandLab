@@ -40,8 +40,10 @@ public sealed class FormationBinding
     public HostOrderProjection FacingProjection { get; } = new HostOrderProjection();
     public HostOrderProjection ArrangementProjection { get; } = new HostOrderProjection();
 
-    /// <summary>最近一次观测到的原生 MovementOrder 原始值，用于 Release 时的恢复对照组。</summary>
+    /// <summary>最近一次被接受的 Native MovementOrder 原始 struct，用于 Release 恢复对照组。</summary>
     public MovementOrder? LastNativeMovement { get; set; }
+    public double? LastNativeMovementCapturedAt { get; set; }
+    public string? LastNativeMovementRawType { get; set; }
 
     /// <summary>夺取前 SetControlledByAI 的值；null 表示本轮没动过它。</summary>
     public bool? ControlledByAiBefore { get; set; }
@@ -277,11 +279,11 @@ public sealed class ProbeRuntime
     /// 否则就变成"用防御性代码掩盖真实缺陷"。
     /// </summary>
     public bool Gate(Formation formation, CommandDomain domain, WritePath path, string hook,
-                     CommandValue incoming, string raw)
+                     CommandValue incoming, string raw, MovementOrder? originalMovement = null)
     {
         try
         {
-            return GateCore(formation, domain, path, hook, incoming, raw);
+            return GateCore(formation, domain, path, hook, incoming, raw, originalMovement);
         }
         catch (Exception ex)
         {
@@ -291,7 +293,7 @@ public sealed class ProbeRuntime
     }
 
     private bool GateCore(Formation formation, CommandDomain domain, WritePath path, string hook,
-                          CommandValue incoming, string raw)
+                          CommandValue incoming, string raw, MovementOrder? originalMovement)
     {
         if (!Enabled(domain, path)) return true;
 
@@ -338,7 +340,12 @@ public sealed class ProbeRuntime
 
         if (!attempt.Rejected && !isLab && domain == CommandDomain.Movement)
         {
-            binding.LastNativeMovement = NeutralOrders.ToMovement(incoming);
+            if (originalMovement is MovementOrder nativeOrder)
+            {
+                binding.LastNativeMovement = nativeOrder;
+                binding.LastNativeMovementCapturedAt = attempt.Timestamp;
+                binding.LastNativeMovementRawType = raw;
+            }
         }
 
         return !attempt.Rejected;
@@ -385,17 +392,76 @@ public sealed class ProbeRuntime
         if (binding is null) return null;
         if (binding.LastNativeMovement is null) return null;
 
+        var order = binding.LastNativeMovement.Value;
+        var rawType = binding.LastNativeMovementRawType ?? order.OrderType.ToString();
+        var capturedAt = binding.LastNativeMovementCapturedAt?.ToString("F4", CultureInfo.InvariantCulture) ?? "unknown";
+        var position = MovementOrderPosition(order, binding.Formation);
+        var targetFormation = TargetFormationId(order);
+        Note(string.Format(CultureInfo.InvariantCulture,
+            "REL_ORDER stage=reapply-request E={0} capturedAt={1} rawType={2} position={3} targetFormation={4}",
+            binding.EntityId, capturedAt, rawType, position, targetFormation));
+
         _inLabWrite = true;
         try
         {
             LastAttempt = null;
-            formation.SetMovementOrder(binding.LastNativeMovement.Value);
+            formation.SetMovementOrder(order);
         }
         finally
         {
             _inLabWrite = false;
         }
+
+        var result = LastAttempt is null ? "no-attempt" : LastAttempt.Rejected ? "rejected" : "accepted";
+        var actual = ActualMovementOrder(binding.Formation);
+        Note(string.Format(CultureInfo.InvariantCulture,
+            "REL_ORDER stage=reapply-result E={0} capturedAt={1} requestedType={2} requestedPosition={3} " +
+            "requestedTargetFormation={4} result={5} actualType={6} actualPosition={7} actualTargetFormation={8}",
+            binding.EntityId, capturedAt, rawType, position, targetFormation, result,
+            actual.RawType, actual.Position, actual.TargetFormation));
         return LastAttempt;
+    }
+
+    private static string MovementOrderPosition(MovementOrder order, Formation formation)
+    {
+        try
+        {
+            var copy = order;
+            var position = copy.GetPosition(formation);
+            return string.Format(CultureInfo.InvariantCulture, "{0:R},{1:R}", position.x, position.y);
+        }
+        catch
+        {
+            return "unknown";
+        }
+    }
+
+    private string TargetFormationId(MovementOrder order)
+    {
+        try
+        {
+            var copy = order;
+            var target = copy.TargetFormation;
+            return target is null ? "-" : EntityIdOf(target);
+        }
+        catch
+        {
+            return "unknown";
+        }
+    }
+
+    private (string RawType, string Position, string TargetFormation) ActualMovementOrder(Formation formation)
+    {
+        try
+        {
+            var actual = formation.GetReadonlyMovementOrderReference();
+            var copy = actual;
+            return (copy.OrderType.ToString(), MovementOrderPosition(copy, formation), TargetFormationId(copy));
+        }
+        catch
+        {
+            return ("unknown", "unknown", "unknown");
+        }
     }
 
     // ---------------- Acquire / Renew / Release ----------------
@@ -1022,6 +1088,10 @@ public sealed class ProbeRuntime
             sb.AppendLine("harmonyId     = " + harmonyId);
             sb.AppendLine("patchedCount  = " + Patches.Applied.Count.ToString(CultureInfo.InvariantCulture));
             sb.AppendLine("patchFailure  = " + (Patches.Failure ?? "(none)"));
+            sb.AppendLine("--- loaded assembly identity ---");
+            AppendAssemblyIdentity(sb, "CommandLab.BannerlordProbe", typeof(ProbeRuntime).Assembly);
+            AppendAssemblyIdentity(sb, "CommandLab.Core", typeof(WritePort).Assembly);
+            AppendAssemblyIdentity(sb, "CommandLab.Telemetry", typeof(TelemetryCollector).Assembly);
             sb.AppendLine("--- patched methods ---");
             foreach (var pm in Patches.Applied) sb.AppendLine(pm);
             sb.AppendLine("--- pending notes ---");
@@ -1032,6 +1102,34 @@ public sealed class ProbeRuntime
         {
             // 哨兵失败不能影响游戏启动。
         }
+    }
+
+    private static void AppendAssemblyIdentity(StringBuilder sb, string name, System.Reflection.Assembly assembly)
+    {
+        var location = "(unknown)";
+        var mvid = "(unknown)";
+        var sha256 = "(unknown)";
+        try { location = string.IsNullOrEmpty(assembly.Location) ? "(empty)" : assembly.Location; }
+        catch (Exception ex) { location = "(error: " + ex.GetType().Name + ": " + ex.Message + ")"; }
+        try { mvid = assembly.ManifestModule.ModuleVersionId.ToString("D"); }
+        catch (Exception ex) { mvid = "(error: " + ex.GetType().Name + ": " + ex.Message + ")"; }
+        try
+        {
+            if (location == "(empty)" || location == "(unknown)") sha256 = "(unavailable: no assembly path)";
+            else if (!System.IO.File.Exists(location)) sha256 = "(missing: " + location + ")";
+            else
+            {
+                using (var stream = new System.IO.FileStream(location, System.IO.FileMode.Open,
+                    System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite | System.IO.FileShare.Delete))
+                using (var hash = System.Security.Cryptography.SHA256.Create())
+                    sha256 = BitConverter.ToString(hash.ComputeHash(stream)).Replace("-", string.Empty).ToLowerInvariant();
+            }
+        }
+        catch (Exception ex) { sha256 = "(error: " + ex.GetType().Name + ": " + ex.Message + ")"; }
+
+        sb.AppendLine(name + ".location = " + location);
+        sb.AppendLine(name + ".mvid = " + mvid);
+        sb.AppendLine(name + ".sha256 = " + sha256);
     }
 
     /// <summary>

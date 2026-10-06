@@ -103,6 +103,9 @@ raise SystemExit(99)
 '''
         self.dotnet.write_text(script, encoding="utf-8")
 
+    def _is_fake_dotnet(self, command) -> bool:
+        return bool(command) and Path(command[0]).resolve() == self.dotnet.resolve()
+
     def _invoke(self, **env_overrides: str) -> tuple[int, str, str, Path | None]:
         argv = ["run_offline.py", "--dotnet", str(self.dotnet)]
         stdout = io.StringIO()
@@ -113,12 +116,12 @@ raise SystemExit(99)
         actual_subprocess_run = runner.subprocess.run
 
         def portable_dotnet_run(command, cwd, command_env, log, label):
-            if command and command[0] == str(self.dotnet):
+            if self._is_fake_dotnet(command):
                 command = [runner.sys.executable, str(self.dotnet), *command[1:]]
             return actual_run(command, cwd, command_env, log, label)
 
         def portable_version_run(command, *args, **kwargs):
-            if command and command[0] == str(self.dotnet):
+            if self._is_fake_dotnet(command):
                 command = [runner.sys.executable, str(self.dotnet), *command[1:]]
             return actual_subprocess_run(command, *args, **kwargs)
 
@@ -135,6 +138,22 @@ raise SystemExit(99)
             if line.startswith("Reports: "):
                 report_dir = Path(line.removeprefix("Reports: "))
         return code, output, stderr.getvalue(), report_dir
+
+    def test_run_preserves_utf8_log_when_console_cannot_encode_output(self) -> None:
+        console_bytes = io.BytesIO()
+        console = io.TextIOWrapper(console_bytes, encoding="gbk", errors="strict")
+        log = io.StringIO()
+        child_env = os.environ.copy()
+        child_env["PYTHONIOENCODING"] = "utf-8"
+        with mock.patch.object(runner.sys, "stdout", console):
+            output, code = runner.run(
+                [runner.sys.executable, "-c", "print('probe \\U0001f600')"],
+                self.root, child_env, log, "console encoding probe")
+        console.flush()
+        self.assertEqual(code, 0)
+        self.assertEqual(output, "probe 😀\n")
+        self.assertEqual(log.getvalue(), "probe 😀\n")
+        self.assertIn(b"probe ?", console_bytes.getvalue())
 
     def _result(self, report_dir: Path | None) -> dict:
         self.assertIsNotNone(report_dir)
@@ -305,7 +324,7 @@ raise SystemExit(99)
         self.assertEqual(code, 1)
         self.assertIsNone(report_dir)
         self.assertNotIn("Reports:", stdout)
-        self.assertIn("File exists", stderr)
+        self.assertIn(collision.name, stderr)
         self.assertEqual(sentinel.read_text(encoding="utf-8"), "historical-result")
 
 

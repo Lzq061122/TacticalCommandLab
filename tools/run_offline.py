@@ -54,17 +54,30 @@ def resolve_dotnet(explicit: str | None) -> str:
     return str(Path(resolved).resolve())
 
 
+def write_console(text: str) -> None:
+    encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
+    sys.stdout.write(text.encode(encoding, errors="replace").decode(encoding))
+    sys.stdout.flush()
+
+
 def run(command: list[str], cwd: Path, env: dict[str, str], log, label: str) -> tuple[str, int]:
-    print(f"\n[{label}] {' '.join(command)}", flush=True)
+    write_console(f"\n[{label}] {' '.join(command)}\n")
     proc = subprocess.Popen(command, cwd=cwd, env=env, stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace")
     output: list[str] = []
     assert proc.stdout is not None
-    for line in proc.stdout:
-        print(line, end="", flush=True)
-        log.write(line)
-        output.append(line)
-    return "".join(output), proc.wait()
+    try:
+        for line in proc.stdout:
+            write_console(line)
+            log.write(line)
+            output.append(line)
+        return "".join(output), proc.wait()
+    finally:
+        if proc.stdout is not None:
+            proc.stdout.close()
+        if proc.poll() is None:
+            proc.terminate()
+            proc.wait()
 
 
 def phase_count(output: str, start: str, end: str | None) -> tuple[int, int]:
@@ -422,7 +435,7 @@ def main() -> int:
             pass
         return 1
 
-    print(f"Reports: {report_dir}")
+    write_console(f"Reports: {report_dir}\n")
     return 0 if result["status"] == "PASS" else 1
 
 

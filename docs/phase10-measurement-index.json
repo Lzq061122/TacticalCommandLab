@@ -1,0 +1,550 @@
+{
+  "schema": 1,
+  "scope": "Phase 10 measurement snapshot, not the date/time of the subsequent Git freeze",
+  "baseline_commit": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+  "source_mapping": "Measured at adab4cf plus archived four-file diff. This containing freeze commit stores those matching code/test blobs; documentation after measurement is not part of the measured snapshot.",
+  "code_files": [
+    {
+      "path": "src/CommandLab.BannerlordProbe/OrderWritePatches.cs",
+      "recorded_new_blob_prefix": "e7482c3",
+      "current_git_blob": "e7482c324b4069779dd3ecf9955e945c49874a14",
+      "current_file_sha256": "538626280d0d8866c20a9aa6ebbcaf28616f4012529bc8fdd3336cfd4df7ce6c"
+    },
+    {
+      "path": "src/CommandLab.BannerlordProbe/ProbeRuntime.cs",
+      "recorded_new_blob_prefix": "08e4f2c",
+      "current_git_blob": "08e4f2c62d1f3220b1bf0b03d62fe3f34e445390",
+      "current_file_sha256": "c90b2855233e68845132308eb269530bec2e050eb3875b9b2848f44f6ab6270b"
+    },
+    {
+      "path": "tests/offline_runner/test_run_offline.py",
+      "recorded_new_blob_prefix": "52716dd",
+      "current_git_blob": "52716dd2e1b8e7d76d5e02bbe79301de7a640cfb",
+      "current_file_sha256": "e5872a607bf0f7132c8c0f66a52224715f3f8572d620b818f24dde5d53676503"
+    },
+    {
+      "path": "tools/run_offline.py",
+      "recorded_new_blob_prefix": "430a5e2",
+      "current_git_blob": "430a5e261cb62f8593b5d6c702c25dbfcd3af5e5",
+      "current_file_sha256": "9232d5b4c2ea79825c12a5d690800dddc0dde3e60c25169750cf1fa21c880145"
+    }
+  ],
+  "measured_driver_sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3",
+  "tracked_driver_at_this_freeze": "tools/run_phase10.ps1 (byte-identical measured snapshot; later cleanup correction must be a separate commit)",
+  "historical_driver_path": "_audit/_tcl-step5.ps1",
+  "raw_data_policy": "Raw data remains local and is not added/rewritten. Hashes and repo-relative locations identify original records.",
+  "raw_manifest_checked": {
+    "path": "_audit/_local-phase10-20261006/session-artifact-manifest.json",
+    "sha256": "c663462a2c3fa4dc8a4e81bc201b59d0131954a520e6fba2c38322b25eee3667",
+    "checked_files": 724,
+    "mismatches": 0
+  },
+  "offline_result": {
+    "path": "tests/artifacts/offline-20261006T135059.876430Z-5638d296/result.json",
+    "sha256": "4c346576b836484b507eea5846be70899ac088ce297a865cbd865043dd70a647",
+    "runtime": "NOT_RUN",
+    "counts": {
+      "csharp": 102,
+      "python": 23,
+      "skipped": 0
+    }
+  },
+  "runs": [
+    {
+      "run": "run04-census-final",
+      "runtime": "RUN",
+      "measured_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "original_classification": "PASS",
+      "expected_counterexample": false,
+      "game_version": "v1.4.8.119303",
+      "input_index": [
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/telemetry-20261006-215243-census-baseline.txt",
+          "sha256": "df47950fa5a3a282c8e6e209bbd466e91e0adfc6dde5c9467508802185466e46"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/metrics-20261006-215243-census-baseline.txt",
+          "sha256": "051522bebe6593c36d8257e835fb0817e7f18b972618373e1296aa452368f52a"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/git-diff.txt",
+          "sha256": "cb8ef11cf50bc1daac25f1212a64b4b664f1ccb804bb9212a35df9db56537b36"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/driver-script.ps1",
+          "sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/source-head.txt",
+          "sha256": "2a0ace4cf2a67bc6dde11695bc310af83f35de2d0fb40ed463a436eddf518873"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/boot-marker.txt",
+          "sha256": "eb0fdb21ef1035e7edffcedcb86a5e936f1ea284cd31425515aa636bc68d5b61"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/patch-marker.txt",
+          "sha256": "94730280482a44d23c8bcd7b92dfdda4fc58ab99449aa892ca2e2fa664cc225c"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/deployment-manifest.json",
+          "sha256": "f86fa6e4da729248ee2318e700a163641b1362f9b577c2e9bb7d53c5156b7ae3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/runtime-identity.json",
+          "sha256": "e0777d2818dde6b85d986d27085780b10bfa4c9f933f2c864dd18780772c1907"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/script-seeded.txt",
+          "sha256": "33e9a9e5361f10363c7fc8dcba98345bf0d6fa9aeb51c5fc1cdb928db453d0fb"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/get-last-run.json",
+          "sha256": "c01006f933fae86ee5b1eeae1826240d9e6b094c6b06dec885cf18268522d8fa"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/assessment.json",
+          "sha256": "8720155541360abfb3d0c54c4040d9803b94254c586ddf001488d6b992a66df3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run04-census-final/cleanup-result.txt",
+          "sha256": "bf9b5d9576f23812d3a58c66a57a3fd7616cb25fd90538cbca5bd8b761f6c5fb"
+        }
+      ]
+    },
+    {
+      "run": "run05-h2-suppression",
+      "runtime": "RUN",
+      "measured_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "original_classification": "FAIL",
+      "expected_counterexample": false,
+      "game_version": "v1.4.8.119303",
+      "input_index": [
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/telemetry-20261006-215546-h2-suppression.txt",
+          "sha256": "9242c6576846709dcc302c26c1f2d1155f4aa35b33ecbc645a947c3d473bc35e"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/metrics-20261006-215546-h2-suppression.txt",
+          "sha256": "b37a56b95881507397e5665c637338998dff2de38983be62ecae422bb62ab962"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/git-diff.txt",
+          "sha256": "cb8ef11cf50bc1daac25f1212a64b4b664f1ccb804bb9212a35df9db56537b36"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/driver-script.ps1",
+          "sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/source-head.txt",
+          "sha256": "2a0ace4cf2a67bc6dde11695bc310af83f35de2d0fb40ed463a436eddf518873"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/boot-marker.txt",
+          "sha256": "b6adb0ac00d86267bb74afe491ad7994b854907088f5dcf061e4336c69b85b28"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/patch-marker.txt",
+          "sha256": "3bc0ea579d4ea1f3bfa6118e4f8e52e66a007159db558deaee6efc7955077512"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/deployment-manifest.json",
+          "sha256": "f86fa6e4da729248ee2318e700a163641b1362f9b577c2e9bb7d53c5156b7ae3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/runtime-identity.json",
+          "sha256": "b7a52219aeabaaab316921c95c39d110f0babb98042e4993d53cb67ce3ca8e89"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/script-seeded.txt",
+          "sha256": "af3655b3b78f68acb9f27297c43999b621f14242ce61cf78e8ea8dad4ce2079e"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/get-last-run.json",
+          "sha256": "c2b038936060c77b199fa0468fd002745fafe83851edd256ebfc4d7e15ae03e9"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/assessment.json",
+          "sha256": "0fcaed84f2a7bdbe012ec9de9f673bd860d2dbcb6847c2192655294b2b483ab2"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run05-h2-suppression/cleanup-result.txt",
+          "sha256": "bf9b5d9576f23812d3a58c66a57a3fd7616cb25fd90538cbca5bd8b761f6c5fb"
+        }
+      ]
+    },
+    {
+      "run": "run06-h2-coverage",
+      "runtime": "RUN",
+      "measured_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "original_classification": "FAIL",
+      "expected_counterexample": false,
+      "game_version": "v1.4.8.119303",
+      "input_index": [
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/telemetry-20261006-215736-h2-coverage.txt",
+          "sha256": "c2f41b3f6c8814f04cd43d08c8c6a1e86a72273ffd417eb86fca79340e1d6f3b"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/metrics-20261006-215736-h2-coverage.txt",
+          "sha256": "f7ab7084150b4376b412c1d6d58234d1be59a304623129967b72180fce5d6082"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/git-diff.txt",
+          "sha256": "cb8ef11cf50bc1daac25f1212a64b4b664f1ccb804bb9212a35df9db56537b36"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/driver-script.ps1",
+          "sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/source-head.txt",
+          "sha256": "2a0ace4cf2a67bc6dde11695bc310af83f35de2d0fb40ed463a436eddf518873"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/boot-marker.txt",
+          "sha256": "4b95388176f66149d434d70f7a0e056ad95a1d2b1a512bf28497c393d64ec5fe"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/patch-marker.txt",
+          "sha256": "f8b15b2fb2f1bea605b146e4836da18829308c5d47412c4381a9d600e249bf9e"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/deployment-manifest.json",
+          "sha256": "f86fa6e4da729248ee2318e700a163641b1362f9b577c2e9bb7d53c5156b7ae3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/runtime-identity.json",
+          "sha256": "beb5cb749a26e1f22e4201c3e5281435d711870c730e0075b651d9eecfb1bdd1"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/script-seeded.txt",
+          "sha256": "75fd43c0e1babcfce64850f6799557bb9ffdf75ed10da47aef32a6c097b21ca9"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/get-last-run.json",
+          "sha256": "d5fac58486cc5879ff8faf11f6449b949bc7e24de20949592512628128813291"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/assessment.json",
+          "sha256": "849162fa61802a41c9448842819451d4056a47013cca67dc29186c96256d1927"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run06-h2-coverage/cleanup-result.txt",
+          "sha256": "bf9b5d9576f23812d3a58c66a57a3fd7616cb25fd90538cbca5bd8b761f6c5fb"
+        }
+      ]
+    },
+    {
+      "run": "run07-h3-route-b",
+      "runtime": "RUN",
+      "measured_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "original_classification": "PASS",
+      "expected_counterexample": false,
+      "game_version": "v1.4.8.119303",
+      "input_index": [
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/telemetry-20261006-215927-h3-route-b.txt",
+          "sha256": "57205e643e42418a67ffaf1039a1acd5d05141df7045af104b4c88ca4d0d252b"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/metrics-20261006-215927-h3-route-b.txt",
+          "sha256": "f47bda68f0f0941d67863367b1328527af1e2b697147d3b2d550f848033a492f"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/git-diff.txt",
+          "sha256": "cb8ef11cf50bc1daac25f1212a64b4b664f1ccb804bb9212a35df9db56537b36"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/driver-script.ps1",
+          "sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/source-head.txt",
+          "sha256": "2a0ace4cf2a67bc6dde11695bc310af83f35de2d0fb40ed463a436eddf518873"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/boot-marker.txt",
+          "sha256": "eccc53d37541e370dd39eeb2b312d4e58daa342de1dfd46fef2bcea9de77804d"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/patch-marker.txt",
+          "sha256": "1c829f4b2768f58f7956d62f2ea0e6963040486f185b3bdd5918f5dbcab0a679"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/deployment-manifest.json",
+          "sha256": "f86fa6e4da729248ee2318e700a163641b1362f9b577c2e9bb7d53c5156b7ae3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/runtime-identity.json",
+          "sha256": "9281978594d94b6847702b7b3506d3b1c80f271eb5d1fe39dc6230f172ec9c91"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/script-seeded.txt",
+          "sha256": "17a351b2fe83e086e261aba15717a5e1034d585218a695a2df290e2713c61fec"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/get-last-run.json",
+          "sha256": "7ec9fa5a08ed82d4f8849ccd0b0c85c77aba6cb6487c1468926a88830bf8070f"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/assessment.json",
+          "sha256": "f0c1edd36438c9bd85f46ad116a12d8e0b833d85480906bdcfc437b55c4d290f"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run07-h3-route-b/cleanup-result.txt",
+          "sha256": "bf9b5d9576f23812d3a58c66a57a3fd7616cb25fd90538cbca5bd8b761f6c5fb"
+        }
+      ]
+    },
+    {
+      "run": "run08-rel-none",
+      "runtime": "RUN",
+      "measured_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "original_classification": "PASS",
+      "expected_counterexample": false,
+      "game_version": "v1.4.8.119303",
+      "input_index": [
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/telemetry-20261006-220128-rel-none.txt",
+          "sha256": "81236f848b42e12337f734f46924cd35a86f2cf0f4a6c6b674e3c852e5cdc66c"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/metrics-20261006-220128-rel-none.txt",
+          "sha256": "d6a41036033fb3eae322017843dc3531669ed143bd37dc13753fe40b1e0afa42"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/git-diff.txt",
+          "sha256": "cb8ef11cf50bc1daac25f1212a64b4b664f1ccb804bb9212a35df9db56537b36"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/driver-script.ps1",
+          "sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/source-head.txt",
+          "sha256": "2a0ace4cf2a67bc6dde11695bc310af83f35de2d0fb40ed463a436eddf518873"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/boot-marker.txt",
+          "sha256": "a11c7a8824ec3440db28e640301707b72ea49c967b0c46e50a8fb45073d3d829"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/patch-marker.txt",
+          "sha256": "e443ef6a1326fdbad3da458a88fc3d2c8514562e62b55de245ed55e9862a4efe"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/deployment-manifest.json",
+          "sha256": "f86fa6e4da729248ee2318e700a163641b1362f9b577c2e9bb7d53c5156b7ae3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/runtime-identity.json",
+          "sha256": "6572970e1db3d87640f94b2050c6e0d0f53cfdccb17d5cc82630e84b9908b366"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/script-seeded.txt",
+          "sha256": "6357eed5644392ac0150e5d817f5a07c86c939404280db2c001a0e921b2da824"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/get-last-run.json",
+          "sha256": "192ca73655226a9d72657ebe4e61915cf4159701f1ebd4532020d5d7b94e16c6"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/assessment.json",
+          "sha256": "39bfa1076a17884c747e11128f7f10b0f56db57cc4791d231cff6bd6a5f66006"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run08-rel-none/cleanup-result.txt",
+          "sha256": "bf9b5d9576f23812d3a58c66a57a3fd7616cb25fd90538cbca5bd8b761f6c5fb"
+        }
+      ]
+    },
+    {
+      "run": "run09-rel-reapply",
+      "runtime": "RUN",
+      "measured_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "original_classification": "PASS",
+      "expected_counterexample": false,
+      "game_version": "v1.4.8.119303",
+      "input_index": [
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/telemetry-20261006-220327-rel-reapply.txt",
+          "sha256": "ffb7e5b12b6590edd64b21dc8d4042df0f165557b00cc8bb3a7fea5c7f9f5ef8"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/metrics-20261006-220327-rel-reapply.txt",
+          "sha256": "311a19ee1167050eaa7e51ba975794be6c4ba87780258576d3af20a587436fb0"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/git-diff.txt",
+          "sha256": "cb8ef11cf50bc1daac25f1212a64b4b664f1ccb804bb9212a35df9db56537b36"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/driver-script.ps1",
+          "sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/source-head.txt",
+          "sha256": "2a0ace4cf2a67bc6dde11695bc310af83f35de2d0fb40ed463a436eddf518873"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/boot-marker.txt",
+          "sha256": "ffdd8f47882d80da7a8884480e943697eff327e242bcef75d9267d948d5a3708"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/patch-marker.txt",
+          "sha256": "c9796eb3966ef838979aba6ed0e2f787a49a650b6462a749072cd4df676e4767"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/deployment-manifest.json",
+          "sha256": "f86fa6e4da729248ee2318e700a163641b1362f9b577c2e9bb7d53c5156b7ae3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/runtime-identity.json",
+          "sha256": "5f2b02c91af66f9ba9eb89c14aa7c7c40ce4126c86f3658aab089c078a52a6c9"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/script-seeded.txt",
+          "sha256": "872415760009e8d018f54497ba9be34385ec13377c250260e8d366160ceb42e9"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/get-last-run.json",
+          "sha256": "86e655887e5e80e9861a22044ca00d7d0216f952ea0fff2b4cb8c0c5f51e73c6"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/assessment.json",
+          "sha256": "886c8ad22446b17d05f7e0c5c956e87edb3b95d1ce47c7c29a1fecc3ceefc3a5"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run09-rel-reapply/cleanup-result.txt",
+          "sha256": "bf9b5d9576f23812d3a58c66a57a3fd7616cb25fd90538cbca5bd8b761f6c5fb"
+        }
+      ]
+    },
+    {
+      "run": "run10-rel-reapply-resetweights",
+      "runtime": "RUN",
+      "measured_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "original_classification": "PASS",
+      "expected_counterexample": false,
+      "game_version": "v1.4.8.119303",
+      "input_index": [
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/telemetry-20261006-220518-rel-reapply-resetweights.txt",
+          "sha256": "4e92417cedc223b2caefdc03739dc3648184d2b0394a7da25b23c619eea1fc55"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/metrics-20261006-220518-rel-reapply-resetweights.txt",
+          "sha256": "715958718d8bf6b4606f5cb2e48591bf1cda2c50f8fb7fe9f1712cd4406e901b"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/git-diff.txt",
+          "sha256": "cb8ef11cf50bc1daac25f1212a64b4b664f1ccb804bb9212a35df9db56537b36"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/driver-script.ps1",
+          "sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/source-head.txt",
+          "sha256": "2a0ace4cf2a67bc6dde11695bc310af83f35de2d0fb40ed463a436eddf518873"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/boot-marker.txt",
+          "sha256": "b6957f5b16c5f300d9fab098c462b20f4143294bfa54f71b1e029040ffac7aa7"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/patch-marker.txt",
+          "sha256": "85cf51e3acea01f31178b9635e0c636ddc6a1ea3f211c4c0c921e0d533b1bc02"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/deployment-manifest.json",
+          "sha256": "f86fa6e4da729248ee2318e700a163641b1362f9b577c2e9bb7d53c5156b7ae3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/runtime-identity.json",
+          "sha256": "b379b54991f90c91880ac85787ac1fcf7123e3c67c71e86e52a9b24d049aafc6"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/script-seeded.txt",
+          "sha256": "ffffcf1ab93467a843ded2025a599cf4b487421811b5b4a036103062fc21e322"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/get-last-run.json",
+          "sha256": "2c53eeff38c0eb26c5e932dfcc378b00d6ebdae672450e1f5ac7f4daf36afc54"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/assessment.json",
+          "sha256": "8de8d77ecd2911080403e3c21f49275001072dcf95f741e7baef6bcbc6f9f25c"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run10-rel-reapply-resetweights/cleanup-result.txt",
+          "sha256": "bf9b5d9576f23812d3a58c66a57a3fd7616cb25fd90538cbca5bd8b761f6c5fb"
+        }
+      ]
+    },
+    {
+      "run": "run11-rel-after-release",
+      "runtime": "RUN",
+      "measured_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "original_classification": "FAIL",
+      "expected_counterexample": true,
+      "game_version": "v1.4.8.119303",
+      "input_index": [
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/telemetry-20261006-220719-rel-after-release.txt",
+          "sha256": "0c121a76be088647650d424cf3649c8779da5aa8e8f8f02563f7d698975041da"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/metrics-20261006-220719-rel-after-release.txt",
+          "sha256": "3364ae7c9e4c5a8c4dd6d8f67073e6e9ba44b76fdecf5d6aca4eba488bb4c6fd"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/git-diff.txt",
+          "sha256": "cb8ef11cf50bc1daac25f1212a64b4b664f1ccb804bb9212a35df9db56537b36"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/driver-script.ps1",
+          "sha256": "541c4ce45c46718ec0633e77a8ea69a8196bb3ef72750357672f29377eb6cdc3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/source-head.txt",
+          "sha256": "2a0ace4cf2a67bc6dde11695bc310af83f35de2d0fb40ed463a436eddf518873"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/boot-marker.txt",
+          "sha256": "54b802241e25937af0f30c25784255ca70de975de5bc8fea8e5073ed95140e64"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/patch-marker.txt",
+          "sha256": "d42ac44ffbe84cfb40840494b8014dfd0ceaf8b07325803d826d2c81990ec343"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/deployment-manifest.json",
+          "sha256": "f86fa6e4da729248ee2318e700a163641b1362f9b577c2e9bb7d53c5156b7ae3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/runtime-identity.json",
+          "sha256": "9f64bf45675eddc3d807a60fc0418abb2fa2791443c619f8d0f8cf2132557f28"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/script-seeded.txt",
+          "sha256": "38d29cac4d6d43805df6ec16cd8dec5763fdf03318d69810db94a7f280a457c3"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/get-last-run.json",
+          "sha256": "0db2290bc9c2f57f4930569dc8116aafd62747f2680efe341ca2a5b966b8f224"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/assessment.json",
+          "sha256": "da7768a9a9caa395aada8ee1a5e79d7d2da0cab592a537306f34df0324668ca6"
+        },
+        {
+          "path": "_audit/_local-phase10-20261006/run11-rel-after-release/cleanup-result.txt",
+          "sha256": "bf9b5d9576f23812d3a58c66a57a3fd7616cb25fd90538cbca5bd8b761f6c5fb"
+        }
+      ]
+    }
+  ]
+}
