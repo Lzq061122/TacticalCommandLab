@@ -1,0 +1,32 @@
+[
+  {
+    "path": "docs/07-final-architecture.md",
+    "sha256": "6512a08afb9329c94a4052440a46c3be03c523d7e590897ff62025a64ca99536",
+    "bytes": 53949,
+    "physical_lines": 477
+  },
+  {
+    "path": "_audit/2026-10-07-phase11-evidence-review.md",
+    "sha256": "871923010b2655ac8bc5ec1ef2d016eb74ad20e2a54c2fe6a9b4e33976c8eaea",
+    "bytes": 37463,
+    "physical_lines": 463
+  },
+  {
+    "path": "HANDOFF.phase11.md",
+    "sha256": "fa48fd526e012a478c167e43cd660890e2f2d3f0c4bd42e9dbac455bfe9b1772",
+    "bytes": 28521,
+    "physical_lines": 142
+  },
+  {
+    "path": "docs/05-experiment-plan.md",
+    "sha256": "7eac433b89b7a6848e9d8b7fa795f025afd0b0c6842a64c76963acc031289a82",
+    "bytes": 42509,
+    "physical_lines": 396
+  },
+  {
+    "path": "docs/phase11-design.md",
+    "sha256": "2c049e6d737f65caf813f655654ca3b12e4ff66ee76302e7fe152d2c8af78358",
+    "bytes": 19622,
+    "physical_lines": 146
+  }
+]

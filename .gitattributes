@@ -1,0 +1,4 @@
+tests/offline_telemetry/fixtures/*.txt -text
+tools/run_phase10.ps1 -text
+docs/evidence/phase10-closure-20261007/*.csv -text whitespace=cr-at-eol
+docs/evidence/phase10-closure-20261007/*.json -text whitespace=cr-at-eol

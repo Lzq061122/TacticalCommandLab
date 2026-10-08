@@ -1,0 +1,1 @@
+t=1.0000|tick=1|E=A|D=Movement|P=Gated|W=Lab|O=Lab|L=3|lease=L1|tok=1|max=1|gen=1|rgen=1|exp=9.0000|cmd=ADVANCE|prev=HOLD|new=ADVANCE|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000|E=duplicate

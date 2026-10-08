@@ -1,0 +1,20 @@
+[
+  {
+    "path": "docs/07-final-architecture.md",
+    "before": "6512a08afb9329c94a4052440a46c3be03c523d7e590897ff62025a64ca99536",
+    "after": "816e8b7254f92e8fe5a17bf512c1491b30a2a1b260374ad3e7f34cf361ba291d",
+    "change": "design version marker only"
+  },
+  {
+    "path": "_audit/2026-10-07-phase11-evidence-review.md",
+    "before": "871923010b2655ac8bc5ec1ef2d016eb74ad20e2a54c2fe6a9b4e33976c8eaea",
+    "after": "4fc578342badccf97ca946791937b6cdc3b14f88ab8c7e3856d04d84fb347654",
+    "change": "design version marker only"
+  },
+  {
+    "path": "HANDOFF.phase11.md",
+    "before": "fa48fd526e012a478c167e43cd660890e2f2d3f0c4bd42e9dbac455bfe9b1772",
+    "after": "045af7c6775df5d388a39bc3bac16c3368174173b55a3970ceca67c2b85bd883",
+    "change": "design version marker and HANDOFF diff-count typo"
+  }
+]

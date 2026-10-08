@@ -128,7 +128,7 @@ internal static class Patches
                     : binding.MovementProjection.Project(raw);
 
                 return runtime.Gate(__instance, CommandDomain.Movement, WritePath.Gated,
-                                    "Formation.SetMovementOrder", value, raw);
+                                    "Formation.SetMovementOrder", value, raw, input);
             }
             catch (Exception ex)
             {

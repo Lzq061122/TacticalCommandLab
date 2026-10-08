@@ -1,0 +1,72 @@
+[
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\arbitration-reproduction.txt",
+    "bytes": 1080,
+    "sha256": "5aadff70bbb08f53f3b6643f70cfeddb15710adce5e43840de4d1cf4427eb509"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\ArbitrationOrder.csproj",
+    "bytes": 361,
+    "sha256": "996ef892e935adfe1c7e9e8c8021f478cae0b0b7d60415d67c958d2e5133e5a8"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\independent-checks.json",
+    "bytes": 26873,
+    "sha256": "d4d40bd076ba87244e6e456562254355b4083412860b2e60d7adc146e6e6e813"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\Program.cs",
+    "bytes": 1737,
+    "sha256": "8ca609cf114073460be96056fa43ce62bc5d112368982e10d1aa1a01e68ae0dd"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\review_evidence.py",
+    "bytes": 4634,
+    "sha256": "732e8c719c4f68659e7d9804260bb2d5c4d31aa1f35e6099eee487e57901b22b"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\run04-census-final.recompute.json",
+    "bytes": 2201,
+    "sha256": "16b0afb8af1eaad930c7ebab2b3826cde0bb0861f411d84d6b751086661ab3b5"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\run05-h2-suppression.recompute.json",
+    "bytes": 2336,
+    "sha256": "a45627769d7776e6aff3596c95e21089b69ee16e8140600006c0fc55d618bda1"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\run06-h2-coverage.recompute.json",
+    "bytes": 2329,
+    "sha256": "0ca787aa2bf3b5aed5e40339379a0858e7e69ad8639dbee5e04d08fd3b6221e4"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\run07-h3-route-b.recompute.json",
+    "bytes": 2327,
+    "sha256": "3b06d38510645556aa8a59b43424adb24cef2c6cee1e2316ab055a13454b00f7"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\run08-rel-none.recompute.json",
+    "bytes": 2324,
+    "sha256": "fa2b6d90091017ca9943b3b58866dd6b1537bfd688508280eee9c6d2b8ae6af3"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\run09-rel-reapply.recompute.json",
+    "bytes": 2171,
+    "sha256": "3fb606a7525332a9535fd51a635d012bd7c64801fc3b6e14b6c352772a1d8ba6"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\run10-rel-reapply-resetweights.recompute.json",
+    "bytes": 2197,
+    "sha256": "942124ef1248b62a03da27499037697015472b17dd684696c2a76ad203561bea"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-codex-review\\run11-rel-after-release.recompute.json",
+    "bytes": 2342,
+    "sha256": "03d68bd4c5e57cd8a6b1b290bcb615fd4990b918399d6689d609feba2fc96505"
+  },
+  {
+    "path": "_audit\\2026-10-07-phase11-review.md",
+    "bytes": 13510,
+    "sha256": "a5ed2e79e0c9dde60767755ffc88ed886538f6ea54adb0ec33ce350fc8c06503"
+  }
+]

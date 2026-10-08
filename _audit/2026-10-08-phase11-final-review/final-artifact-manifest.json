@@ -1,0 +1,57 @@
+{
+  "acceptance": "PASS_PHASE11_BASIC_DELIVERY",
+  "date": "2026-10-08",
+  "game_runtime_this_review": "NOT_RUN",
+  "phase12": "NOT_STARTED",
+  "files": [
+    {
+      "path": "docs\\07-final-architecture.md",
+      "sha256": "816e8b7254f92e8fe5a17bf512c1491b30a2a1b260374ad3e7f34cf361ba291d",
+      "bytes": 54041,
+      "physical_lines": 477,
+      "nonempty_lines": 336
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-evidence-review.md",
+      "sha256": "4fc578342badccf97ca946791937b6cdc3b14f88ab8c7e3856d04d84fb347654",
+      "bytes": 37555,
+      "physical_lines": 463,
+      "nonempty_lines": 346
+    },
+    {
+      "path": "HANDOFF.phase11.md",
+      "sha256": "4d8af326d47a0d92dfae06438b7252ef4042db5510b3160ed1d8de990480e9ca",
+      "bytes": 29071,
+      "physical_lines": 144,
+      "nonempty_lines": 115
+    },
+    {
+      "path": "docs\\05-experiment-plan.md",
+      "sha256": "7eac433b89b7a6848e9d8b7fa795f025afd0b0c6842a64c76963acc031289a82",
+      "bytes": 42509,
+      "physical_lines": 396,
+      "nonempty_lines": 305
+    },
+    {
+      "path": "docs\\phase11-design.md",
+      "sha256": "2c049e6d737f65caf813f655654ca3b12e4ff66ee76302e7fe152d2c8af78358",
+      "bytes": 19622,
+      "physical_lines": 146,
+      "nonempty_lines": 100
+    },
+    {
+      "path": "HANDOFF.md",
+      "sha256": "363672a3aa767145445166900b8aea70bff7997c7911259532e73287de87df20",
+      "bytes": 162218,
+      "physical_lines": 743,
+      "nonempty_lines": 595
+    },
+    {
+      "path": "_audit\\2026-10-08-phase11-final-review.md",
+      "sha256": "4e00a4696436dfd8747ff6b0e6deffc1c9a1441c1cff177c32a85a53cf71e135",
+      "bytes": 4430,
+      "physical_lines": 42,
+      "nonempty_lines": 28
+    }
+  ]
+}

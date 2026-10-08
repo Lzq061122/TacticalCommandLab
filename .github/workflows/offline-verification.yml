@@ -1,0 +1,228 @@
+name: Offline verification
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: offline-verification-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline:
+    name: .NET 10 / Python 3.12 offline verification
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Check out source
+        # actions/checkout v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Set up .NET 10
+        # actions/setup-dotnet v6.0.0
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Set up Python 3.12
+        # actions/setup-python v7.0.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+
+      - name: Run offline verification
+        id: verify
+        run: python tools/run_offline.py
+
+      - name: Add result JSON to the job summary
+        if: always()
+        env:
+          VERIFY_OUTCOME: ${{ steps.verify.outcome }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+          import sys
+
+          reports = sorted(Path("tests/artifacts").glob("offline-*/result.json"),
+                           key=lambda path: path.stat().st_mtime_ns)
+          summary = ["# Offline verification", ""]
+          if not reports:
+              summary += ["**Overall: FAIL — NO_RESULT**", "",
+                          f"Verification step outcome: `{os.environ.get('VERIFY_OUTCOME', 'unknown')}`.",
+                          "No result.json was produced; inspect the setup and verification logs.", ""]
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as stream:
+                  stream.write("\n".join(summary))
+              sys.exit(1)
+
+          path = reports[-1]
+          try:
+              result = json.loads(path.read_text(encoding="utf-8"))
+          except (OSError, json.JSONDecodeError) as exc:
+              summary += ["**Overall: FAIL — INVALID_RESULT**", "", f"Result file: `{path}`",
+                          f"Read error: `{exc}`", ""]
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as stream:
+                  stream.write("\n".join(summary))
+              sys.exit(1)
+
+          expected_checks = {"D0": 15, "E1-E11": 51, "E12": 10, "MEASURE": 26}
+          expected_builds = {
+              ("src/CommandLab.Core/CommandLab.Core.csproj", "net10.0"),
+              ("src/CommandLab.Core/CommandLab.Core.csproj", "netstandard2.0"),
+              ("src/CommandLab.Telemetry/CommandLab.Telemetry.csproj", "net10.0"),
+              ("src/CommandLab.Telemetry/CommandLab.Telemetry.csproj", "netstandard2.0"),
+              ("src/CommandLab.Simulation/CommandLab.Simulation.csproj", "net10.0"),
+              ("tests/CommandLab.Tests/CommandLab.Tests.csproj", "net10.0"),
+          }
+          def object_or_empty(value):
+              return value if isinstance(value, dict) else {}
+
+          def list_or_empty(value):
+              return value if isinstance(value, list) else []
+
+          def safe(value):
+              return str(value if value is not None else "UNKNOWN").replace("|", "\\|").replace("`", "\\`").replace("\r", " ").replace("\n", " ")[:500]
+
+          if not isinstance(result, dict):
+              summary += ["**Overall: FAIL — INVALID_RESULT**", "", "The result JSON root must be an object.", ""]
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as stream:
+                  stream.write("\n".join(summary))
+              sys.exit(1)
+
+          source = object_or_empty(result.get("source"))
+          sdk = object_or_empty(result.get("sdk"))
+          checks = object_or_empty(result.get("checks"))
+          builds = list_or_empty(result.get("builds"))
+          validation_errors = []
+          if not isinstance(result.get("source"), dict):
+              validation_errors.append("source field is not an object")
+          if not isinstance(result.get("sdk"), dict):
+              validation_errors.append("sdk field is not an object")
+          if not isinstance(result.get("checks"), dict):
+              validation_errors.append("checks field is not an object")
+          if not isinstance(result.get("builds"), list):
+              validation_errors.append("builds field is not an array")
+          if result.get("schema") != 1:
+              validation_errors.append("unsupported result schema")
+          if result.get("runtime") != "NOT_RUN":
+              validation_errors.append("runtime field is not NOT_RUN")
+          if len(builds) != 6:
+              validation_errors.append(f"expected six build records, found {len(builds)}")
+          actual_builds = set()
+          for build in builds:
+              if not isinstance(build, dict):
+                  validation_errors.append("build record is not an object")
+                  continue
+              project, framework = build.get("project"), build.get("framework")
+              if not isinstance(project, str) or not isinstance(framework, str):
+                  validation_errors.append("build project/framework must be strings")
+                  continue
+              identity = (project, framework)
+              if identity in actual_builds:
+                  validation_errors.append(f"duplicate build record: {identity}")
+              actual_builds.add(identity)
+              if build.get("status") != "PASS" or build.get("exit_code") != 0:
+                  validation_errors.append(f"build failed: {build.get('project')} {build.get('framework')}")
+          if actual_builds != expected_builds:
+              validation_errors.append("build project/framework set differs from the required six targets")
+          current_head = subprocess.run(["git", "rev-parse", "HEAD"], check=True, capture_output=True,
+                                        text=True).stdout.strip()
+          if source.get("git_head") != current_head:
+              validation_errors.append("result source.git_head does not match this checkout")
+          if (not isinstance(source.get("sha256"), str) or len(source["sha256"]) != 64
+                  or any(char not in "0123456789abcdef" for char in source["sha256"].lower())):
+              validation_errors.append("source SHA-256 is missing or malformed")
+          for name, expected in expected_checks.items():
+              item = object_or_empty(checks.get(name))
+              if (item.get("status") != "PASS" or item.get("passed") != expected
+                      or item.get("expected") != expected or item.get("failed") != 0):
+                  validation_errors.append(f"check mismatch: {name}")
+          python_checks = list_or_empty(checks.get("Python"))
+          if not python_checks:
+              validation_errors.append("no Python unittest records")
+          python_suites = set()
+          for item in python_checks:
+              if not isinstance(item, dict):
+                  validation_errors.append("Python test record is not an object")
+                  continue
+              suite = item.get("suite")
+              if not isinstance(suite, str):
+                  validation_errors.append("Python suite name must be a string")
+              else:
+                  python_suites.add(suite)
+              if (item.get("status") != "PASS" or item.get("failed") != 0
+                      or not isinstance(item.get("passed"), int) or item.get("passed", 0) < 1
+                      or item.get("expected") != item.get("discovered")
+                      or not isinstance(item.get("discovered"), int) or item.get("discovered", 0) < 1
+                      or not isinstance(item.get("skipped"), int)
+                      or item.get("passed", 0) + item.get("skipped", 0) != item.get("discovered")
+                      or item.get("exit_code") != 0):
+                  validation_errors.append(f"Python suite failed or had no discovered tests: {item.get('suite')}")
+          if not {"tests/offline_telemetry", "tests/offline_runner"}.issubset(python_suites):
+              validation_errors.append("Python records must include offline_telemetry and offline_runner suites")
+          verify_outcome = os.environ.get("VERIFY_OUTCOME", "unknown")
+          runner_status = result.get("status", "UNKNOWN")
+          if runner_status not in ("PASS", "FAIL"):
+              validation_errors.append("result status must be PASS or FAIL")
+          if runner_status == "PASS" and (result.get("failed_stage") is not None or result.get("error") is not None):
+              validation_errors.append("PASS result contains a failed stage or error")
+          overall = "PASS" if runner_status == "PASS" and verify_outcome == "success" and not validation_errors else "FAIL"
+
+          summary += [f"**Overall: {overall}**", "", f"- Runner result: `{safe(runner_status)}`",
+                      f"- Verification step outcome: `{verify_outcome}`",
+                      f"- Bannerlord runtime: `{safe(result.get('runtime'))}`",
+                      f"- Source Git HEAD: `{safe(source.get('git_head'))}`",
+                      f"- Source SHA-256: `{safe(source.get('sha256'))}`",
+                      f"- Source reference: `{safe(source.get('reference'))}`",
+                      f"- .NET SDK: `{safe(sdk.get('dotnet'))}`",
+                      f"- Python: `{safe(sdk.get('python'))}`", "", "## Builds", "",
+                      "| Project | Target | Result | Exit |", "|---|---|---:|---:|"]
+          for item in builds:
+              if isinstance(item, dict):
+                  summary.append(f"| {safe(item.get('project'))} | {safe(item.get('framework'))} | "
+                                 f"{safe(item.get('status'))} | {safe(item.get('exit_code'))} |")
+          summary += ["", "## Checks", "", "| Suite | Result | Passed | Expected | Failed |",
+                      "|---|---:|---:|---:|---:|"]
+          for name in expected_checks:
+              item = object_or_empty(checks.get(name))
+              summary.append(f"| {name} | {safe(item.get('status'))} | {safe(item.get('passed'))} | "
+                             f"{safe(item.get('expected'))} | {safe(item.get('failed'))} |")
+          for item in python_checks:
+              if isinstance(item, dict):
+                  summary.append(f"| Python: {safe(item.get('suite'))} | {safe(item.get('status'))} | "
+                                 f"{safe(item.get('passed'))} | {safe(item.get('expected'))} | "
+                                 f"{safe(item.get('failed'))} (skipped {safe(item.get('skipped'))}) |")
+          summary += ["", f"- Failed stage: `{safe(result.get('failed_stage') or 'none')}`",
+                      f"- Error: `{safe(result.get('error') or 'none')}`",
+                      f"- Report directory: `{safe(path.parent)}`"]
+          if validation_errors:
+              summary += ["", "## Result contract validation", ""]
+              summary.extend(f"- {safe(error)}" for error in validation_errors)
+          summary.append("")
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as stream:
+              stream.write("\n".join(summary))
+          sys.exit(0 if overall == "PASS" else 1)
+          PY
+
+      - name: Upload offline verification report
+        if: always()
+        # actions/upload-artifact v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: offline-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: tests/artifacts/offline-*/
+          if-no-files-found: warn
+          retention-days: 14

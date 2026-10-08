@@ -1,0 +1,5 @@
+NOTE|t=0.0000|HARMONY_PATCH_DEFERRED to first mission tick
+t=0.0050|tick=1|E=T-1F0|D=Movement|P=Gated|W=Native|O=Native|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=HOLD|prev=Unset|new=HOLD|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=0.0050|tick=1|E=T-1F0|D=Arrangement|P=NonGated|W=Native|O=Native|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=Obs0|prev=Unset|new=Obs0|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+SHADOW|t=0.0717|E=T0F0|D=Facing|from=Obs0|to=Obs1
+HOST|t=0.0050|E=T-1F0|D=Movement|hook=Formation.SetMovementOrder|team=nonplayer|idx=0|behavior=-|weight=-|raw=StandYourGround|prev=-|new=StandYourGround|ome=1|chg=1

@@ -1,0 +1,23 @@
+NOTE|t=0.0000|fixture starts; host and note rows do not represent attempts
+t=1.0000|tick=1|E=A|D=Movement|P=Gated|W=Lab|O=Lab|L=3|lease=L1|tok=1|max=1|gen=1|rgen=1|exp=9.0000|cmd=ADVANCE|prev=HOLD|new=ADVANCE|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=1.1000|tick=2|E=B|D=Movement|P=Gated|W=Native|O=Native|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=HOLD|prev=ADVANCE|new=HOLD|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=1.2000|tick=3|E=A|D=Facing|P=Gated|W=Native|O=Native|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=HOLD|prev=Unset|new=HOLD|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=1.3000|tick=4|E=A|D=Movement|P=Gated|W=Native|O=Native|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=RETREAT|prev=ADVANCE|new=ADVANCE|ome=0|chg=1|rej=1|why=StaleLease|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=1.4000|tick=5|E=A|D=Movement|P=Gated|W=Native|O=Native|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=ADVANCE|prev=ADVANCE|new=ADVANCE|ome=1|chg=0|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=1.8000|tick=6|E=A|D=Movement|P=Gated|W=Native|O=Native|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=HOLD|prev=ADVANCE|new=HOLD|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+SHADOW|t=2.0000|E=A|D=Movement|from=ADVANCE|to=HOLD
+SHADOW|t=2.1000|E=A|D=Movement|from=HOLD|to=ADVANCE
+SHADOW|t=2.2000|E=A|D=Movement|from=ADVANCE|to=HOLD
+SHADOW|t=2.3000|E=A|D=Facing|from=HOLD|to=LOOK
+HOST|t=2.3000|E=A|D=Movement|hook=Formation.SetMovementOrder|team=player|idx=1|behavior=BehaviorDefend|weight=1|raw=Move|prev=Move|new=Move|ome=1|chg=0
+CENSUS|t=2.3000|E=A|hook=Formation.SetMovementOrder|raw=Move
+NOTE|t=2.3000|a free-form diagnostic note
+SHADOW|t=2.4000|E=B|D=Facing|from=HOLD|to=LOOK
+t=3.0000|tick=7|E=C|D=Movement|P=Gated|W=Native|O=Native|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=HOLD|prev=Unset|new=HOLD|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=3.0000|tick=8|E=C|D=Movement|P=Gated|W=Lab|O=Lab|L=3|lease=L2|tok=1|max=1|gen=1|rgen=1|exp=9.0000|cmd=ADVANCE|prev=HOLD|new=ADVANCE|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=3.0000|tick=9|E=C|D=Movement|P=Gated|W=Native|O=Native|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=HOLD|prev=ADVANCE|new=HOLD|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=4.0000|tick=10|E=D|D=Movement|P=Gated|W=Lab|O=Lab|L=3|lease=L3|tok=1|max=1|gen=1|rgen=1|exp=9.0000|cmd=ADVANCE|prev=HOLD|new=ADVANCE|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=4.1000|tick=11|E=D|D=Movement|P=Gated|W=UnknownWriter|O=UnknownWriter|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=HOLD|prev=ADVANCE|new=HOLD|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=5.0000|tick=12|E=E|D=Movement|P=Gated|W=Lab|O=Lab|L=3|lease=L4|tok=1|max=1|gen=1|rgen=1|exp=9.0000|cmd=ADVANCE|prev=HOLD|new=ADVANCE|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=5.5000|tick=13|E=E|D=Movement|P=Gated|W=Lab|O=Lab|L=3|lease=L4|tok=2|max=2|gen=2|rgen=2|exp=9.0000|cmd=RETREAT|prev=ADVANCE|new=RETREAT|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000
+t=6.0000|tick=14|E=E|D=Movement|P=Gated|W=Native|O=Native|L=5|lease=-|tok=0|max=0|gen=0|rgen=0|exp=-Infinity|cmd=HOLD|prev=RETREAT|new=HOLD|ome=1|chg=1|rej=0|why=-|task=-|ts=-|int=-|u=0.0000|p=0.0000

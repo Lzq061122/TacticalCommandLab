@@ -1,0 +1,996 @@
+[
+  {
+    "global": {
+      "Run": "run05",
+      "Input": "E:\\MBmod\\TacticalCommandLab\\_audit\\_local-phase10-20261006\\run05-h2-suppression\\telemetry-20261006-215546-h2-suppression.txt",
+      "InputSha256": "9242c6576846709dcc302c26c1f2d1155f4aa35b33ecbc645a947c3d473bc35e",
+      "Attempts": 1649,
+      "RejectedAttempts": 50,
+      "AcceptedEffectiveChanges": 122,
+      "KeysWithChanges": 63,
+      "OscillationPairs": 37,
+      "LifetimeSampleCount": 102,
+      "RecomputedAtReported33Seconds": {
+        "SimulationSeconds": 33,
+        "WriteAttempts": 1649,
+        "CommandsPerSecond": 49.96969696969697,
+        "EffectiveChanges": 122,
+        "OrderChangesPerSecond": 3.696969696969697,
+        "UnauthorizedWriteAttempts": 50,
+        "UnauthorizedWrites": 0,
+        "NativeOverrides": 0,
+        "LabOverrides": 0,
+        "AuthorityTransfers": 1,
+        "Preemptions": 0,
+        "AverageCommandLifetime": 15.234838235294108,
+        "OscillationPairs": 37,
+        "OscillationFrequency": 1.121212121212121,
+        "StaleCommandExecutions": 0,
+        "TaskStarvation": 0,
+        "MaxPendingSeconds": 0,
+        "grade": "Oscillating",
+        "thresholds": {
+          "stableUnauthorizedWritesMax": 0,
+          "stableOscillationFrequencyMax": 0.05,
+          "stableOrderChangesPerSecondMax": 0.2,
+          "oscillatingFrequencyMin": 0.5,
+          "oscillatingLifetimeLessThanSeconds": 1
+        },
+        "stableChecks": {
+          "unauthorizedWritesZero": true,
+          "oscFrequencyAtMost005": false,
+          "changesPerSecondAtMost02": false
+        },
+        "oscillationChecks": {
+          "frequencyAtLeast05": true,
+          "lifetimeBelow1Second": false
+        },
+        "triggers": [
+          "oscillation_frequency>=0.5"
+        ]
+      },
+      "RecomputedAtInferredDumpCenter": {
+        "SimulationSeconds": 33.00415904445357,
+        "WriteAttempts": 1649,
+        "CommandsPerSecond": 49.96339999994996,
+        "EffectiveChanges": 122,
+        "OrderChangesPerSecond": 3.6965038204935685,
+        "UnauthorizedWriteAttempts": 50,
+        "UnauthorizedWrites": 0,
+        "NativeOverrides": 0,
+        "LabOverrides": 0,
+        "AuthorityTransfers": 1,
+        "Preemptions": 0,
+        "AverageCommandLifetime": 15.236591557955911,
+        "OscillationPairs": 37,
+        "OscillationFrequency": 1.1210708308054265,
+        "StaleCommandExecutions": 0,
+        "TaskStarvation": 0,
+        "MaxPendingSeconds": 0,
+        "grade": "Oscillating",
+        "thresholds": {
+          "stableUnauthorizedWritesMax": 0,
+          "stableOscillationFrequencyMax": 0.05,
+          "stableOrderChangesPerSecondMax": 0.2,
+          "oscillatingFrequencyMin": 0.5,
+          "oscillatingLifetimeLessThanSeconds": 1
+        },
+        "stableChecks": {
+          "unauthorizedWritesZero": true,
+          "oscFrequencyAtMost005": false,
+          "changesPerSecondAtMost02": false
+        },
+        "oscillationChecks": {
+          "frequencyAtLeast05": true,
+          "lifetimeBelow1Second": false
+        },
+        "triggers": [
+          "oscillation_frequency>=0.5"
+        ]
+      },
+      "Reported": {
+        "simulation_seconds": "33.00",
+        "commands_per_second": "49.9634",
+        "order_changes_per_second": "3.6965",
+        "unauthorized_write_attempts": "50",
+        "unauthorized_writes": "0",
+        "native_overrides": "0",
+        "lab_overrides": "0",
+        "authority_transfers": "1",
+        "preemptions": "0",
+        "average_command_lifetime": "15.2366",
+        "oscillation_pairs": "37",
+        "oscillation_frequency": "1.1211",
+        "reaction_latency": "0.4999",
+        "stale_command_execution": "0",
+        "task_starvation": "0",
+        "max_pending_seconds": "0.00",
+        "release_recovery_failures": "0",
+        "stability_grade": "Oscillating"
+      },
+      "InferredDumpSeconds": {
+        "Low": 33.00412601611778,
+        "High": 33.00419207278936,
+        "Center": 33.00415904445357,
+        "Constraints": [
+          {
+            "Name": "simulation_seconds F2",
+            "Low": 32.995,
+            "High": 33.005
+          },
+          {
+            "Name": "commands_per_second F4",
+            "Low": 33.00412601611778,
+            "High": 33.00419207278936
+          },
+          {
+            "Name": "order_changes_per_second F4",
+            "Low": 33.00374673682217,
+            "High": 33.00463958663042
+          },
+          {
+            "Name": "oscillation_frequency F4",
+            "Low": 33.00182847968603,
+            "High": 33.0047723116721
+          }
+        ]
+      },
+      "AcquireT": 3.0046,
+      "FirstAcceptedLabHoldT": 3.5045,
+      "FirstAcceptedLabHoldRow": 170,
+      "ReleaseT": 28.006,
+      "ReleaseEventMissing": false,
+      "WindowAttributedChanges": 122,
+      "WindowAttributedPairs": 37,
+      "WindowEventTotals": [
+        {
+          "Name": "pre_acquire",
+          "changes": 112,
+          "pairs": 34
+        },
+        {
+          "Name": "acquire_to_first_accepted_lab_hold",
+          "changes": 0,
+          "pairs": 0
+        },
+        {
+          "Name": "first_lab_hold_to_release",
+          "changes": 8,
+          "pairs": 1
+        },
+        {
+          "Name": "release_to_dump",
+          "changes": 2,
+          "pairs": 2
+        }
+      ],
+      "Conservation": {
+        "perKeyChanges": 122,
+        "globalEffectiveChanges": 122,
+        "changesMatch": true,
+        "perKeyPairs": 37,
+        "globalPairs": 37,
+        "pairsMatch": true,
+        "lifetimeSamples": 102,
+        "lifetimeSamplesFromProductionRule": 102,
+        "lifetimeCountMatchesRule": true,
+        "perKeyLifetimeSamples": 102,
+        "perKeyLifetimeSamplesMatchGlobal": true,
+        "windowChanges": 122,
+        "windowPairs": 37,
+        "windowChangesMatchGlobal": true,
+        "windowPairsMatchGlobal": true,
+        "lifetimeOverlapSeconds": 1554.132338911504,
+        "lifetimeSampleSeconds": 1554.1323389115034,
+        "lifetimeOverlapsMatchSamples": true,
+        "lifetimeAvgAtInferredDumpCenterUsingPrintedTimestamps": 15.236591557955911,
+        "reportedLifetimeAvg": 15.2366,
+        "maxMeanErrorFromEachSourceTimestampRoundedToF4": 7.892156862745098e-05,
+        "excludedRejectedAttempts": 50,
+        "excludedAcceptedUnchangedAttempts": 1477
+      },
+      "ReportedGrade": "Oscillating"
+    },
+    "windows": [
+      {
+        "Name": "pre_acquire",
+        "Start": 0,
+        "End": 3.0046,
+        "Changes": 112,
+        "Pairs": 34,
+        "LifetimeSamplesEndingHere": 50,
+        "LifetimeOverlapSeconds": 163.70239999999998
+      },
+      {
+        "Name": "acquire_to_first_accepted_lab_hold",
+        "Start": 3.0046,
+        "End": 3.5045,
+        "Changes": 0,
+        "Pairs": 0,
+        "LifetimeSamplesEndingHere": 0,
+        "LifetimeOverlapSeconds": 23.99520000000001
+      },
+      {
+        "Name": "first_lab_hold_to_release",
+        "Start": 3.5045,
+        "End": 28.006,
+        "Changes": 8,
+        "Pairs": 1,
+        "LifetimeSamplesEndingHere": 7,
+        "LifetimeOverlapSeconds": 1150.9755
+      },
+      {
+        "Name": "release_to_dump",
+        "Start": 28.006,
+        "End": 33.00415904445357,
+        "Changes": 2,
+        "Pairs": 2,
+        "LifetimeSamplesEndingHere": 2,
+        "LifetimeOverlapSeconds": 215.45923891150386
+      }
+    ],
+    "target_keys": [
+      {
+        "Entity": "T1F0",
+        "Domain": "Movement",
+        "Changes": 3,
+        "AcceptedEffectiveChanges": [
+          {
+            "Row": 27,
+            "T": 0.005,
+            "Prev": "Unset",
+            "New": "Obs0",
+            "Writer": "Native"
+          },
+          {
+            "Row": 170,
+            "T": 3.5045,
+            "Prev": "Obs0",
+            "New": "HOLD",
+            "Writer": "Lab"
+          },
+          {
+            "Row": 1398,
+            "T": 28.0261,
+            "Prev": "HOLD",
+            "New": "Obs0",
+            "Writer": "Native"
+          }
+        ],
+        "ExcludedMultiChangeTailRow": 1398,
+        "Pairs": [
+          {
+            "Row1": 27,
+            "T1": 0.005,
+            "A": "Obs0",
+            "Row2": 170,
+            "T2": 3.5045,
+            "B": "HOLD",
+            "Row3": 1398,
+            "T3": 28.0261,
+            "C": "Obs0",
+            "AttributedWindow": "release_to_dump",
+            "CrossesWindowBoundary": true,
+            "WindowsTouched": [
+              "pre_acquire",
+              "first_lab_hold_to_release",
+              "release_to_dump"
+            ]
+          }
+        ],
+        "LifetimeSamples": [
+          {
+            "Entity": "T1F0",
+            "Domain": "Movement",
+            "Kind": "completed",
+            "StartRow": 27,
+            "StartT": 0.005,
+            "EndRow": 170,
+            "EndT": 3.5045,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 3.4995000000000003,
+            "DurationLow": 3.4995000000000003,
+            "DurationHigh": 3.4995000000000003,
+            "EndWindow": "first_lab_hold_to_release",
+            "Overlap": {
+              "pre_acquire": 2.9996,
+              "acquire_to_first_accepted_lab_hold": 0.49990000000000023,
+              "first_lab_hold_to_release": 0,
+              "release_to_dump": 0
+            }
+          },
+          {
+            "Entity": "T1F0",
+            "Domain": "Movement",
+            "Kind": "completed",
+            "StartRow": 170,
+            "StartT": 3.5045,
+            "EndRow": 1398,
+            "EndT": 28.0261,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 24.5216,
+            "DurationLow": 24.5216,
+            "DurationHigh": 24.5216,
+            "EndWindow": "release_to_dump",
+            "Overlap": {
+              "pre_acquire": 0,
+              "acquire_to_first_accepted_lab_hold": 0,
+              "first_lab_hold_to_release": 24.5015,
+              "release_to_dump": 0.02009999999999934
+            }
+          }
+        ]
+      },
+      {
+        "Entity": "T1F0",
+        "Domain": "Facing",
+        "Changes": 2,
+        "AcceptedEffectiveChanges": [
+          {
+            "Row": 28,
+            "T": 0.005,
+            "Prev": "Unset",
+            "New": "Obs0",
+            "Writer": "Native"
+          },
+          {
+            "Row": 120,
+            "T": 2.4702,
+            "Prev": "Obs0",
+            "New": "Obs1",
+            "Writer": "Native"
+          }
+        ],
+        "ExcludedMultiChangeTailRow": 120,
+        "Pairs": [],
+        "LifetimeSamples": [
+          {
+            "Entity": "T1F0",
+            "Domain": "Facing",
+            "Kind": "completed",
+            "StartRow": 28,
+            "StartT": 0.005,
+            "EndRow": 120,
+            "EndT": 2.4702,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 2.4652000000000003,
+            "DurationLow": 2.4652000000000003,
+            "DurationHigh": 2.4652000000000003,
+            "EndWindow": "pre_acquire",
+            "Overlap": {
+              "pre_acquire": 2.4652000000000003,
+              "acquire_to_first_accepted_lab_hold": 0,
+              "first_lab_hold_to_release": 0,
+              "release_to_dump": 0
+            }
+          }
+        ]
+      },
+      {
+        "Entity": "T1F0",
+        "Domain": "Arrangement",
+        "Changes": 4,
+        "AcceptedEffectiveChanges": [
+          {
+            "Row": 29,
+            "T": 0.005,
+            "Prev": "Unset",
+            "New": "Obs0",
+            "Writer": "Native"
+          },
+          {
+            "Row": 118,
+            "T": 2.4702,
+            "Prev": "Obs0",
+            "New": "Obs1",
+            "Writer": "Native"
+          },
+          {
+            "Row": 141,
+            "T": 2.5132,
+            "Prev": "Obs1",
+            "New": "Obs0",
+            "Writer": "Native"
+          },
+          {
+            "Row": 1423,
+            "T": 28.5243,
+            "Prev": "Obs0",
+            "New": "Obs1",
+            "Writer": "Native"
+          }
+        ],
+        "ExcludedMultiChangeTailRow": 1423,
+        "Pairs": [
+          {
+            "Row1": 29,
+            "T1": 0.005,
+            "A": "Obs0",
+            "Row2": 118,
+            "T2": 2.4702,
+            "B": "Obs1",
+            "Row3": 141,
+            "T3": 2.5132,
+            "C": "Obs0",
+            "AttributedWindow": "pre_acquire",
+            "CrossesWindowBoundary": false,
+            "WindowsTouched": [
+              "pre_acquire"
+            ]
+          },
+          {
+            "Row1": 118,
+            "T1": 2.4702,
+            "A": "Obs1",
+            "Row2": 141,
+            "T2": 2.5132,
+            "B": "Obs0",
+            "Row3": 1423,
+            "T3": 28.5243,
+            "C": "Obs1",
+            "AttributedWindow": "release_to_dump",
+            "CrossesWindowBoundary": true,
+            "WindowsTouched": [
+              "pre_acquire",
+              "release_to_dump"
+            ]
+          }
+        ],
+        "LifetimeSamples": [
+          {
+            "Entity": "T1F0",
+            "Domain": "Arrangement",
+            "Kind": "completed",
+            "StartRow": 29,
+            "StartT": 0.005,
+            "EndRow": 118,
+            "EndT": 2.4702,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 2.4652000000000003,
+            "DurationLow": 2.4652000000000003,
+            "DurationHigh": 2.4652000000000003,
+            "EndWindow": "pre_acquire",
+            "Overlap": {
+              "pre_acquire": 2.4652000000000003,
+              "acquire_to_first_accepted_lab_hold": 0,
+              "first_lab_hold_to_release": 0,
+              "release_to_dump": 0
+            }
+          },
+          {
+            "Entity": "T1F0",
+            "Domain": "Arrangement",
+            "Kind": "completed",
+            "StartRow": 118,
+            "StartT": 2.4702,
+            "EndRow": 141,
+            "EndT": 2.5132,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 0.042999999999999705,
+            "DurationLow": 0.042999999999999705,
+            "DurationHigh": 0.042999999999999705,
+            "EndWindow": "pre_acquire",
+            "Overlap": {
+              "pre_acquire": 0.042999999999999705,
+              "acquire_to_first_accepted_lab_hold": 0,
+              "first_lab_hold_to_release": 0,
+              "release_to_dump": 0
+            }
+          },
+          {
+            "Entity": "T1F0",
+            "Domain": "Arrangement",
+            "Kind": "completed",
+            "StartRow": 141,
+            "StartT": 2.5132,
+            "EndRow": 1423,
+            "EndT": 28.5243,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 26.0111,
+            "DurationLow": 26.0111,
+            "DurationHigh": 26.0111,
+            "EndWindow": "release_to_dump",
+            "Overlap": {
+              "pre_acquire": 0.49140000000000006,
+              "acquire_to_first_accepted_lab_hold": 0.49990000000000023,
+              "first_lab_hold_to_release": 24.5015,
+              "release_to_dump": 0.5183
+            }
+          }
+        ]
+      }
+    ],
+    "all_key_csv": "run05-keys.csv",
+    "all_accepted_changes_csv": "run05-changes.csv",
+    "all_triples_csv": "run05-triples.csv",
+    "all_lifetimes_csv": "run05-lifetimes.csv",
+    "read_only_full_diagnostic_local": "_audit/_phase10-closure-20261007/verified-output/run05-diagnostics.json",
+    "full_diagnostic_sha256": "0f439954883555afdabf977eefde7a9e967b35db207b3bc1132e27f7d0b52312"
+  },
+  {
+    "global": {
+      "Run": "run06",
+      "Input": "E:\\MBmod\\TacticalCommandLab\\_audit\\_local-phase10-20261006\\run06-h2-coverage\\telemetry-20261006-215736-h2-coverage.txt",
+      "InputSha256": "c2f41b3f6c8814f04cd43d08c8c6a1e86a72273ffd417eb86fca79340e1d6f3b",
+      "Attempts": 1642,
+      "RejectedAttempts": 50,
+      "AcceptedEffectiveChanges": 120,
+      "KeysWithChanges": 63,
+      "OscillationPairs": 35,
+      "LifetimeSampleCount": 100,
+      "RecomputedAtReported33Seconds": {
+        "SimulationSeconds": 33,
+        "WriteAttempts": 1642,
+        "CommandsPerSecond": 49.75757575757576,
+        "EffectiveChanges": 120,
+        "OrderChangesPerSecond": 3.6363636363636362,
+        "UnauthorizedWriteAttempts": 50,
+        "UnauthorizedWrites": 0,
+        "NativeOverrides": 0,
+        "LabOverrides": 0,
+        "AuthorityTransfers": 1,
+        "Preemptions": 0,
+        "AverageCommandLifetime": 15.212003999999993,
+        "OscillationPairs": 35,
+        "OscillationFrequency": 1.0606060606060606,
+        "StaleCommandExecutions": 0,
+        "TaskStarvation": 0,
+        "MaxPendingSeconds": 0,
+        "grade": "Oscillating",
+        "thresholds": {
+          "stableUnauthorizedWritesMax": 0,
+          "stableOscillationFrequencyMax": 0.05,
+          "stableOrderChangesPerSecondMax": 0.2,
+          "oscillatingFrequencyMin": 0.5,
+          "oscillatingLifetimeLessThanSeconds": 1
+        },
+        "stableChecks": {
+          "unauthorizedWritesZero": true,
+          "oscFrequencyAtMost005": false,
+          "changesPerSecondAtMost02": false
+        },
+        "oscillationChecks": {
+          "frequencyAtLeast05": true,
+          "lifetimeBelow1Second": false
+        },
+        "triggers": [
+          "oscillation_frequency>=0.5"
+        ]
+      },
+      "RecomputedAtInferredDumpCenter": {
+        "SimulationSeconds": 33.00429538244698,
+        "WriteAttempts": 1642,
+        "CommandsPerSecond": 49.75109999994976,
+        "EffectiveChanges": 120,
+        "OrderChangesPerSecond": 3.6358903775846354,
+        "UnauthorizedWriteAttempts": 50,
+        "UnauthorizedWrites": 0,
+        "NativeOverrides": 0,
+        "LabOverrides": 0,
+        "AuthorityTransfers": 1,
+        "Preemptions": 0,
+        "AverageCommandLifetime": 15.21385101445221,
+        "OscillationPairs": 35,
+        "OscillationFrequency": 1.0604680267955187,
+        "StaleCommandExecutions": 0,
+        "TaskStarvation": 0,
+        "MaxPendingSeconds": 0,
+        "grade": "Oscillating",
+        "thresholds": {
+          "stableUnauthorizedWritesMax": 0,
+          "stableOscillationFrequencyMax": 0.05,
+          "stableOrderChangesPerSecondMax": 0.2,
+          "oscillatingFrequencyMin": 0.5,
+          "oscillatingLifetimeLessThanSeconds": 1
+        },
+        "stableChecks": {
+          "unauthorizedWritesZero": true,
+          "oscFrequencyAtMost005": false,
+          "changesPerSecondAtMost02": false
+        },
+        "oscillationChecks": {
+          "frequencyAtLeast05": true,
+          "lifetimeBelow1Second": false
+        },
+        "triggers": [
+          "oscillation_frequency>=0.5"
+        ]
+      },
+      "Reported": {
+        "simulation_seconds": "33.00",
+        "commands_per_second": "49.7511",
+        "order_changes_per_second": "3.6359",
+        "unauthorized_write_attempts": "50",
+        "unauthorized_writes": "0",
+        "native_overrides": "0",
+        "lab_overrides": "0",
+        "authority_transfers": "1",
+        "preemptions": "0",
+        "average_command_lifetime": "15.2138",
+        "oscillation_pairs": "35",
+        "oscillation_frequency": "1.0605",
+        "reaction_latency": "0.4963",
+        "stale_command_execution": "0",
+        "task_starvation": "0",
+        "max_pending_seconds": "0.00",
+        "release_recovery_failures": "0",
+        "stability_grade": "Oscillating"
+      },
+      "InferredDumpSeconds": {
+        "Low": 33.004262213034266,
+        "High": 33.00432855185971,
+        "Center": 33.00429538244698,
+        "Constraints": [
+          {
+            "Name": "simulation_seconds F2",
+            "Low": 32.995,
+            "High": 33.005
+          },
+          {
+            "Name": "commands_per_second F4",
+            "Low": 33.004262213034266,
+            "High": 33.00432855185971
+          },
+          {
+            "Name": "order_changes_per_second F4",
+            "Low": 33.00375417703764,
+            "High": 33.004661908494576
+          },
+          {
+            "Name": "oscillation_frequency F4",
+            "Low": 33.00174437791711,
+            "High": 33.00485642887454
+          }
+        ]
+      },
+      "AcquireT": 3.0057,
+      "FirstAcceptedLabHoldT": 3.502,
+      "FirstAcceptedLabHoldRow": 170,
+      "ReleaseT": 28.006,
+      "ReleaseEventMissing": false,
+      "WindowAttributedChanges": 120,
+      "WindowAttributedPairs": 35,
+      "WindowEventTotals": [
+        {
+          "Name": "pre_acquire",
+          "changes": 112,
+          "pairs": 34
+        },
+        {
+          "Name": "acquire_to_first_accepted_lab_hold",
+          "changes": 0,
+          "pairs": 0
+        },
+        {
+          "Name": "first_lab_hold_to_release",
+          "changes": 6,
+          "pairs": 0
+        },
+        {
+          "Name": "release_to_dump",
+          "changes": 2,
+          "pairs": 1
+        }
+      ],
+      "Conservation": {
+        "perKeyChanges": 120,
+        "globalEffectiveChanges": 120,
+        "changesMatch": true,
+        "perKeyPairs": 35,
+        "globalPairs": 35,
+        "pairsMatch": true,
+        "lifetimeSamples": 100,
+        "lifetimeSamplesFromProductionRule": 100,
+        "lifetimeCountMatchesRule": true,
+        "perKeyLifetimeSamples": 100,
+        "perKeyLifetimeSamplesMatchGlobal": true,
+        "windowChanges": 120,
+        "windowPairs": 35,
+        "windowChangesMatchGlobal": true,
+        "windowPairsMatchGlobal": true,
+        "lifetimeOverlapSeconds": 1521.3851014452207,
+        "lifetimeSampleSeconds": 1521.385101445221,
+        "lifetimeOverlapsMatchSamples": true,
+        "lifetimeAvgAtInferredDumpCenterUsingPrintedTimestamps": 15.21385101445221,
+        "reportedLifetimeAvg": 15.2138,
+        "maxMeanErrorFromEachSourceTimestampRoundedToF4": 7.85e-05,
+        "excludedRejectedAttempts": 50,
+        "excludedAcceptedUnchangedAttempts": 1472
+      },
+      "ReportedGrade": "Oscillating"
+    },
+    "windows": [
+      {
+        "Name": "pre_acquire",
+        "Start": 0,
+        "End": 3.0057,
+        "Changes": 112,
+        "Pairs": 34,
+        "LifetimeSamplesEndingHere": 50,
+        "LifetimeOverlapSeconds": 163.53249999999997
+      },
+      {
+        "Name": "acquire_to_first_accepted_lab_hold",
+        "Start": 3.0057,
+        "End": 3.502,
+        "Changes": 0,
+        "Pairs": 0,
+        "LifetimeSamplesEndingHere": 0,
+        "LifetimeOverlapSeconds": 23.32609999999996
+      },
+      {
+        "Name": "first_lab_hold_to_release",
+        "Start": 3.502,
+        "End": 28.006,
+        "Changes": 6,
+        "Pairs": 0,
+        "LifetimeSamplesEndingHere": 5,
+        "LifetimeOverlapSeconds": 1115.9298000000001
+      },
+      {
+        "Name": "release_to_dump",
+        "Start": 28.006,
+        "End": 33.00429538244698,
+        "Changes": 2,
+        "Pairs": 1,
+        "LifetimeSamplesEndingHere": 2,
+        "LifetimeOverlapSeconds": 218.5967014452205
+      }
+    ],
+    "target_keys": [
+      {
+        "Entity": "T1F0",
+        "Domain": "Movement",
+        "Changes": 3,
+        "AcceptedEffectiveChanges": [
+          {
+            "Row": 27,
+            "T": 0.005,
+            "Prev": "Unset",
+            "New": "Obs0",
+            "Writer": "Native"
+          },
+          {
+            "Row": 170,
+            "T": 3.502,
+            "Prev": "Obs0",
+            "New": "HOLD",
+            "Writer": "Lab"
+          },
+          {
+            "Row": 1395,
+            "T": 28.0248,
+            "Prev": "HOLD",
+            "New": "Obs0",
+            "Writer": "Native"
+          }
+        ],
+        "ExcludedMultiChangeTailRow": 1395,
+        "Pairs": [
+          {
+            "Row1": 27,
+            "T1": 0.005,
+            "A": "Obs0",
+            "Row2": 170,
+            "T2": 3.502,
+            "B": "HOLD",
+            "Row3": 1395,
+            "T3": 28.0248,
+            "C": "Obs0",
+            "AttributedWindow": "release_to_dump",
+            "CrossesWindowBoundary": true,
+            "WindowsTouched": [
+              "pre_acquire",
+              "first_lab_hold_to_release",
+              "release_to_dump"
+            ]
+          }
+        ],
+        "LifetimeSamples": [
+          {
+            "Entity": "T1F0",
+            "Domain": "Movement",
+            "Kind": "completed",
+            "StartRow": 27,
+            "StartT": 0.005,
+            "EndRow": 170,
+            "EndT": 3.502,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 3.497,
+            "DurationLow": 3.497,
+            "DurationHigh": 3.497,
+            "EndWindow": "first_lab_hold_to_release",
+            "Overlap": {
+              "pre_acquire": 3.0007,
+              "acquire_to_first_accepted_lab_hold": 0.49629999999999974,
+              "first_lab_hold_to_release": 0,
+              "release_to_dump": 0
+            }
+          },
+          {
+            "Entity": "T1F0",
+            "Domain": "Movement",
+            "Kind": "completed",
+            "StartRow": 170,
+            "StartT": 3.502,
+            "EndRow": 1395,
+            "EndT": 28.0248,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 24.5228,
+            "DurationLow": 24.5228,
+            "DurationHigh": 24.5228,
+            "EndWindow": "release_to_dump",
+            "Overlap": {
+              "pre_acquire": 0,
+              "acquire_to_first_accepted_lab_hold": 0,
+              "first_lab_hold_to_release": 24.504,
+              "release_to_dump": 0.018799999999998818
+            }
+          }
+        ]
+      },
+      {
+        "Entity": "T1F0",
+        "Domain": "Facing",
+        "Changes": 2,
+        "AcceptedEffectiveChanges": [
+          {
+            "Row": 28,
+            "T": 0.005,
+            "Prev": "Unset",
+            "New": "Obs0",
+            "Writer": "Native"
+          },
+          {
+            "Row": 120,
+            "T": 2.5002,
+            "Prev": "Obs0",
+            "New": "Obs1",
+            "Writer": "Native"
+          }
+        ],
+        "ExcludedMultiChangeTailRow": 120,
+        "Pairs": [],
+        "LifetimeSamples": [
+          {
+            "Entity": "T1F0",
+            "Domain": "Facing",
+            "Kind": "completed",
+            "StartRow": 28,
+            "StartT": 0.005,
+            "EndRow": 120,
+            "EndT": 2.5002,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 2.4952,
+            "DurationLow": 2.4952,
+            "DurationHigh": 2.4952,
+            "EndWindow": "pre_acquire",
+            "Overlap": {
+              "pre_acquire": 2.4952,
+              "acquire_to_first_accepted_lab_hold": 0,
+              "first_lab_hold_to_release": 0,
+              "release_to_dump": 0
+            }
+          }
+        ]
+      },
+      {
+        "Entity": "T1F0",
+        "Domain": "Arrangement",
+        "Changes": 3,
+        "AcceptedEffectiveChanges": [
+          {
+            "Row": 29,
+            "T": 0.005,
+            "Prev": "Unset",
+            "New": "Obs0",
+            "Writer": "Native"
+          },
+          {
+            "Row": 118,
+            "T": 2.5002,
+            "Prev": "Obs0",
+            "New": "Obs1",
+            "Writer": "Native"
+          },
+          {
+            "Row": 141,
+            "T": 2.543,
+            "Prev": "Obs1",
+            "New": "Obs0",
+            "Writer": "Native"
+          }
+        ],
+        "ExcludedMultiChangeTailRow": 141,
+        "Pairs": [
+          {
+            "Row1": 29,
+            "T1": 0.005,
+            "A": "Obs0",
+            "Row2": 118,
+            "T2": 2.5002,
+            "B": "Obs1",
+            "Row3": 141,
+            "T3": 2.543,
+            "C": "Obs0",
+            "AttributedWindow": "pre_acquire",
+            "CrossesWindowBoundary": false,
+            "WindowsTouched": [
+              "pre_acquire"
+            ]
+          }
+        ],
+        "LifetimeSamples": [
+          {
+            "Entity": "T1F0",
+            "Domain": "Arrangement",
+            "Kind": "completed",
+            "StartRow": 29,
+            "StartT": 0.005,
+            "EndRow": 118,
+            "EndT": 2.5002,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 2.4952,
+            "DurationLow": 2.4952,
+            "DurationHigh": 2.4952,
+            "EndWindow": "pre_acquire",
+            "Overlap": {
+              "pre_acquire": 2.4952,
+              "acquire_to_first_accepted_lab_hold": 0,
+              "first_lab_hold_to_release": 0,
+              "release_to_dump": 0
+            }
+          },
+          {
+            "Entity": "T1F0",
+            "Domain": "Arrangement",
+            "Kind": "completed",
+            "StartRow": 118,
+            "StartT": 2.5002,
+            "EndRow": 141,
+            "EndT": 2.543,
+            "DumpLow": null,
+            "DumpHigh": null,
+            "DumpT": null,
+            "Duration": 0.04280000000000017,
+            "DurationLow": 0.04280000000000017,
+            "DurationHigh": 0.04280000000000017,
+            "EndWindow": "pre_acquire",
+            "Overlap": {
+              "pre_acquire": 0.04280000000000017,
+              "acquire_to_first_accepted_lab_hold": 0,
+              "first_lab_hold_to_release": 0,
+              "release_to_dump": 0
+            }
+          }
+        ]
+      }
+    ],
+    "all_key_csv": "run06-keys.csv",
+    "all_accepted_changes_csv": "run06-changes.csv",
+    "all_triples_csv": "run06-triples.csv",
+    "all_lifetimes_csv": "run06-lifetimes.csv",
+    "read_only_full_diagnostic_local": "_audit/_phase10-closure-20261007/verified-output/run06-diagnostics.json",
+    "full_diagnostic_sha256": "35bf25cfbc31c699ec7f318055de527f655287c2dcc4b38368db3ccbdba75348"
+  }
+]

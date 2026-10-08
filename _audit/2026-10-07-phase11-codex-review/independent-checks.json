@@ -1,0 +1,1052 @@
+{
+  "review_runtime": "NOT_RUN",
+  "runs": [
+    {
+      "run": "run04-census-final",
+      "game_pid": 19180,
+      "source_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "manifest_entries": 61,
+      "metrics_hash_match": true,
+      "telemetry_hash_match": true,
+      "script_hash_match": true,
+      "script_commands": [
+        "t=0.5   policy patchMovement=true patchFacing=true patchArrangement=true",
+        "t=30.0  dump census-baseline"
+      ],
+      "verdicts": [
+        {
+          "id": "P0",
+          "actual": "7",
+          "status": "PASS"
+        },
+        {
+          "id": "P0b",
+          "actual": "2040",
+          "status": "PASS"
+        },
+        {
+          "id": "P0c",
+          "actual": "29/29",
+          "status": "PASS"
+        },
+        {
+          "id": "X1",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "X2",
+          "actual": "1.1998",
+          "status": "PASS"
+        },
+        {
+          "id": "X3",
+          "actual": "4.0327",
+          "status": "PASS"
+        },
+        {
+          "id": "X4",
+          "actual": "0.0000",
+          "status": "PASS"
+        },
+        {
+          "id": "X5",
+          "actual": "0",
+          "status": "PASS"
+        }
+      ],
+      "fresh_recompute_exit": 0,
+      "fresh_recompute_equal_to_delivery": false,
+      "fresh_recompute_equal_except_input_path": true,
+      "recompute_status": "NO_RELEVANT_EVIDENCE",
+      "first_override_pairs": [],
+      "target_native_rejected_all": 0,
+      "target_native_rejected_3_28": 0,
+      "target_native_rejected_3_5_28": 0,
+      "first_restore_lab": [],
+      "first_native_after_28": [
+        {
+          "t": "28.0290",
+          "tick": "3999",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Native",
+          "O": "Native",
+          "L": "5",
+          "lease": "-",
+          "tok": "0",
+          "max": "0",
+          "gen": "0",
+          "rgen": "0",
+          "exp": "-Infinity",
+          "cmd": "Obs0",
+          "prev": "Obs0",
+          "new": "Obs0",
+          "ome": "1",
+          "chg": "0",
+          "rej": "0",
+          "why": "-",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1448
+        }
+      ],
+      "first_native_gap_after_restore": null
+    },
+    {
+      "run": "run05-h2-suppression",
+      "game_pid": 36348,
+      "source_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "manifest_entries": 61,
+      "metrics_hash_match": true,
+      "telemetry_hash_match": true,
+      "script_hash_match": true,
+      "script_commands": [
+        "t=1.0   policy level=Full ttl=30 autorenew=true enforceGated=true enforceNonGated=false",
+        "t=3.0   acquire T1F0 Movement Full 30",
+        "t=3.5   cmd T1F0 Movement HOLD",
+        "t=28.0  release T1F0 Movement",
+        "t=33.0  dump h2-suppression"
+      ],
+      "verdicts": [
+        {
+          "id": "P0",
+          "actual": "7",
+          "status": "PASS"
+        },
+        {
+          "id": "P0b",
+          "actual": "2086",
+          "status": "PASS"
+        },
+        {
+          "id": "P0c",
+          "actual": "29/29",
+          "status": "PASS"
+        },
+        {
+          "id": "G1",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "G2",
+          "actual": "100.0%",
+          "status": "PASS"
+        },
+        {
+          "id": "G3",
+          "actual": "Oscillating",
+          "status": "FAIL"
+        },
+        {
+          "id": "X1",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "X2",
+          "actual": "1.1211",
+          "status": "PASS"
+        },
+        {
+          "id": "X3",
+          "actual": "3.6965",
+          "status": "PASS"
+        },
+        {
+          "id": "X4",
+          "actual": "0.4999",
+          "status": "PASS"
+        },
+        {
+          "id": "X5",
+          "actual": "0",
+          "status": "PASS"
+        }
+      ],
+      "fresh_recompute_exit": 0,
+      "fresh_recompute_equal_to_delivery": false,
+      "fresh_recompute_equal_except_input_path": true,
+      "recompute_status": "EVIDENCE_FOUND",
+      "first_override_pairs": [
+        {
+          "domain": "Movement",
+          "entity": "T1F0",
+          "lab_line": 170,
+          "lab_t": 3.5045,
+          "latency_seconds": 24.5216,
+          "native_tagged_line": 1398,
+          "native_tagged_t": 28.0261
+        }
+      ],
+      "target_native_rejected_all": 50,
+      "target_native_rejected_3_28": 50,
+      "target_native_rejected_3_5_28": 49,
+      "first_restore_lab": [],
+      "first_native_after_28": [
+        {
+          "t": "28.0261",
+          "tick": "3952",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Native",
+          "O": "Native",
+          "L": "5",
+          "lease": "-",
+          "tok": "0",
+          "max": "1",
+          "gen": "0",
+          "rgen": "2",
+          "exp": "-Infinity",
+          "cmd": "Obs0",
+          "prev": "HOLD",
+          "new": "Obs0",
+          "ome": "1",
+          "chg": "1",
+          "rej": "0",
+          "why": "-",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1398
+        }
+      ],
+      "first_native_gap_after_restore": null
+    },
+    {
+      "run": "run06-h2-coverage",
+      "game_pid": 39760,
+      "source_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "manifest_entries": 61,
+      "metrics_hash_match": true,
+      "telemetry_hash_match": true,
+      "script_hash_match": true,
+      "script_commands": [
+        "t=1.0   policy level=Full ttl=30 autorenew=true enforceGated=true enforceNonGated=true arrangementPath=Gated",
+        "t=3.0   acquire T1F0 Movement Full 30",
+        "t=3.5   cmd T1F0 Movement HOLD",
+        "t=28.0  release T1F0 Movement",
+        "t=33.0  dump h2-coverage"
+      ],
+      "verdicts": [
+        {
+          "id": "P0",
+          "actual": "7",
+          "status": "PASS"
+        },
+        {
+          "id": "P0b",
+          "actual": "2077",
+          "status": "PASS"
+        },
+        {
+          "id": "P0c",
+          "actual": "29/29",
+          "status": "PASS"
+        },
+        {
+          "id": "G1",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "G2",
+          "actual": "100.0%",
+          "status": "PASS"
+        },
+        {
+          "id": "G3",
+          "actual": "Oscillating",
+          "status": "FAIL"
+        },
+        {
+          "id": "X1",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "X2",
+          "actual": "1.0605",
+          "status": "PASS"
+        },
+        {
+          "id": "X3",
+          "actual": "3.6359",
+          "status": "PASS"
+        },
+        {
+          "id": "X4",
+          "actual": "0.4963",
+          "status": "PASS"
+        },
+        {
+          "id": "X5",
+          "actual": "0",
+          "status": "PASS"
+        }
+      ],
+      "fresh_recompute_exit": 0,
+      "fresh_recompute_equal_to_delivery": false,
+      "fresh_recompute_equal_except_input_path": true,
+      "recompute_status": "EVIDENCE_FOUND",
+      "first_override_pairs": [
+        {
+          "domain": "Movement",
+          "entity": "T1F0",
+          "lab_line": 170,
+          "lab_t": 3.502,
+          "latency_seconds": 24.5228,
+          "native_tagged_line": 1395,
+          "native_tagged_t": 28.0248
+        }
+      ],
+      "target_native_rejected_all": 50,
+      "target_native_rejected_3_28": 50,
+      "target_native_rejected_3_5_28": 49,
+      "first_restore_lab": [],
+      "first_native_after_28": [
+        {
+          "t": "28.0248",
+          "tick": "4157",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Native",
+          "O": "Native",
+          "L": "5",
+          "lease": "-",
+          "tok": "0",
+          "max": "1",
+          "gen": "0",
+          "rgen": "2",
+          "exp": "-Infinity",
+          "cmd": "Obs0",
+          "prev": "HOLD",
+          "new": "Obs0",
+          "ome": "1",
+          "chg": "1",
+          "rej": "0",
+          "why": "-",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1395
+        }
+      ],
+      "first_native_gap_after_restore": null
+    },
+    {
+      "run": "run07-h3-route-b",
+      "game_pid": 38156,
+      "source_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "manifest_entries": 61,
+      "metrics_hash_match": true,
+      "telemetry_hash_match": true,
+      "script_hash_match": true,
+      "script_commands": [
+        "t=1.0   policy level=Full ttl=30 autorenew=true controlledByAiRoute=true restore=RestoreControlledByAi restoreBeforeRelease=true",
+        "t=3.0   acquire T1F0 Movement Full 30",
+        "t=3.5   cmd T1F0 Movement HOLD",
+        "t=28.0  release T1F0 Movement",
+        "t=33.0  dump h3-route-b"
+      ],
+      "verdicts": [
+        {
+          "id": "P0",
+          "actual": "7",
+          "status": "PASS"
+        },
+        {
+          "id": "P0b",
+          "actual": "1992",
+          "status": "PASS"
+        },
+        {
+          "id": "P0c",
+          "actual": "29/29",
+          "status": "PASS"
+        },
+        {
+          "id": "H3-a",
+          "actual": "60",
+          "status": "PASS"
+        },
+        {
+          "id": "H3-b",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "G2",
+          "actual": "100.0%",
+          "status": "PASS"
+        },
+        {
+          "id": "X1",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "X2",
+          "actual": "1.1514",
+          "status": "PASS"
+        },
+        {
+          "id": "X3",
+          "actual": "3.6965",
+          "status": "PASS"
+        },
+        {
+          "id": "X4",
+          "actual": "0.4965",
+          "status": "PASS"
+        },
+        {
+          "id": "X5",
+          "actual": "0",
+          "status": "PASS"
+        }
+      ],
+      "fresh_recompute_exit": 0,
+      "fresh_recompute_equal_to_delivery": false,
+      "fresh_recompute_equal_except_input_path": true,
+      "recompute_status": "EVIDENCE_FOUND",
+      "first_override_pairs": [
+        {
+          "domain": "Movement",
+          "entity": "T1F0",
+          "lab_line": 169,
+          "lab_t": 3.5004,
+          "latency_seconds": 24.5045,
+          "native_tagged_line": 1304,
+          "native_tagged_t": 28.0049
+        }
+      ],
+      "target_native_rejected_all": 3,
+      "target_native_rejected_3_28": 0,
+      "target_native_rejected_3_5_28": 0,
+      "first_restore_lab": [],
+      "first_native_after_28": [
+        {
+          "t": "28.0049",
+          "tick": "3778",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Native",
+          "O": "Lab",
+          "L": "5",
+          "lease": "-",
+          "tok": "0",
+          "max": "1",
+          "gen": "0",
+          "rgen": "1",
+          "exp": "36.0049",
+          "cmd": "Obs0",
+          "prev": "HOLD",
+          "new": "HOLD",
+          "ome": "0",
+          "chg": "0",
+          "rej": "1",
+          "why": "NotOwner",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1298
+        }
+      ],
+      "first_native_gap_after_restore": null
+    },
+    {
+      "run": "run08-rel-none",
+      "game_pid": 40564,
+      "source_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "manifest_entries": 62,
+      "metrics_hash_match": true,
+      "telemetry_hash_match": true,
+      "script_hash_match": true,
+      "script_commands": [
+        "t=1.0   policy level=Full ttl=30 autorenew=true restore=None restoreBeforeRelease=true",
+        "t=3.0   acquire T1F0 Movement Full 30",
+        "t=3.5   cmd T1F0 Movement HOLD",
+        "t=28.0  release T1F0 Movement",
+        "t=38.0  dump rel-none"
+      ],
+      "verdicts": [
+        {
+          "id": "P0",
+          "actual": "7",
+          "status": "PASS"
+        },
+        {
+          "id": "P0b",
+          "actual": "2318",
+          "status": "PASS"
+        },
+        {
+          "id": "P0c",
+          "actual": "29/29",
+          "status": "PASS"
+        },
+        {
+          "id": "REL",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "X1",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "X2",
+          "actual": "0.9473",
+          "status": "PASS"
+        },
+        {
+          "id": "X3",
+          "actual": "3.1575",
+          "status": "PASS"
+        },
+        {
+          "id": "X4",
+          "actual": "0.5047",
+          "status": "PASS"
+        },
+        {
+          "id": "X5",
+          "actual": "0",
+          "status": "PASS"
+        }
+      ],
+      "fresh_recompute_exit": 0,
+      "fresh_recompute_equal_to_delivery": false,
+      "fresh_recompute_equal_except_input_path": true,
+      "recompute_status": "EVIDENCE_FOUND",
+      "first_override_pairs": [
+        {
+          "domain": "Movement",
+          "entity": "T1F0",
+          "lab_line": 173,
+          "lab_t": 3.5051,
+          "latency_seconds": 24.5183,
+          "native_tagged_line": 1402,
+          "native_tagged_t": 28.0234
+        }
+      ],
+      "target_native_rejected_all": 50,
+      "target_native_rejected_3_28": 50,
+      "target_native_rejected_3_5_28": 49,
+      "first_restore_lab": [],
+      "first_native_after_28": [
+        {
+          "t": "28.0234",
+          "tick": "3913",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Native",
+          "O": "Native",
+          "L": "5",
+          "lease": "-",
+          "tok": "0",
+          "max": "1",
+          "gen": "0",
+          "rgen": "2",
+          "exp": "-Infinity",
+          "cmd": "Obs0",
+          "prev": "HOLD",
+          "new": "Obs0",
+          "ome": "1",
+          "chg": "1",
+          "rej": "0",
+          "why": "-",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1402
+        }
+      ],
+      "first_native_gap_after_restore": null
+    },
+    {
+      "run": "run09-rel-reapply",
+      "game_pid": 38548,
+      "source_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "manifest_entries": 62,
+      "metrics_hash_match": true,
+      "telemetry_hash_match": true,
+      "script_hash_match": true,
+      "script_commands": [
+        "t=1.0   policy level=Full ttl=30 autorenew=true restore=ReapplyLastNativeOrder restoreBeforeRelease=true",
+        "t=3.0   acquire T1F0 Movement Full 30",
+        "t=3.5   cmd T1F0 Movement HOLD",
+        "t=28.0  release T1F0 Movement",
+        "t=38.0  dump rel-reapply"
+      ],
+      "verdicts": [
+        {
+          "id": "P0",
+          "actual": "7",
+          "status": "PASS"
+        },
+        {
+          "id": "P0b",
+          "actual": "2308",
+          "status": "PASS"
+        },
+        {
+          "id": "P0c",
+          "actual": "29/29",
+          "status": "PASS"
+        },
+        {
+          "id": "REL",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "X1",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "X2",
+          "actual": "0.9210",
+          "status": "PASS"
+        },
+        {
+          "id": "X3",
+          "actual": "3.1314",
+          "status": "PASS"
+        },
+        {
+          "id": "X4",
+          "actual": "0.4977",
+          "status": "PASS"
+        },
+        {
+          "id": "X5",
+          "actual": "0",
+          "status": "PASS"
+        }
+      ],
+      "fresh_recompute_exit": 0,
+      "fresh_recompute_equal_to_delivery": false,
+      "fresh_recompute_equal_except_input_path": true,
+      "recompute_status": "EVIDENCE_INSUFFICIENT",
+      "first_override_pairs": [],
+      "target_native_rejected_all": 50,
+      "target_native_rejected_3_28": 50,
+      "target_native_rejected_3_5_28": 49,
+      "first_restore_lab": [
+        {
+          "t": "28.0016",
+          "tick": "3968",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Lab",
+          "O": "Lab",
+          "L": "5",
+          "lease": "L1",
+          "tok": "1",
+          "max": "1",
+          "gen": "1",
+          "rgen": "1",
+          "exp": "36.0016",
+          "cmd": "Obs0",
+          "prev": "HOLD",
+          "new": "Obs0",
+          "ome": "1",
+          "chg": "1",
+          "rej": "0",
+          "why": "-",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1404
+        }
+      ],
+      "first_native_after_28": [
+        {
+          "t": "28.0281",
+          "tick": "3972",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Native",
+          "O": "Native",
+          "L": "5",
+          "lease": "-",
+          "tok": "0",
+          "max": "1",
+          "gen": "0",
+          "rgen": "2",
+          "exp": "-Infinity",
+          "cmd": "Obs0",
+          "prev": "Obs0",
+          "new": "Obs0",
+          "ome": "1",
+          "chg": "0",
+          "rej": "0",
+          "why": "-",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1408
+        }
+      ],
+      "first_native_gap_after_restore": 0.0265
+    },
+    {
+      "run": "run10-rel-reapply-resetweights",
+      "game_pid": 18632,
+      "source_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "manifest_entries": 61,
+      "metrics_hash_match": true,
+      "telemetry_hash_match": true,
+      "script_hash_match": true,
+      "script_commands": [
+        "t=1.0   policy level=Full ttl=30 autorenew=true restore=ReapplyLastNativeOrder,ResetBehaviorWeights restoreBeforeRelease=true",
+        "t=3.0   acquire T1F0 Movement Full 30",
+        "t=3.5   cmd T1F0 Movement HOLD",
+        "t=28.0  release T1F0 Movement",
+        "t=38.0  dump rel-reapply-resetweights"
+      ],
+      "verdicts": [
+        {
+          "id": "P0",
+          "actual": "7",
+          "status": "PASS"
+        },
+        {
+          "id": "P0b",
+          "actual": "2283",
+          "status": "PASS"
+        },
+        {
+          "id": "P0c",
+          "actual": "29/29",
+          "status": "PASS"
+        },
+        {
+          "id": "REL",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "X1",
+          "actual": "0",
+          "status": "PASS"
+        },
+        {
+          "id": "X2",
+          "actual": "0.9209",
+          "status": "PASS"
+        },
+        {
+          "id": "X3",
+          "actual": "3.1312",
+          "status": "PASS"
+        },
+        {
+          "id": "X4",
+          "actual": "0.5036",
+          "status": "PASS"
+        },
+        {
+          "id": "X5",
+          "actual": "0",
+          "status": "PASS"
+        }
+      ],
+      "fresh_recompute_exit": 0,
+      "fresh_recompute_equal_to_delivery": false,
+      "fresh_recompute_equal_except_input_path": true,
+      "recompute_status": "EVIDENCE_INSUFFICIENT",
+      "first_override_pairs": [],
+      "target_native_rejected_all": 50,
+      "target_native_rejected_3_28": 50,
+      "target_native_rejected_3_5_28": 49,
+      "first_restore_lab": [
+        {
+          "t": "28.0019",
+          "tick": "3880",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Lab",
+          "O": "Lab",
+          "L": "5",
+          "lease": "L1",
+          "tok": "1",
+          "max": "1",
+          "gen": "1",
+          "rgen": "1",
+          "exp": "36.0019",
+          "cmd": "Obs0",
+          "prev": "HOLD",
+          "new": "Obs0",
+          "ome": "1",
+          "chg": "1",
+          "rej": "0",
+          "why": "-",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1388
+        }
+      ],
+      "first_native_after_28": [
+        {
+          "t": "28.0288",
+          "tick": "3884",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Native",
+          "O": "Native",
+          "L": "5",
+          "lease": "-",
+          "tok": "0",
+          "max": "1",
+          "gen": "0",
+          "rgen": "2",
+          "exp": "-Infinity",
+          "cmd": "Obs0",
+          "prev": "Obs0",
+          "new": "Obs0",
+          "ome": "1",
+          "chg": "0",
+          "rej": "0",
+          "why": "-",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1391
+        }
+      ],
+      "first_native_gap_after_restore": 0.0269
+    },
+    {
+      "run": "run11-rel-after-release",
+      "game_pid": 19252,
+      "source_head": "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+      "manifest_entries": 62,
+      "metrics_hash_match": true,
+      "telemetry_hash_match": true,
+      "script_hash_match": true,
+      "script_commands": [
+        "t=1.0   policy level=Full ttl=30 autorenew=true restore=ReapplyLastNativeOrder restoreBeforeRelease=false",
+        "t=3.0   acquire T1F0 Movement Full 30",
+        "t=3.5   cmd T1F0 Movement HOLD",
+        "t=28.0  release T1F0 Movement",
+        "t=38.0  dump rel-after-release"
+      ],
+      "verdicts": [
+        {
+          "id": "P0",
+          "actual": "7",
+          "status": "PASS"
+        },
+        {
+          "id": "P0b",
+          "actual": "2301",
+          "status": "PASS"
+        },
+        {
+          "id": "P0c",
+          "actual": "29/29",
+          "status": "PASS"
+        },
+        {
+          "id": "REL",
+          "actual": "1",
+          "status": "FAIL"
+        },
+        {
+          "id": "X1",
+          "actual": "1",
+          "status": "PASS"
+        },
+        {
+          "id": "X2",
+          "actual": "0.9209",
+          "status": "PASS"
+        },
+        {
+          "id": "X3",
+          "actual": "3.1312",
+          "status": "PASS"
+        },
+        {
+          "id": "X4",
+          "actual": "0.4984",
+          "status": "PASS"
+        },
+        {
+          "id": "X5",
+          "actual": "0",
+          "status": "PASS"
+        }
+      ],
+      "fresh_recompute_exit": 0,
+      "fresh_recompute_equal_to_delivery": false,
+      "fresh_recompute_equal_except_input_path": true,
+      "recompute_status": "EVIDENCE_FOUND",
+      "first_override_pairs": [
+        {
+          "domain": "Movement",
+          "entity": "T1F0",
+          "lab_line": 166,
+          "lab_t": 3.5014,
+          "latency_seconds": 24.5237,
+          "native_tagged_line": 1388,
+          "native_tagged_t": 28.0251
+        }
+      ],
+      "target_native_rejected_all": 50,
+      "target_native_rejected_3_28": 50,
+      "target_native_rejected_3_5_28": 49,
+      "first_restore_lab": [
+        {
+          "t": "28.0049",
+          "tick": "4012",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Lab",
+          "O": "Native",
+          "L": "5",
+          "lease": "-",
+          "tok": "0",
+          "max": "1",
+          "gen": "2",
+          "rgen": "2",
+          "exp": "-Infinity",
+          "cmd": "Obs0",
+          "prev": "HOLD",
+          "new": "HOLD",
+          "ome": "0",
+          "chg": "0",
+          "rej": "1",
+          "why": "NotOwner",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1387
+        }
+      ],
+      "first_native_after_28": [
+        {
+          "t": "28.0251",
+          "tick": "4015",
+          "E": "T1F0",
+          "D": "Movement",
+          "P": "Gated",
+          "W": "Native",
+          "O": "Native",
+          "L": "5",
+          "lease": "-",
+          "tok": "0",
+          "max": "1",
+          "gen": "0",
+          "rgen": "2",
+          "exp": "-Infinity",
+          "cmd": "Obs0",
+          "prev": "HOLD",
+          "new": "Obs0",
+          "ome": "1",
+          "chg": "1",
+          "rej": "0",
+          "why": "-",
+          "task": "-",
+          "ts": "-",
+          "int": "-",
+          "u": "0.0000",
+          "p": "0.0000",
+          "line": 1388
+        }
+      ],
+      "first_native_gap_after_restore": 0.0202
+    }
+  ],
+  "manifest_count": 491,
+  "manifest_errors": [],
+  "reviewed_files": [
+    {
+      "path": "docs\\07-final-architecture.md",
+      "sha256": "a55b902c0919367fe93eba7314800b03784f9e7779b05b5c91e390bfe2fa6b22",
+      "lines": 457
+    },
+    {
+      "path": "HANDOFF.phase11.md",
+      "sha256": "d3664bdcb93012fc93e70c924f440803096b60252365fb4878d666a7d21cd1a5",
+      "lines": 118
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-evidence-review.md",
+      "sha256": "e706875036ef8fb4b8f32418bb4b70dd054656193bb78776a6b23c9ca0ac9a96",
+      "lines": 432
+    }
+  ],
+  "frozen_csv_comparison": [
+    {
+      "file": "run05-changes.csv",
+      "equal": true
+    },
+    {
+      "file": "run05-keys.csv",
+      "equal": true
+    },
+    {
+      "file": "run05-lifetimes.csv",
+      "equal": true
+    },
+    {
+      "file": "run05-triples.csv",
+      "equal": true
+    },
+    {
+      "file": "run06-changes.csv",
+      "equal": true
+    },
+    {
+      "file": "run06-keys.csv",
+      "equal": true
+    },
+    {
+      "file": "run06-lifetimes.csv",
+      "equal": true
+    },
+    {
+      "file": "run06-triples.csv",
+      "equal": true
+    }
+  ]
+}

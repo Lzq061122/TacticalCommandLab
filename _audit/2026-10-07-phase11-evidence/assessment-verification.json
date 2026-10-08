@@ -1,0 +1,98 @@
+﻿[
+    {
+        "run":  "run04-census-final",
+        "runtime":  "RUN",
+        "source_head":  "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+        "classification":  "PASS",
+        "gates":  true,
+        "metricsMatch":  true,
+        "telemetryMatch":  true,
+        "scriptSourceMatch":  false,
+        "metrics":  "metrics-20261006-215243-census-baseline.txt",
+        "telemetry":  "telemetry-20261006-215243-census-baseline.txt"
+    },
+    {
+        "run":  "run05-h2-suppression",
+        "runtime":  "RUN",
+        "source_head":  "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+        "classification":  "FAIL",
+        "gates":  true,
+        "metricsMatch":  true,
+        "telemetryMatch":  true,
+        "scriptSourceMatch":  false,
+        "metrics":  "metrics-20261006-215546-h2-suppression.txt",
+        "telemetry":  "telemetry-20261006-215546-h2-suppression.txt"
+    },
+    {
+        "run":  "run06-h2-coverage",
+        "runtime":  "RUN",
+        "source_head":  "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+        "classification":  "FAIL",
+        "gates":  true,
+        "metricsMatch":  true,
+        "telemetryMatch":  true,
+        "scriptSourceMatch":  false,
+        "metrics":  "metrics-20261006-215736-h2-coverage.txt",
+        "telemetry":  "telemetry-20261006-215736-h2-coverage.txt"
+    },
+    {
+        "run":  "run07-h3-route-b",
+        "runtime":  "RUN",
+        "source_head":  "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+        "classification":  "PASS",
+        "gates":  true,
+        "metricsMatch":  true,
+        "telemetryMatch":  true,
+        "scriptSourceMatch":  false,
+        "metrics":  "metrics-20261006-215927-h3-route-b.txt",
+        "telemetry":  "telemetry-20261006-215927-h3-route-b.txt"
+    },
+    {
+        "run":  "run08-rel-none",
+        "runtime":  "RUN",
+        "source_head":  "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+        "classification":  "PASS",
+        "gates":  true,
+        "metricsMatch":  true,
+        "telemetryMatch":  true,
+        "scriptSourceMatch":  false,
+        "metrics":  "metrics-20261006-220128-rel-none.txt",
+        "telemetry":  "telemetry-20261006-220128-rel-none.txt"
+    },
+    {
+        "run":  "run09-rel-reapply",
+        "runtime":  "RUN",
+        "source_head":  "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+        "classification":  "PASS",
+        "gates":  true,
+        "metricsMatch":  true,
+        "telemetryMatch":  true,
+        "scriptSourceMatch":  false,
+        "metrics":  "metrics-20261006-220327-rel-reapply.txt",
+        "telemetry":  "telemetry-20261006-220327-rel-reapply.txt"
+    },
+    {
+        "run":  "run10-rel-reapply-resetweights",
+        "runtime":  "RUN",
+        "source_head":  "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+        "classification":  "PASS",
+        "gates":  true,
+        "metricsMatch":  true,
+        "telemetryMatch":  true,
+        "scriptSourceMatch":  false,
+        "metrics":  "metrics-20261006-220518-rel-reapply-resetweights.txt",
+        "telemetry":  "telemetry-20261006-220518-rel-reapply-resetweights.txt"
+    },
+    {
+        "run":  "run11-rel-after-release",
+        "runtime":  "RUN",
+        "source_head":  "adab4cf008a8dd6e83f8e12c03f1423483cb98f0",
+        "classification":  "FAIL",
+        "gates":  true,
+        "metricsMatch":  true,
+        "telemetryMatch":  true,
+        "scriptSourceMatch":  false,
+        "metrics":  "metrics-20261006-220719-rel-after-release.txt",
+        "telemetry":  "telemetry-20261006-220719-rel-after-release.txt"
+    }
+]

@@ -40,8 +40,10 @@ public sealed class FormationBinding
     public HostOrderProjection FacingProjection { get; } = new HostOrderProjection();
     public HostOrderProjection ArrangementProjection { get; } = new HostOrderProjection();
 
-    /// <summary>最近一次观测到的原生 MovementOrder 原始值，用于 Release 时的恢复对照组。</summary>
+    /// <summary>最近一次被接受的 Native MovementOrder 原始 struct，用于 Release 恢复对照组。</summary>
     public MovementOrder? LastNativeMovement { get; set; }
+    public double? LastNativeMovementCapturedAt { get; set; }
+    public string? LastNativeMovementRawType { get; set; }
 
     /// <summary>夺取前 SetControlledByAI 的值；null 表示本轮没动过它。</summary>
     public bool? ControlledByAiBefore { get; set; }
@@ -63,81 +65,6 @@ public sealed class FormationBinding
     };
 }
 
-/// <summary>
-/// intent_hold_share 采样器：归属窗口内按 Mission tick 累加"实际值 == 意图值"的时长。
-/// 支持多窗口累计（一条时间线里可能有多次 cmd）。窗口从 Open 起算，到 Close 结束。
-/// </summary>
-public sealed class HoldMeter
-{
-    private double _windowStart = -1.0;
-    private double _lastSample = -1.0;
-    private double _held;
-    private double _cumHeld;
-    private double _cumWindow;
-    private bool _open;
-    private CommandValue _lastActual = CommandValue.Unset;
-
-    public CommandValue Intent { get; private set; } = CommandValue.Unset;
-    public int Samples { get; private set; }
-    public int Matches { get; private set; }
-    public int Windows { get; private set; }
-    public bool IsOpen => _open;
-
-    /// <summary>当前（未关闭）窗口的时长；已关闭窗口计入 Cumulative。</summary>
-    public double WindowSeconds { get; private set; }
-    public double CumulativeSeconds => _cumWindow;
-    public double HeldSeconds => _cumHeld + _held;
-
-    public void Open(double now, CommandValue intent)
-    {
-        if (_open) Close(now);
-        _windowStart = now;
-        _lastSample = now;
-        _held = 0.0;
-        _open = true;
-        Intent = intent;
-        WindowSeconds = 0.0;
-    }
-
-    public void Sample(double now, CommandValue actual)
-    {
-        if (!_open || now <= _lastSample) return;
-        var dt = now - _lastSample;
-        Samples++;
-        if (actual == Intent) { _held += dt; Matches++; }
-        _lastSample = now;
-        _lastActual = actual;
-        WindowSeconds = Math.Max(0.0, now - _windowStart);
-    }
-
-    /// <summary>
-    /// 末段处理：最后一次采样到 Close 之间没有新采样点，按"状态未变"把这段时长计入同一判定。
-    /// 等价假设是 Order 只会在采样间隔内发生变化 —— 采样频率高于 FormationAI 周期（0.5s）时成立。
-    /// </summary>
-    public double Close(double now)
-    {
-        if (_open)
-        {
-            if (now > _lastSample && Samples > 0) Sample(now, _lastActual);
-            var w = Samples > 0 ? Math.Max(0.0, Math.Max(now, _lastSample) - _windowStart) : 0.0;
-            _cumWindow += w;
-            _cumHeld += _held;
-            _held = 0.0;
-            WindowSeconds = w;
-            Windows++;
-            _open = false;
-        }
-        return Share();
-    }
-
-    /// <summary>窗口内"实体值 == 意图值"的时长占比。窗口为 0 时返回 0（不得当作 100%）。</summary>
-    public double Share()
-    {
-        var total = _cumWindow + (_open ? WindowSeconds : 0.0);
-        return total > 0 ? (_cumHeld + _held) / total : 0.0;
-    }
-}
-
 public sealed class ProbeRuntime
 {
     [ThreadStatic] private static bool _inLabWrite;
@@ -153,6 +80,7 @@ public sealed class ProbeRuntime
     private readonly Dictionary<string, Lease> _leases = new Dictionary<string, Lease>(StringComparer.Ordinal);
     private readonly Dictionary<string, double> _acquiredAt = new Dictionary<string, double>(StringComparer.Ordinal);
     private readonly Dictionary<string, HoldMeter> _holds = new Dictionary<string, HoldMeter>(StringComparer.Ordinal);
+    private readonly NativeOverrideTracker _nativeOverrideTracker;
     private readonly List<KeyValuePair<string, HoldMeter>> _holdHistory = new List<KeyValuePair<string, HoldMeter>>();
     private readonly ScriptRunner _script;
 
@@ -172,6 +100,7 @@ public sealed class ProbeRuntime
         _clock = new ProbeClock();
         _telemetry = new TelemetryCollector();
         _authority = new AuthorityService(_telemetry, ProbeConfig.NativeWriterId);
+        _nativeOverrideTracker = new NativeOverrideTracker(ProbeConfig.LabWriterId, ProbeConfig.NativeWriterId);
         _port = new WritePort(_clock, _authority, _telemetry, config.ToPolicy());
         _script = new ScriptRunner(this, config.ScriptPath);
         Current = this;
@@ -189,16 +118,10 @@ public sealed class ProbeRuntime
     public double ReactionLatency { get; private set; } = -1.0;
 
     /// <summary>Lab 生效写入 -> 第一次原生生效覆盖的时间差。H1 的"多久被覆盖"。</summary>
-    public double NativeOverrideLatency { get; private set; } = -1.0;
-
-    /// <summary>
-    /// 按 (实体,域) 记录最近一次 Lab 生效写入的时刻。
-    /// 覆盖延迟必须在同一实体、同一域内关联 —— 用单一全局时间戳会把别的实体/别的域的改动误算成覆盖。
-    /// </summary>
-    private readonly Dictionary<string, double> _lastLabChangeAt = new Dictionary<string, double>(StringComparer.Ordinal);
+    public double NativeOverrideLatency => _nativeOverrideTracker.FirstNativeOverrideLatency;
 
     /// <summary>Lab 写入在本轮是否被写入口接受过。H1 没有获准的 Lab 写入时不能判"覆盖成功"。</summary>
-    public int AcceptedLabChanges { get; private set; }
+    public int AcceptedLabChanges => _nativeOverrideTracker.AcceptedLabChanges;
 
     /// <summary>
     /// 已落盘的崩溃报告份数。用于去重：同一个异常每 tick 都会抛，不做去重会把磁盘写爆。
@@ -356,11 +279,11 @@ public sealed class ProbeRuntime
     /// 否则就变成"用防御性代码掩盖真实缺陷"。
     /// </summary>
     public bool Gate(Formation formation, CommandDomain domain, WritePath path, string hook,
-                     CommandValue incoming, string raw)
+                     CommandValue incoming, string raw, MovementOrder? originalMovement = null)
     {
         try
         {
-            return GateCore(formation, domain, path, hook, incoming, raw);
+            return GateCore(formation, domain, path, hook, incoming, raw, originalMovement);
         }
         catch (Exception ex)
         {
@@ -370,7 +293,7 @@ public sealed class ProbeRuntime
     }
 
     private bool GateCore(Formation formation, CommandDomain domain, WritePath path, string hook,
-                          CommandValue incoming, string raw)
+                          CommandValue incoming, string raw, MovementOrder? originalMovement)
     {
         if (!Enabled(domain, path)) return true;
 
@@ -408,21 +331,7 @@ public sealed class ProbeRuntime
 
         // H1 的核心量：Lab 的意图值被原生覆盖需要多久。必须同实体、同域关联，
         // 否则把别的 formation / 别的域的原生改动算进来，延迟值没有意义。
-        if (!attempt.Rejected && attempt.OrderChanged)
-        {
-            var k = Key(binding.EntityId, domain);
-            if (isLab)
-            {
-                _lastLabChangeAt[k] = attempt.Timestamp;
-                AcceptedLabChanges++;
-            }
-            else if (NativeOverrideLatency < 0 &&
-                     _lastLabChangeAt.TryGetValue(k, out var labAt) &&
-                     attempt.Timestamp >= labAt)
-            {
-                NativeOverrideLatency = attempt.Timestamp - labAt;
-            }
-        }
+        _nativeOverrideTracker.Observe(attempt);
 
         _hostLines.Add(HostContext.Line(
             attempt.Timestamp, binding.EntityId, domain, hook, formation,
@@ -431,7 +340,12 @@ public sealed class ProbeRuntime
 
         if (!attempt.Rejected && !isLab && domain == CommandDomain.Movement)
         {
-            binding.LastNativeMovement = NeutralOrders.ToMovement(incoming);
+            if (originalMovement is MovementOrder nativeOrder)
+            {
+                binding.LastNativeMovement = nativeOrder;
+                binding.LastNativeMovementCapturedAt = attempt.Timestamp;
+                binding.LastNativeMovementRawType = raw;
+            }
         }
 
         return !attempt.Rejected;
@@ -478,17 +392,76 @@ public sealed class ProbeRuntime
         if (binding is null) return null;
         if (binding.LastNativeMovement is null) return null;
 
+        var order = binding.LastNativeMovement.Value;
+        var rawType = binding.LastNativeMovementRawType ?? order.OrderType.ToString();
+        var capturedAt = binding.LastNativeMovementCapturedAt?.ToString("F4", CultureInfo.InvariantCulture) ?? "unknown";
+        var position = MovementOrderPosition(order, binding.Formation);
+        var targetFormation = TargetFormationId(order);
+        Note(string.Format(CultureInfo.InvariantCulture,
+            "REL_ORDER stage=reapply-request E={0} capturedAt={1} rawType={2} position={3} targetFormation={4}",
+            binding.EntityId, capturedAt, rawType, position, targetFormation));
+
         _inLabWrite = true;
         try
         {
             LastAttempt = null;
-            formation.SetMovementOrder(binding.LastNativeMovement.Value);
+            formation.SetMovementOrder(order);
         }
         finally
         {
             _inLabWrite = false;
         }
+
+        var result = LastAttempt is null ? "no-attempt" : LastAttempt.Rejected ? "rejected" : "accepted";
+        var actual = ActualMovementOrder(binding.Formation);
+        Note(string.Format(CultureInfo.InvariantCulture,
+            "REL_ORDER stage=reapply-result E={0} capturedAt={1} requestedType={2} requestedPosition={3} " +
+            "requestedTargetFormation={4} result={5} actualType={6} actualPosition={7} actualTargetFormation={8}",
+            binding.EntityId, capturedAt, rawType, position, targetFormation, result,
+            actual.RawType, actual.Position, actual.TargetFormation));
         return LastAttempt;
+    }
+
+    private static string MovementOrderPosition(MovementOrder order, Formation formation)
+    {
+        try
+        {
+            var copy = order;
+            var position = copy.GetPosition(formation);
+            return string.Format(CultureInfo.InvariantCulture, "{0:R},{1:R}", position.x, position.y);
+        }
+        catch
+        {
+            return "unknown";
+        }
+    }
+
+    private string TargetFormationId(MovementOrder order)
+    {
+        try
+        {
+            var copy = order;
+            var target = copy.TargetFormation;
+            return target is null ? "-" : EntityIdOf(target);
+        }
+        catch
+        {
+            return "unknown";
+        }
+    }
+
+    private (string RawType, string Position, string TargetFormation) ActualMovementOrder(Formation formation)
+    {
+        try
+        {
+            var actual = formation.GetReadonlyMovementOrderReference();
+            var copy = actual;
+            return (copy.OrderType.ToString(), MovementOrderPosition(copy, formation), TargetFormationId(copy));
+        }
+        catch
+        {
+            return ("unknown", "unknown", "unknown");
+        }
     }
 
     // ---------------- Acquire / Renew / Release ----------------
@@ -946,14 +919,15 @@ public sealed class ProbeRuntime
             // 本装置未 acquire 时 Owner 恒为 Native，原生本来就是所有者 ⇒ 该计数结构性恒 0。
             // 现降级为记录值（与 H1-d 同级），改用"是否有获准的 Lab 写入"作为真正的前置门禁。
             rows.Add(Row("H1-a", "lab writes accepted > 0 (有可覆盖对象)",
-                AcceptedLabChanges.ToString(CultureInfo.InvariantCulture), AcceptedLabChanges > 0));
+                AcceptedLabChanges.ToString(CultureInfo.InvariantCulture),
+                ExperimentVerdicts.H1AcceptedLabChanges(AcceptedLabChanges)));
             rows.Add(Row("H1-b", "Movement 写入口有原生流量",
                 CensusOf("Formation.SetMovementOrder").ToString(CultureInfo.InvariantCulture),
                 CensusOf("Formation.SetMovementOrder") > 0));
             // H1-c 必须是真门禁：无覆盖时打印 no-override 并 FAIL，否则"没被覆盖"会被误报成成功。
             rows.Add(Row("H1-c", "first native override latency (s)",
                 NativeOverrideLatency < 0 ? "no-override" : NativeOverrideLatency.ToString("F3", CultureInfo.InvariantCulture),
-                NativeOverrideLatency >= 0));
+                ExperimentVerdicts.H1ObservedNativeOverride(NativeOverrideLatency)));
             rows.Add(Row("H1-d", "lab_overrides (Lab 反覆盖原生)",
                 m.LabOverrides.ToString(CultureInfo.InvariantCulture), true));
             rows.Add(Row("H1-e", "native_overrides (仅非所有者改动，本域恒 0)",
@@ -966,7 +940,7 @@ public sealed class ProbeRuntime
             var hold = BestHold();
             rows.Add(Row("G2", "intent_hold_share >= 95%",
                 hold is null ? "no-window" : (hold.Share() * 100.0).ToString("F1", CultureInfo.InvariantCulture) + "%",
-                hold is not null && hold.Share() >= 0.95));
+                ExperimentVerdicts.HoldTargetMet(hold)));
             rows.Add(Row("G3", "stability grade != Oscillating",
                 m.Grade.ToString(), m.Grade != StabilityGrade.Oscillating));
         }
@@ -980,12 +954,13 @@ public sealed class ProbeRuntime
             var hold3 = BestHold();
             rows.Add(Row("G2", "intent_hold_share >= 95%",
                 hold3 is null ? "no-window" : (hold3.Share() * 100.0).ToString("F1", CultureInfo.InvariantCulture) + "%",
-                hold3 is not null && hold3.Share() >= 0.95));
+                ExperimentVerdicts.HoldTargetMet(hold3)));
         }
         else if (prefix == "rel")
         {
             rows.Add(Row("REL", "release_recovery_failures == 0",
-                ReleaseRecoveryFailures.ToString(CultureInfo.InvariantCulture), ReleaseRecoveryFailures == 0));
+                ReleaseRecoveryFailures.ToString(CultureInfo.InvariantCulture),
+                ExperimentVerdicts.ReleaseRecoveryPassed(ReleaseRecoveryFailures)));
         }
 
         rows.Add(Row("X1", "release_recovery_failures", ReleaseRecoveryFailures.ToString(CultureInfo.InvariantCulture), true));
@@ -1113,6 +1088,10 @@ public sealed class ProbeRuntime
             sb.AppendLine("harmonyId     = " + harmonyId);
             sb.AppendLine("patchedCount  = " + Patches.Applied.Count.ToString(CultureInfo.InvariantCulture));
             sb.AppendLine("patchFailure  = " + (Patches.Failure ?? "(none)"));
+            sb.AppendLine("--- loaded assembly identity ---");
+            AppendAssemblyIdentity(sb, "CommandLab.BannerlordProbe", typeof(ProbeRuntime).Assembly);
+            AppendAssemblyIdentity(sb, "CommandLab.Core", typeof(WritePort).Assembly);
+            AppendAssemblyIdentity(sb, "CommandLab.Telemetry", typeof(TelemetryCollector).Assembly);
             sb.AppendLine("--- patched methods ---");
             foreach (var pm in Patches.Applied) sb.AppendLine(pm);
             sb.AppendLine("--- pending notes ---");
@@ -1123,6 +1102,34 @@ public sealed class ProbeRuntime
         {
             // 哨兵失败不能影响游戏启动。
         }
+    }
+
+    private static void AppendAssemblyIdentity(StringBuilder sb, string name, System.Reflection.Assembly assembly)
+    {
+        var location = "(unknown)";
+        var mvid = "(unknown)";
+        var sha256 = "(unknown)";
+        try { location = string.IsNullOrEmpty(assembly.Location) ? "(empty)" : assembly.Location; }
+        catch (Exception ex) { location = "(error: " + ex.GetType().Name + ": " + ex.Message + ")"; }
+        try { mvid = assembly.ManifestModule.ModuleVersionId.ToString("D"); }
+        catch (Exception ex) { mvid = "(error: " + ex.GetType().Name + ": " + ex.Message + ")"; }
+        try
+        {
+            if (location == "(empty)" || location == "(unknown)") sha256 = "(unavailable: no assembly path)";
+            else if (!System.IO.File.Exists(location)) sha256 = "(missing: " + location + ")";
+            else
+            {
+                using (var stream = new System.IO.FileStream(location, System.IO.FileMode.Open,
+                    System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite | System.IO.FileShare.Delete))
+                using (var hash = System.Security.Cryptography.SHA256.Create())
+                    sha256 = BitConverter.ToString(hash.ComputeHash(stream)).Replace("-", string.Empty).ToLowerInvariant();
+            }
+        }
+        catch (Exception ex) { sha256 = "(error: " + ex.GetType().Name + ": " + ex.Message + ")"; }
+
+        sb.AppendLine(name + ".location = " + location);
+        sb.AppendLine(name + ".mvid = " + mvid);
+        sb.AppendLine(name + ".sha256 = " + sha256);
     }
 
     /// <summary>
