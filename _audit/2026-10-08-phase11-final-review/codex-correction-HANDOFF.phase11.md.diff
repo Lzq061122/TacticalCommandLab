@@ -1,0 +1,25 @@
+--- submitted/HANDOFF.phase11.md
++++ accepted/HANDOFF.phase11.md
+@@ -1,4 +1,6 @@
+ # Phase 11 开发反馈文档
++
++> **Codex 最终验收（2026-10-08）**：**Phase 11 基本交付通过**。五条文字整改已核实；审查方补齐设计版本标记与统计笔误。完整结论见 `_audit/2026-10-08-phase11-final-review.md`，最终文件哈希见 `_audit/2026-10-08-phase11-final-review/final-artifact-manifest.json`。下方开发组“待复审/部分通过”是本次验收前的交接历史。**运行时遗留项未被宣称完成，Phase 12 未启动。**
+ 
+ > 本文件是**交接事实记录**，不代表开发完成或审查通过。按 `docs/phase11-handoff-template.md` 填写。
+ >
+@@ -22,7 +24,7 @@
+ | 工作区 / 开发环境 | `E:\MBmod\TacticalCommandLab`（Windows 本地）。原始八场证据在 `_audit\_local-phase10-20261006\`，**该目录未被 git 跟踪**；跟踪副本在 `docs\evidence\phase10-closure-20261007\`。两处本轮均可访问，已逐项核对。 |
+ | 开工分支 / HEAD | 分支 `codex/local-phase10-verification-20261006`；HEAD `f8b1f173f05bf054b42eb2e31527deb1a83aa613` |
+ | 交付分支 / HEAD / 提交范围 | **未提交、未推送**。分支与 HEAD 同开工值 `codex/local-phase10-verification-20261006` @ `f8b1f17`；改动包含**四份 tracked 文档修改**（`HANDOFF.md`、`docs/05`、`docs/06`、`docs/07a`）与若干未跟踪新增文件。 |
+-| 设计依据 | `docs/phase11-design.md`；**开工基线** SHA-256 `042ef0fbc5ed3eaa452cba67bd0b442ed442c33f00c531fe391519b6a3759a74`（blob `f84440e6e06f143ef97ee1996e5918ac6c5b3507`）；**整改后当前版本** `dd13fbaf97d1642ca14639a9f36320ef7ef096793b7c85a8de465f0aecae54f5`（旧值**不是**当前文件哈希） |
++| 设计依据 | `docs/phase11-design.md`；**开工基线** SHA-256 `042ef0fbc5ed3eaa452cba67bd0b442ed442c33f00c531fe391519b6a3759a74`（blob `f84440e6e06f143ef97ee1996e5918ac6c5b3507`）；**上一轮整改版本** `dd13fbaf97d1642ca14639a9f36320ef7ef096793b7c85a8de465f0aecae54f5`；**当前设计版本** `2c049e6d737f65caf813f655654ca3b12e4ff66ee76302e7fe152d2c8af78358`（旧值**不是**当前文件哈希） |
+ | Prompt 依据 | `_dispatch/2026-10-07-phase11-development-prompt.md`；SHA-256 `aadc20923744f7dd0ce603c107391cedcdc18919429b7be2029f871589707cfd`（blob `a018052472f98e5b781c611484f65d34e3967e8a`），126 行 |
+ | 开工已有他方改动 | 三项未跟踪文件（均在本轮之前存在）：`_dispatch/2026-10-07-phase11-development-prompt.md`、`docs/phase11-design.md`、`docs/phase11-handoff-template.md`（开工基线 SHA-256 分别为 `aadc2092…`、`042ef0fb…`、`ba79c8d3574f7c39f16f99f9e853f7d6d66633fc84ccb8b5673f98a9676231bf`；其中设计文档在整改阶段被更新为 `dd13fbaf…`）。开工时 `git status --porcelain` **无 tracked 修改**。 |
+ | 本轮自己的未提交改动 | 新增：`docs/07-final-architecture.md`、`HANDOFF.phase11.md`、`_audit/2026-10-07-phase11-evidence-review.md`、`_audit/verify_phase11_evidence.ps1` 及 `_audit/2026-10-07-phase11-evidence/`。修改：**四份 tracked 文档**——`HANDOFF.md`（3 处状态行）、`docs/05-experiment-plan.md`（§1.5）、`docs/06-experiment-results.md`（§5）、`docs/07a-architecture-abc-comparison.md`（§2.2a/§2.2b）。**唯一写入方 = 本轮开发组**（根 `HANDOFF.md` 顶部审查块由 Codex 写入）。 |
+@@ -138,5 +140,5 @@
+ 
+ **首轮审查时（整改前）对照**：`docs/07-final-architecture.md` = `a55b902c0919367fe93eba7314800b03784f9e7779b05b5c91e390bfe2fa6b22`（457 行）；`HANDOFF.phase11.md` = `d3664bdcb93012fc93e70c924f440803096b60252365fb4878d666a7d21cd1a5`（118 行）；`_audit/2026-10-07-phase11-evidence-review.md` = `e706875036ef8fb4b8f32418bb4b70dd054656193bb78776a6b23c9ca0ac9a96`（432 行）。三个数字与 Codex 审查报告 §1 记录一致。
+ 
+-**整改后工作树**（`git status --porcelain`）：tracked 修改 4 个（`HANDOFF.md` 10+/3−、`docs/05` 14+/0−、`docs/06` 2+/0−、`docs/07a` 16+/0−，合计 39+/3−）；`src/`、`tests/`、`deploy/`、`tools/`、`docs/evidence/`、`docs/10-harmony-runtime-experiments.md` **零改动**（`git diff --name-only` 对这些路径为空）。分支 `codex/local-phase10-verification-20261006`，HEAD `f8b1f173f05bf054b42eb2e31527deb1a83aa613`，**未提交、未推送**。**注**：`docs/06-experiment-results.md` 的 2 行新增**不在** Codex 审查报告的六条整改点内，属首轮已交付、复审时一并核验。
++**整改后工作树**（`git status --porcelain`）：tracked 修改 4 个（`HANDOFF.md` 7+/3−、`docs/05` 14+/0−、`docs/06` 2+/0−、`docs/07a` 16+/0−，合计 39+/3−）；`src/`、`tests/`、`deploy/`、`tools/`、`docs/evidence/`、`docs/10-harmony-runtime-experiments.md` **零改动**（`git diff --name-only` 对这些路径为空）。分支 `codex/local-phase10-verification-20261006`，HEAD `f8b1f173f05bf054b42eb2e31527deb1a83aa613`，**未提交、未推送**。**注**：`docs/06-experiment-results.md` 的 2 行新增**不在** Codex 审查报告的六条整改点内，属首轮已交付、复审时一并核验。
+ - **是否进入 Phase 12**：**否**。

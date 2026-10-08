@@ -329,6 +329,8 @@ Decision: apply write
 4. **并列新增 Writer 会立刻劣化一个数量级**（E9），支持"集成原生链 / 替换产出"而非"旁路加一个写入者"的方向。
 5. **Transformation 与 Authority 正交**（E10），可作为任一架构的附加层，但不参与胜负判定。
 6. **归因能力是可量化的架构属性**（E11 50% vs 100%），应进入 A/B/C 的 Debuggability / Decision explainability 维度。
+7. **hold（`intent_hold_share`）在本轮还不是判据，Phase 8/11 才成为判据**（Phase 11 正式补记）。本 Phase 的 14 项指标里没有 `intent_hold_share`，E1–E11 因此**无法区分"从未抢到控制权"与"完全控制"**——两者在 `unauthorized_writes == 0` + Stable 上同形。这正是 E12 必须补 Level 谱系对照（L2 档 `unauthW == 0` 且 Stable，但 hold = 0.0%）的原因。**`intent_hold_share` 与硬门限 G2（`intent_hold_share ≥ 95%`）的正式定义见 `docs/05-experiment-plan.md` §1.5（Phase 11 补记）**，E12 实测见 `docs/07a-architecture-abc-comparison.md` §2.1，宿主侧实测见 `docs/07-final-architecture.md` 与 `_audit/2026-10-07-phase11-evidence-review.md`。
+8. **`lab_delivery_rate` 不得用作控制判据**（Phase 11 正式补记）。该变量的口径缺陷见 `docs/07a-architecture-abc-comparison.md` §8 遗留 1：L5 档仅 4.8%，原因是**写入同值不计变更**，分母统计的并非"交付动作"本身。因此它在 A/B/C 对比中**不参与胜负判定，也不得与 G1/G2 同表当作控制落地证据**；本轮 E1–E11 亦未使用该口径。
 
 ---
 

@@ -108,6 +108,9 @@ Reason: Movement Authority owned by Lab under Level-5 lease; writer token stale
 | `stale_command_execution` | 携带 `token < max_seen` 却仍被**接受**的写入数（**应当恒为 0**，非 0 即设计失败） |
 | `task_starvation` | 仿真结束时既未 Complete 也未 Cancelled 的 Task 数，附最长 Pending 时长 |
 | `release_recovery_failures` | Release 后，`2 × T_eval` 内 Ns 状态未回到 acquisition 前基线的次数 |
+| `intent_hold_share` | **有效意图窗口内"实体实际值 == 意图值"的累计时长 ÷ 该窗口累计时长**。**有效意图窗口**：同一 `(EntityId, Domain)` 上从**首个被接受的 Lab 写入**起算，至该 Lab 归属结束（Release 或到期）为止；窗口的起止与该累计时长必须逐 `(EntityId, Domain)` 记录。**无有效意图窗口、窗口长度为零、或窗口内未采样到任何样本时不能判 PASS**，只能记"无窗口"。多目标时**逐目标分别报告**，不得以 BestHold 代表所有目标。**这是第 15 项指标，本 Phase 5 计划成文时未列入上表，于 Phase 8 E12 补入、Phase 11 在此正式补记**（来源 `docs/07a-architecture-abc-comparison.md` §2.1、§7；实测口径 `docs/09-bannerlord-probe.md`；宿主实测见 `HANDOFF.phase11.md`、`docs/07-final-architecture.md` 与 `_audit/2026-10-07-phase11-evidence-review.md`）。 |
+| `intent_hold_share`（**事件归因窗口，不参与上述分母**） | 与上项**分开、不得混用**的另一组切分：`pre_acquire`（Acquire 前）／`acquire_to_first_accepted_lab_hold`（Acquire 到首个被接受的 Lab 写入）／`first_lab_hold_to_release`（首个被接受的 Lab 写入到 Release）。**前两段没有当前有效 Lab 意图，属事件归因窗口**，仅用于把 telemetry 事件按阶段归类与对齐时间轴，**不是 hold 的分母**。若按完整归属时间（已知 run05/06 为 Acquire≈3.00 → Release≈28.00）计算，与按有效意图时间（≈3.50 → 28.00）计算，G2 的数值含义不同，**两者不得互相替代或混算**。 |
+| **E12 仿真窗口 vs Probe 采样实现（口径差异，登记）** | **E12 历史仿真不使用窗口打开/延长语义**：`tests/CommandLab.Tests/Scenarios/ArchitectureComparison.cs:43-58` 的 `IntentHoldShare` 在**固定 `[2.0,22.0)` 区间**上积分——筛选该域被接受且 `OrderChanged` 的事件、按时间排序重建时间线，**窗口前状态延续进来**（第 51 行 `if (a.Timestamp <= from) { cur = a.NewValue; continue; }`），在区间内累计状态等于 HOLD 的时长，**分母固定 20 s**（第 58 行 `to - from`）；第 201 行调用参数为 `from=2.0, to=22.0`。**全程不调用 `HoldMeter.Open`，也不按每次变更延长窗口。** 宿主 Probe 则是 `HoldMeter` 的 tick 采样，其 Open 条件见下条代码差距。**两者的实验窗口与实现须分别标明**，引用 hold 数值必须写明来自哪一侧，**不得把 Probe 的窗口规则倒写为 E12 的历史行为**。 |
 
 **稳定性分级（全文档统一约定，不得在各实验里各自解释）**：
 
@@ -117,7 +120,18 @@ Reason: Movement Authority owned by Lab under Level-5 lease; writer token stale
 | **临界** | 不满足"稳定"且不满足"抖动"→ 记为临界，**必须补跑 300 s 长时 scenario 再判** |
 | **抖动** | `oscillation_frequency ≥ 0.5 /s` **或** `average_command_lifetime < 2 × T_eval`（即命令活不过两倍原生决策周期） |
 
+**硬门限 G1 / G2（Phase 8 引入，Phase 11 正式补记）**：
+
+| 门限 | 判据 | 说明 |
+|---|---|---|
+| **G1** | `unauthorized_writes == 0` | 在写入口判定的越权**生效**写入必须为零 |
+| **G2** | `intent_hold_share ≥ 95%` | 必须与 G1 **同表判读**；只看 G1 时"从未抢到控制权"与"完全控制"同形 |
+
+> G1/G2 与上表的"稳定性分级"是**两套并存的判据**：分级刻画抖动程度，G1/G2 刻画控制权是否真正落地。E12 Authority Level 谱系（`docs/07a` §2.1）给出的是二者不可互推的直接证据：L2 档 `unauthorized_writes == 0` 且判为稳定，但 `intent_hold_share = 0.0%` —— 即 **`unauthorized_writes == 0` 且 Stable 是"取得控制权"的必要非充分条件**。G2 的 95% 阈值与 §1.4 的 Telemetry 字段口径均由 Phase 10 宿主装置落实（`docs/09-bannerlord-probe.md`、`docs/10-harmony-runtime-experiments.md` §5 判据表）。
+
 > 第三条直接来自 Phase 1 §3.2 的特征签名：Authority 冲突的典型值是"`average_command_lifetime ≈ 原生评估周期而非任务周期`"。**把这条写成分级阈值，是为了让"稳定"不再靠感觉。**
+
+> **与现有 Probe 实现的一处差距（登记为待验证，本轮不改算法）**：`ProbeRuntime.Command`（`ProbeRuntime.cs:378-384`）打开意图窗口的条件实际是 `LastAttempt is not null && domain == CommandDomain.Movement` —— 它**只检查该次写入尝试是否发生（非 null），并不检查 `Rejected`**。因此"现有实现仅在成功/有效命令提交后打开窗口"**不能无条件宣称**。正常 H2 接受写入打开窗口有本轮证据（run05/06 `t=3.5045/3.5020` 首个被接受的 Lab 写入，见 `_audit/2026-10-07-phase11-evidence-review.md` §5.1）；但**被拒命令是否同样打开/延长窗口，本轮未实测**，登记为待验证。此处与设计 §5.1 的描述同属简化表述，本行按代码实际行为更正。
 
 ---
 

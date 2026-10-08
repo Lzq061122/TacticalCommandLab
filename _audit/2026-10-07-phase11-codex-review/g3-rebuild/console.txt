@@ -1,0 +1,384 @@
+[
+  {
+    "Run": "run05",
+    "Input": "E:\\MBmod\\TacticalCommandLab\\_audit\\_local-phase10-20261006\\run05-h2-suppression\\telemetry-20261006-215546-h2-suppression.txt",
+    "InputSha256": "9242c6576846709dcc302c26c1f2d1155f4aa35b33ecbc645a947c3d473bc35e",
+    "Attempts": 1649,
+    "RejectedAttempts": 50,
+    "AcceptedEffectiveChanges": 122,
+    "KeysWithChanges": 63,
+    "OscillationPairs": 37,
+    "LifetimeSampleCount": 102,
+    "RecomputedAtReported33Seconds": {
+      "SimulationSeconds": 33,
+      "WriteAttempts": 1649,
+      "CommandsPerSecond": 49.96969696969697,
+      "EffectiveChanges": 122,
+      "OrderChangesPerSecond": 3.696969696969697,
+      "UnauthorizedWriteAttempts": 50,
+      "UnauthorizedWrites": 0,
+      "NativeOverrides": 0,
+      "LabOverrides": 0,
+      "AuthorityTransfers": 1,
+      "Preemptions": 0,
+      "AverageCommandLifetime": 15.234838235294108,
+      "OscillationPairs": 37,
+      "OscillationFrequency": 1.121212121212121,
+      "StaleCommandExecutions": 0,
+      "TaskStarvation": 0,
+      "MaxPendingSeconds": 0,
+      "grade": "Oscillating",
+      "thresholds": {
+        "stableUnauthorizedWritesMax": 0,
+        "stableOscillationFrequencyMax": 0.05,
+        "stableOrderChangesPerSecondMax": 0.2,
+        "oscillatingFrequencyMin": 0.5,
+        "oscillatingLifetimeLessThanSeconds": 1
+      },
+      "stableChecks": {
+        "unauthorizedWritesZero": true,
+        "oscFrequencyAtMost005": false,
+        "changesPerSecondAtMost02": false
+      },
+      "oscillationChecks": {
+        "frequencyAtLeast05": true,
+        "lifetimeBelow1Second": false
+      },
+      "triggers": [
+        "oscillation_frequency\u003E=0.5"
+      ]
+    },
+    "RecomputedAtInferredDumpCenter": {
+      "SimulationSeconds": 33.00415904445357,
+      "WriteAttempts": 1649,
+      "CommandsPerSecond": 49.96339999994996,
+      "EffectiveChanges": 122,
+      "OrderChangesPerSecond": 3.6965038204935685,
+      "UnauthorizedWriteAttempts": 50,
+      "UnauthorizedWrites": 0,
+      "NativeOverrides": 0,
+      "LabOverrides": 0,
+      "AuthorityTransfers": 1,
+      "Preemptions": 0,
+      "AverageCommandLifetime": 15.236591557955911,
+      "OscillationPairs": 37,
+      "OscillationFrequency": 1.1210708308054265,
+      "StaleCommandExecutions": 0,
+      "TaskStarvation": 0,
+      "MaxPendingSeconds": 0,
+      "grade": "Oscillating",
+      "thresholds": {
+        "stableUnauthorizedWritesMax": 0,
+        "stableOscillationFrequencyMax": 0.05,
+        "stableOrderChangesPerSecondMax": 0.2,
+        "oscillatingFrequencyMin": 0.5,
+        "oscillatingLifetimeLessThanSeconds": 1
+      },
+      "stableChecks": {
+        "unauthorizedWritesZero": true,
+        "oscFrequencyAtMost005": false,
+        "changesPerSecondAtMost02": false
+      },
+      "oscillationChecks": {
+        "frequencyAtLeast05": true,
+        "lifetimeBelow1Second": false
+      },
+      "triggers": [
+        "oscillation_frequency\u003E=0.5"
+      ]
+    },
+    "Reported": {
+      "simulation_seconds": "33.00",
+      "commands_per_second": "49.9634",
+      "order_changes_per_second": "3.6965",
+      "unauthorized_write_attempts": "50",
+      "unauthorized_writes": "0",
+      "native_overrides": "0",
+      "lab_overrides": "0",
+      "authority_transfers": "1",
+      "preemptions": "0",
+      "average_command_lifetime": "15.2366",
+      "oscillation_pairs": "37",
+      "oscillation_frequency": "1.1211",
+      "reaction_latency": "0.4999",
+      "stale_command_execution": "0",
+      "task_starvation": "0",
+      "max_pending_seconds": "0.00",
+      "release_recovery_failures": "0",
+      "stability_grade": "Oscillating"
+    },
+    "InferredDumpSeconds": {
+      "Low": 33.00412601611778,
+      "High": 33.00419207278936,
+      "Center": 33.00415904445357,
+      "Constraints": [
+        {
+          "Name": "simulation_seconds F2",
+          "Low": 32.995,
+          "High": 33.005
+        },
+        {
+          "Name": "commands_per_second F4",
+          "Low": 33.00412601611778,
+          "High": 33.00419207278936
+        },
+        {
+          "Name": "order_changes_per_second F4",
+          "Low": 33.00374673682217,
+          "High": 33.00463958663042
+        },
+        {
+          "Name": "oscillation_frequency F4",
+          "Low": 33.00182847968603,
+          "High": 33.0047723116721
+        }
+      ]
+    },
+    "AcquireT": 3.0046,
+    "FirstAcceptedLabHoldT": 3.5045,
+    "FirstAcceptedLabHoldRow": 170,
+    "ReleaseT": 28.006,
+    "ReleaseEventMissing": false,
+    "WindowAttributedChanges": 122,
+    "WindowAttributedPairs": 37,
+    "WindowEventTotals": [
+      {
+        "Name": "pre_acquire",
+        "changes": 112,
+        "pairs": 34
+      },
+      {
+        "Name": "acquire_to_first_accepted_lab_hold",
+        "changes": 0,
+        "pairs": 0
+      },
+      {
+        "Name": "first_lab_hold_to_release",
+        "changes": 8,
+        "pairs": 1
+      },
+      {
+        "Name": "release_to_dump",
+        "changes": 2,
+        "pairs": 2
+      }
+    ],
+    "Conservation": {
+      "perKeyChanges": 122,
+      "globalEffectiveChanges": 122,
+      "changesMatch": true,
+      "perKeyPairs": 37,
+      "globalPairs": 37,
+      "pairsMatch": true,
+      "lifetimeSamples": 102,
+      "lifetimeSamplesFromProductionRule": 102,
+      "lifetimeCountMatchesRule": true,
+      "perKeyLifetimeSamples": 102,
+      "perKeyLifetimeSamplesMatchGlobal": true,
+      "windowChanges": 122,
+      "windowPairs": 37,
+      "windowChangesMatchGlobal": true,
+      "windowPairsMatchGlobal": true,
+      "lifetimeOverlapSeconds": 1554.132338911504,
+      "lifetimeSampleSeconds": 1554.1323389115034,
+      "lifetimeOverlapsMatchSamples": true,
+      "lifetimeAvgAtInferredDumpCenterUsingPrintedTimestamps": 15.236591557955911,
+      "reportedLifetimeAvg": 15.2366,
+      "maxMeanErrorFromEachSourceTimestampRoundedToF4": 7.892156862745098E-05,
+      "excludedRejectedAttempts": 50,
+      "excludedAcceptedUnchangedAttempts": 1477
+    },
+    "ReportedGrade": "Oscillating"
+  },
+  {
+    "Run": "run06",
+    "Input": "E:\\MBmod\\TacticalCommandLab\\_audit\\_local-phase10-20261006\\run06-h2-coverage\\telemetry-20261006-215736-h2-coverage.txt",
+    "InputSha256": "c2f41b3f6c8814f04cd43d08c8c6a1e86a72273ffd417eb86fca79340e1d6f3b",
+    "Attempts": 1642,
+    "RejectedAttempts": 50,
+    "AcceptedEffectiveChanges": 120,
+    "KeysWithChanges": 63,
+    "OscillationPairs": 35,
+    "LifetimeSampleCount": 100,
+    "RecomputedAtReported33Seconds": {
+      "SimulationSeconds": 33,
+      "WriteAttempts": 1642,
+      "CommandsPerSecond": 49.75757575757576,
+      "EffectiveChanges": 120,
+      "OrderChangesPerSecond": 3.6363636363636362,
+      "UnauthorizedWriteAttempts": 50,
+      "UnauthorizedWrites": 0,
+      "NativeOverrides": 0,
+      "LabOverrides": 0,
+      "AuthorityTransfers": 1,
+      "Preemptions": 0,
+      "AverageCommandLifetime": 15.212003999999993,
+      "OscillationPairs": 35,
+      "OscillationFrequency": 1.0606060606060606,
+      "StaleCommandExecutions": 0,
+      "TaskStarvation": 0,
+      "MaxPendingSeconds": 0,
+      "grade": "Oscillating",
+      "thresholds": {
+        "stableUnauthorizedWritesMax": 0,
+        "stableOscillationFrequencyMax": 0.05,
+        "stableOrderChangesPerSecondMax": 0.2,
+        "oscillatingFrequencyMin": 0.5,
+        "oscillatingLifetimeLessThanSeconds": 1
+      },
+      "stableChecks": {
+        "unauthorizedWritesZero": true,
+        "oscFrequencyAtMost005": false,
+        "changesPerSecondAtMost02": false
+      },
+      "oscillationChecks": {
+        "frequencyAtLeast05": true,
+        "lifetimeBelow1Second": false
+      },
+      "triggers": [
+        "oscillation_frequency\u003E=0.5"
+      ]
+    },
+    "RecomputedAtInferredDumpCenter": {
+      "SimulationSeconds": 33.00429538244698,
+      "WriteAttempts": 1642,
+      "CommandsPerSecond": 49.75109999994976,
+      "EffectiveChanges": 120,
+      "OrderChangesPerSecond": 3.6358903775846354,
+      "UnauthorizedWriteAttempts": 50,
+      "UnauthorizedWrites": 0,
+      "NativeOverrides": 0,
+      "LabOverrides": 0,
+      "AuthorityTransfers": 1,
+      "Preemptions": 0,
+      "AverageCommandLifetime": 15.21385101445221,
+      "OscillationPairs": 35,
+      "OscillationFrequency": 1.0604680267955187,
+      "StaleCommandExecutions": 0,
+      "TaskStarvation": 0,
+      "MaxPendingSeconds": 0,
+      "grade": "Oscillating",
+      "thresholds": {
+        "stableUnauthorizedWritesMax": 0,
+        "stableOscillationFrequencyMax": 0.05,
+        "stableOrderChangesPerSecondMax": 0.2,
+        "oscillatingFrequencyMin": 0.5,
+        "oscillatingLifetimeLessThanSeconds": 1
+      },
+      "stableChecks": {
+        "unauthorizedWritesZero": true,
+        "oscFrequencyAtMost005": false,
+        "changesPerSecondAtMost02": false
+      },
+      "oscillationChecks": {
+        "frequencyAtLeast05": true,
+        "lifetimeBelow1Second": false
+      },
+      "triggers": [
+        "oscillation_frequency\u003E=0.5"
+      ]
+    },
+    "Reported": {
+      "simulation_seconds": "33.00",
+      "commands_per_second": "49.7511",
+      "order_changes_per_second": "3.6359",
+      "unauthorized_write_attempts": "50",
+      "unauthorized_writes": "0",
+      "native_overrides": "0",
+      "lab_overrides": "0",
+      "authority_transfers": "1",
+      "preemptions": "0",
+      "average_command_lifetime": "15.2138",
+      "oscillation_pairs": "35",
+      "oscillation_frequency": "1.0605",
+      "reaction_latency": "0.4963",
+      "stale_command_execution": "0",
+      "task_starvation": "0",
+      "max_pending_seconds": "0.00",
+      "release_recovery_failures": "0",
+      "stability_grade": "Oscillating"
+    },
+    "InferredDumpSeconds": {
+      "Low": 33.004262213034266,
+      "High": 33.00432855185971,
+      "Center": 33.00429538244698,
+      "Constraints": [
+        {
+          "Name": "simulation_seconds F2",
+          "Low": 32.995,
+          "High": 33.005
+        },
+        {
+          "Name": "commands_per_second F4",
+          "Low": 33.004262213034266,
+          "High": 33.00432855185971
+        },
+        {
+          "Name": "order_changes_per_second F4",
+          "Low": 33.00375417703764,
+          "High": 33.004661908494576
+        },
+        {
+          "Name": "oscillation_frequency F4",
+          "Low": 33.00174437791711,
+          "High": 33.00485642887454
+        }
+      ]
+    },
+    "AcquireT": 3.0057,
+    "FirstAcceptedLabHoldT": 3.502,
+    "FirstAcceptedLabHoldRow": 170,
+    "ReleaseT": 28.006,
+    "ReleaseEventMissing": false,
+    "WindowAttributedChanges": 120,
+    "WindowAttributedPairs": 35,
+    "WindowEventTotals": [
+      {
+        "Name": "pre_acquire",
+        "changes": 112,
+        "pairs": 34
+      },
+      {
+        "Name": "acquire_to_first_accepted_lab_hold",
+        "changes": 0,
+        "pairs": 0
+      },
+      {
+        "Name": "first_lab_hold_to_release",
+        "changes": 6,
+        "pairs": 0
+      },
+      {
+        "Name": "release_to_dump",
+        "changes": 2,
+        "pairs": 1
+      }
+    ],
+    "Conservation": {
+      "perKeyChanges": 120,
+      "globalEffectiveChanges": 120,
+      "changesMatch": true,
+      "perKeyPairs": 35,
+      "globalPairs": 35,
+      "pairsMatch": true,
+      "lifetimeSamples": 100,
+      "lifetimeSamplesFromProductionRule": 100,
+      "lifetimeCountMatchesRule": true,
+      "perKeyLifetimeSamples": 100,
+      "perKeyLifetimeSamplesMatchGlobal": true,
+      "windowChanges": 120,
+      "windowPairs": 35,
+      "windowChangesMatchGlobal": true,
+      "windowPairsMatchGlobal": true,
+      "lifetimeOverlapSeconds": 1521.3851014452207,
+      "lifetimeSampleSeconds": 1521.385101445221,
+      "lifetimeOverlapsMatchSamples": true,
+      "lifetimeAvgAtInferredDumpCenterUsingPrintedTimestamps": 15.21385101445221,
+      "reportedLifetimeAvg": 15.2138,
+      "maxMeanErrorFromEachSourceTimestampRoundedToF4": 7.85E-05,
+      "excludedRejectedAttempts": 50,
+      "excludedAcceptedUnchangedAttempts": 1472
+    },
+    "ReportedGrade": "Oscillating"
+  }
+]

@@ -1,0 +1,75 @@
+{
+  "assessment_status": "EVIDENCE_FOUND",
+  "diagnostics": [],
+  "evidence": {
+    "event_file_missing": false,
+    "first_override_latency": {
+      "first_latency_seconds": 24.5237,
+      "pairs": [
+        {
+          "domain": "Movement",
+          "entity": "T1F0",
+          "lab_line": 166,
+          "lab_t": 3.5014,
+          "latency_seconds": 24.5237,
+          "native_tagged_line": 1388,
+          "native_tagged_t": 28.0251
+        }
+      ],
+      "pairs_scope": "first Native-tagged coverage per entity/domain; list order preserves event order",
+      "status": "FOUND"
+    },
+    "x5_coverage_gap_lower_bound": {
+      "count": 0,
+      "interpretation": "zero means no observed positive gap; it does not prove complete coverage",
+      "shadow_minus_effective_writes_by_entity_domain": {
+        "T0F0|Facing": 0,
+        "T0F0|Movement": 0,
+        "T0F1|Arrangement": 0,
+        "T0F1|Facing": 0,
+        "T0F1|Movement": 0,
+        "T0F2|Facing": 0,
+        "T0F2|Movement": 0,
+        "T0F3|Facing": 0,
+        "T0F3|Movement": 0,
+        "T0F4|Facing": 0,
+        "T0F4|Movement": 0,
+        "T0F5|Facing": 0,
+        "T0F5|Movement": 0,
+        "T0F6|Facing": 0,
+        "T0F6|Movement": 0,
+        "T0F7|Facing": 0,
+        "T0F7|Movement": 0,
+        "T1F0|Arrangement": 0,
+        "T1F0|Facing": 0,
+        "T1F0|Movement": 0,
+        "T1F1|Arrangement": 0,
+        "T1F1|Facing": 0,
+        "T1F1|Movement": 0,
+        "T1F2|Arrangement": 0,
+        "T1F2|Facing": 0,
+        "T1F2|Movement": 0,
+        "T1F3|Movement": 0,
+        "T1F4|Arrangement": 0,
+        "T1F4|Facing": 0,
+        "T1F4|Movement": 0
+      },
+      "status": "ESTIMATED"
+    }
+  },
+  "experiment_qualification": "UNKNOWN",
+  "input": {
+    "path": "E:\\MBmod\\TacticalCommandLab\\_audit\\_local-phase10-20261006\\run11-rel-after-release\\telemetry-20261006-220719-rel-after-release.txt",
+    "sha256": "0c121a76be088647650d424cf3649c8779da5aa8e8f8f02563f7d698975041da",
+    "status": "PRESENT"
+  },
+  "runtime": "NOT_RUN",
+  "schema_version": 1,
+  "statistics": {
+    "accepted_effective_lab_writes": 1,
+    "canonical_write_attempts": 1868,
+    "effective_write_attempts_all_writers": 119,
+    "rejected_write_attempts": 51,
+    "shadow_change_samples": 38
+  }
+}

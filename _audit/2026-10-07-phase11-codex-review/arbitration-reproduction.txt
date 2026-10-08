@@ -1,0 +1,17 @@
+Captured from the actual Codex tool execution on 2026-10-07.
+Command: C:\Program Files\dotnet\dotnet.exe run --project _audit\2026-10-07-phase11-codex-review\ArbitrationOrder.csproj
+Exit code: 0. This run built the new diagnostic before executing it.
+Marker: PHASE11_CODEX_REVIEW_ARBITRATION_ORDER_20261007
+Loaded Core: E:\MBmod\TacticalCommandLab\_audit\2026-10-07-phase11-codex-review\bin\Debug\net10.0\CommandLab.Core.dll
+MVID: 91fafab7-5494-4c6c-a979-e28d1ccc1345
+SHA-256: D9AA4046AE063982D0EF27825203EA457199391545E59A19AB31FDABCC86C927
+
+Owner-only control: final value HOLD; Lab Rejected=false, OrderChanged=true.
+Unauthorized high-priority competitor: final value Unset;
+  Lab: Rejected=true, RejectReasonText=LostArbitration, OrderChanged=false.
+  Native: Rejected=true, RejectReasonText=NotOwner, OrderChanged=false.
+
+Inputs: E0/Movement, Lab Full lease TTL=10 at virtual t=0; Arbitration=Priority.
+Lab HOLD has priority=1 and correct LeaseId/Token/Generation.
+Native ADVANCE has priority=100 and is not the owner.
+No Bannerlord game run, no product source modification.

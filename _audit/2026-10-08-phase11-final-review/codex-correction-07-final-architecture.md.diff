@@ -1,0 +1,11 @@
+--- submitted/docs/07-final-architecture.md
++++ accepted/docs/07-final-architecture.md
+@@ -1,7 +1,7 @@
+ # 07 · 最终架构（Final Architecture）
+ 
+ > Phase 11 交付物。日期：2026-10-07（北京时间）。
+-> 依据：`docs/phase11-design.md`（**开工基线** SHA-256 `042ef0fbc5ed3eaa452cba67bd0b442ed442c33f00c531fe391519b6a3759a74`；**整改后当前版本** `dd13fbaf97d1642ca14639a9f36320ef7ef096793b7c85a8de465f0aecae54f5`）、`docs/01`–`docs/06`、`docs/07a`、`docs/10`，以及 `_audit/_local-phase10-20261006/run04`–`run11` 的原始 assessment / manifest / metrics / telemetry。
++> 依据：`docs/phase11-design.md`（**开工基线** SHA-256 `042ef0fbc5ed3eaa452cba67bd0b442ed442c33f00c531fe391519b6a3759a74`；**上一轮整改版本** `dd13fbaf97d1642ca14639a9f36320ef7ef096793b7c85a8de465f0aecae54f5`；**当前设计版本** `2c049e6d737f65caf813f655654ca3b12e4ff66ee76302e7fe152d2c8af78358`）、`docs/01`–`docs/06`、`docs/07a`、`docs/10`，以及 `_audit/_local-phase10-20261006/run04`–`run11` 的原始 assessment / manifest / metrics / telemetry。
+ > 本文件落实设计，不重新选型；不改判据、阈值与历史数值。
+ 
+ ---

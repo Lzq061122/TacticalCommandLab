@@ -1,0 +1,138 @@
+{
+  "runtime": "NOT_RUN",
+  "input_identity": [
+    {
+      "path": "docs/07-final-architecture.md",
+      "sha256": "37f44214a01dca200db65a81bbe15e865a5fd316eded109aa6f286ce68a7b486",
+      "physical_lines": 477,
+      "nonempty_lines": 336
+    },
+    {
+      "path": "docs/07-final-architecture.md",
+      "line": 37,
+      "review_excerpt": "| `current-formation-tick-il.txt` | `AI.Tick` 门控为 `HasTeamAi && (IsAIControlled || IsPlayerSergeant)` | 普通非 PlayerSergeant 情形下关闭控制会跳过整个 `Formation::Tick` 的静态路径代价 | 任意编队均停 Tick；运行时调用次数已经观测 |"
+    },
+    {
+      "path": "docs/07-final-architecture.md",
+      "line": 245,
+      "review_excerpt": "| 2 | 追加 Native 候选 `Priority=100`（**越权**，Owner 仍为 Lab）+ 合法 Lab 候选 `Priority=1` | 排序后 `ranked[0]` 为 Native；**Native 以 `LostArbitration` 被拒**（Evaluate 阶段）**且 Lab 以 `NotOwner` 被拒** | 最终该 `(Entity, Domain)` 落到 `Unset` |"
+    },
+    {
+      "path": "docs/07-final-architecture.md",
+      "line": 260,
+      "review_excerpt": "| **③ 与既有实现的差距（登记）** | `ProbeRuntime.Command`（`ProbeRuntime.cs:378-384`）打开意图窗口的条件为 `LastAttempt is not null && domain == CommandDomain.Movement`——**只检查该次写入尝试存在，未检查 `Rejected`**。 | 因此**\"仅在成功/有效命令提交后打开窗口\"不能无条件宣称**。接受写入打开窗口有本轮证据（run05/06 首个被接受的写入 `t=3.5045/3.5020`）；**被拒命令是否同样打开/延长窗口本轮未实测**，登记为待验证。E12 仿真窗口（`docs/05` §1.4，按仿真时钟在每次生效写入后打开/延长）与宿主 Probe 采样是**两套实现**，引用 hold 数值须注明来源侧。 |"
+    },
+    {
+      "path": "_audit/2026-10-07-phase11-evidence-review.md",
+      "sha256": "b2e32d8df990e4dd09cef16b969d06beb0190cdb05d2808556204d645632fec2",
+      "physical_lines": 452,
+      "nonempty_lines": 335
+    },
+    {
+      "path": "_audit/2026-10-07-phase11-evidence-review.md",
+      "line": 141,
+      "review_excerpt": "**八场 `first_override` 明细（更正）**：**run04 / run09 / run10 为 `pairs = 0`**（故 `first_latency_s = null`）；run05/06/07/08/11 各 **1 对**，且该对**全部是 `entity=T1F0, domain=Movement`**（`lab_t` 分别 3.5045 / 3.5020 / 3.5004 / 3.5051 / 3.5014）。这与八场脚本一律 `acquire N0 Movement Full 30` + `cmd N0 Movement HOLD`（`N0` = `T1F0`）一致，`docs/10` §14 已登记 Multi-Team 时应用全名 `T{t}F{i}`、不使用 `N0`。"
+    },
+    {
+      "path": "_audit/2026-10-07-phase11-evidence-review.md",
+      "line": 170,
+      "review_excerpt": "> **工具实际写出范围**：该工具在输出目录下生成 `results.json`（`Program.cs` 第 13 行默认路径）以及由它派生的 `run05-*` / `run06-*` 系列 CSV、`h3-same-run.json` 等生成物。**`final-freeze-manifest.json`、`final-vs-adab4cf.patch` 等非本工具产物未受影响**（时间戳仍为 1:46:06）。"
+    },
+    {
+      "path": "_audit/2026-10-07-phase11-evidence-review.md",
+      "line": 173,
+      "review_excerpt": "> 1. **已逐字节比对认证的部分**：重新生成的 8 份 CSV（见下表）与 tracked 冻结副本 `docs/evidence/phase10-closure-20261007/` **全部 IDENTICAL**；`h3-same-run.json` 亦相同。"
+    },
+    {
+      "path": "HANDOFF.phase11.md",
+      "sha256": "ab4232991e6e6ba86c33a89e6c81bc48224affe11deb58c3b76ef1f09cb8ca1f",
+      "physical_lines": 140,
+      "nonempty_lines": 113
+    },
+    {
+      "path": "HANDOFF.phase11.md",
+      "line": 73,
+      "review_excerpt": "| 逐字节比对 `g3-rebuild` 与 tracked 冻结副本 `docs\\evidence\\phase10-closure-20261007\\` | 同上 | **8/8 CSV + `h3-same-run.json` 全部 IDENTICAL** | 冻结 `g3-summary.json` = `27fda22bea7bd685a3017a199671362bf9a80f55976b36b900808b174df79b78`（len 30937） | 只支持\"**本次输入与本次工具版本下输出确定**\"；**不泛化为任意输入下的工具认证**，也不单独证明覆盖事故无损失（见 §7） |"
+    },
+    {
+      "path": "HANDOFF.phase11.md",
+      "line": 101,
+      "review_excerpt": "| `tools/phase10_evidence` 覆盖他方目录（**本轮已发生**） | **已发生**：首次运行未传 `args[2]`，`Program.cs:13` 默认写 `_audit/_phase10-closure-20261007`，刷新了该目录下**由该工具生成的**文件（`results.json` 及派生的 `run05-*`/`run06-*` 系列、`h3-same-run.json` 等）；非本工具产物（`final-freeze-manifest.json`、`final-vs-adab4cf.patch`）未受影响 | **违反派单\"不得覆盖他方审计目录\"的操作要求** | **分三层**：①**已认证**——重新生成的 8 份 CSV 与 tracked 冻结副本 `docs\\evidence\\phase10-closure-20261007\\` 逐字节相同，`h3-same-run.json` 亦相同；②**可重生成**——其余派生生成物已在 `g3-rebuild\\` 独立产出完整副本；③**不能认证**——**覆盖前未记录各文件哈希/副本**，无法对全部被覆盖文件作逐字节前后一致性认证，时间戳等元信息确定已变更且不可恢复。**\"未被 git 跟踪\"不等于\"覆盖无害\"**；本轮一致性结果只支持\"本次输入与本次工具版本下输出确定\"，**不泛化为任意输入** | 已改用显式输出目录；后续调用一律显式传 `args[2]`。完整登记见报告 §3.2 |"
+    },
+    {
+      "path": "docs/05-experiment-plan.md",
+      "sha256": "038c606dd8091bc2adaa0690f5a2fef0b19274769412772e65fae2f0ab09d511",
+      "physical_lines": 396,
+      "nonempty_lines": 305
+    },
+    {
+      "path": "docs/05-experiment-plan.md",
+      "line": 113,
+      "review_excerpt": "| **E12 仿真窗口 vs Probe 采样实现（口径差异，登记）** | `docs/05` §1.4 的 E12 仿真按虚拟时钟在**每次生效写入后**打开/延长 hold 窗口；`ProbeRuntime` 的宿主实测 HoldMeter 是**另一套实现**，其 Open 条件见下条代码差距。**文档引用 hold 数值时必须写明来自哪一侧**，不得直接把 E12 的窗口语义套到宿主实测数字上。 |"
+    },
+    {
+      "path": "docs/phase11-design.md",
+      "sha256": "dd13fbaf97d1642ca14639a9f36320ef7ef096793b7c85a8de465f0aecae54f5",
+      "physical_lines": 146,
+      "nonempty_lines": 100
+    }
+  ],
+  "previous_review_evidence_unchanged": [
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\arbitration-reproduction.txt",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\ArbitrationOrder.csproj",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\independent-checks.json",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\Program.cs",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\review_evidence.py",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\run04-census-final.recompute.json",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\run05-h2-suppression.recompute.json",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\run06-h2-coverage.recompute.json",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\run07-h3-route-b.recompute.json",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\run08-rel-none.recompute.json",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\run09-rel-reapply.recompute.json",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\run10-rel-reapply-resetweights.recompute.json",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-codex-review\\run11-rel-after-release.recompute.json",
+      "same_sha256": true
+    },
+    {
+      "path": "_audit\\2026-10-07-phase11-review.md",
+      "same_sha256": true
+    }
+  ]
+}

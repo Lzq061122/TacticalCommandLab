@@ -1,10 +1,14 @@
 # Tactical Command Lab — 会话交接文件（Handoff）
 
+> **当前验收（2026-10-08，Codex）**：**Phase 11 基本交付通过**。架构文档、证据复核/指标同步与 handoff 已验收，五条剩余文字整改关闭；审查方仅补齐设计版本标记、统计笔误和验收状态。见 [最终验收报告](_audit/2026-10-08-phase11-final-review.md)。[首轮审查](_audit/2026-10-07-phase11-review.md) 与 [复审报告](_audit/2026-10-07-phase11-re-review.md) 保留作历史记录，下方旧状态由本条覆盖。**运行时能力遗留项继续登记，Phase 12 未启动。**
+
+> **2026-10-07 Phase 11 基本交付已完成，待 Codex 审查**。本轮交付最终架构文档 `docs/07-final-architecture.md`、证据复核报告 `_audit/2026-10-07-phase11-evidence-review.md`、交接 `HANDOFF.phase11.md`，并按最小范围同步 `docs/05`/`06`/`07a`。本轮未启动游戏、未部署 DLL、未改运行时代码。**不自行宣称通过；不进入 Phase 12。**
+
 > **2026-10-07 Phase 10 收口**：本轮仅离线解释已有数据并冻结版本，没有新游戏采集。测量快照为 adab4cf+四文件 diff；匹配源码冻结于 e57e157，清理失败退出码修补于 0a0a594。G3 原样 FAIL，主要来自接管前初始化但目标也贡献 3/37、2/35，不能称全部由其他编队造成。H3 同场关闭内 Native Movement=0、释放边界4、之后10；实际 Tick/Behavior 调用次数未验证。H2b 完整覆盖/Arrangement 独占及 REL 普遍必要性/完整状态恢复未验证。详见 [收口报告](docs/phase10-closure-20261007.md) 和 [冻结索引](docs/evidence/phase10-closure-20261007/closure-index.json)。本轮停止交回验收，未推进 Phase 11/12。
 
-> **当前交接（2026-10-06，本轮本地 Phase 10 已交付并停止）**：真实工作区仍为 `E:\MBmod\TacticalCommandLab`。本地分支 `codex/local-phase10-verification-20261006`，HEAD `adab4cf008a8dd6e83f8e12c03f1423483cb98f0` **加本轮未提交修补**；未改写/合并 master，未推送。最终离线六项构建、C# 102/102、Python 23/23（新增编码回归一项）通过，net472 宿主构建 0 警告/0 错误，三份 DLL 已部署且实际加载身份吻合。最终八场 census/H2/H2b/H3/四组 REL 已跑完，所有装置门禁通过；**H2/H2b 的 G3 失败，不能汇总全 PASS；H3 通过现有判据；REL=0/0/0/1，最后一项是正确检出的预期失败**。完整覆盖率、实际 Behavior 选择调用计数与普遍恢复必要性仍未验证。详情：[本轮交付记录](docs/local-phase10-verification-20261006.md)。
+> **当前交接（2026-10-07，Phase 11 基本交付已完成，待 Codex 审查）**：本轮为 **Phase 11 开发交付**，工作区仍为 `E:\MBmod\TacticalCommandLab`。本轮**未启动游戏、未部署 DLL、未修改运行时代码、未新增实验**；分支 `codex/local-phase10-verification-20261006`，HEAD `f8b1f173f05bf054b42eb2e31527deb1a83aa613`（设计文档记的 `e57e157` 已前进，以实际为准）。交付物：`docs/07-final-architecture.md`（最终架构）、`_audit/2026-10-07-phase11-evidence-review.md`（八场证据复核，491/491 manifest 条目与 16/16 metrics/telemetry 哈希全匹配，独立重建复现 G3 FAIL）、`HANDOFF.phase11.md`（按模板填写的交接），并按派单允许的最小范围同步 `docs/05`（`intent_hold_share` 与 G2 正式指标定义）、`docs/06`（hold 角色、`lab_delivery_rate` 不作控制判据）、`docs/07a`（C 的保证边界、A 的实验适用范围）。**失败项原样保留**：H2/H2b G3 FAIL、H3 原判据 PASS 但独立全场 grade 仍 `Oscillating`、REL=0/0/0/1（第四项为设计出来的反例，辨识成功）。**本行是 Phase 10 段的历史交接记录，保留原文如下**：真实工作区仍为 `E:\MBmod\TacticalCommandLab`。本地分支 `codex/local-phase10-verification-20261006`，HEAD `adab4cf008a8dd6e83f8e12c03f1423483cb98f0` **加本轮未提交修补**；未改写/合并 master，未推送。最终离线六项构建、C# 102/102、Python 23/23（新增编码回归一项）通过，net472 宿主构建 0 警告/0 错误，三份 DLL 已部署且实际加载身份吻合。最终八场 census/H2/H2b/H3/四组 REL 已跑完，所有装置门禁通过；**H2/H2b 的 G3 失败，不能汇总全 PASS；H3 通过现有判据；REL=0/0/0/1，最后一项是正确检出的预期失败**。完整覆盖率、实际 Behavior 选择调用计数与普遍恢复必要性仍未验证。详情：[本轮交付记录](docs/local-phase10-verification-20261006.md)。
 >
-> **下一步：等待用户决定如何处理失败/证据不足项。本轮不再执行新实验或开发，不进入 Phase 11/12。** 下方旧日期的环境、阻塞、状态和“下一步”均是历史记录，不能当作当前机器事实。
+> **下一步：等待 Codex 审查本轮 Phase 11 交付。本轮不再执行新实验或开发，不进入 Phase 12，不自行宣称验收通过。** 下方旧日期的环境、阻塞、状态和“下一步”均是历史记录，不能当作当前机器事实。
 
 > 生成时间：2026-09-19 01:50 GMT+8
 > 生成原因：本周期 Hy4 免费额度已用 **35,695,579 token**（撞顶区间 2,000–4,900 万），继续跑会被 429 中断且上下文全丢。
@@ -58,7 +62,7 @@
 | 8 | Architecture A/B/C 对比 | ✅ **完成**（2026-09-20 会话 8，13 维度 + E12 补 H-I，判据 10/10） |
 | 9 | BannerlordProbe 实现 | ✅ **完成**（2026-09-20 会话 9，net472 离线可构建，红线自检通过） |
 | 10 | Harmony Runtime 实验 H1/H2/H3 | 🟨 **本轮本地采集与交付完成（2026-10-06）**：最终 census 四门禁 PASS；H2/H2b G1∧G2 PASS、G3 FAIL；H3 现有判据 PASS；REL=0/0/0/1（反例正确识别）。完整覆盖率/实际 AI.Tick 调用次数/普遍恢复必要性仍未验证。**已停止，等待用户决定后续；详见 §14 和 docs/local-phase10-verification-20261006.md。** |
-| 11 | 最终架构（07-final-architecture.md） | ⬜ 未开始 |
+| 11 | 最终架构（07-final-architecture.md） | ✅ **基本交付通过（2026-10-08，Codex）**：架构文档、证据复核/指标同步和 handoff 完成；运行时能力遗留项保留。见 `_audit/2026-10-08-phase11-final-review.md`。**Phase 12 未启动。** |
 | 12 | CombatBrain 集成（08-integration-report.md） | ⬜ 未开始 |
 
 **已完成：立项书（HANDOFF.md）+ Phase 1–5 交付物（`docs/01` ~ `05`）+ Phase 6 工程（`src/` 三个库 + `tests/` 门禁）+ Phase 7 实验结果（`docs/06` + `tests/Scenarios/Experiments.cs`）+ Phase 8 架构对比（`docs/07a` + `tests/Scenarios/ArchitectureComparison.cs` + E12 证据）+ Phase 9 宿主探针（`src/CommandLab.BannerlordProbe/` + `deploy/CommandLabProbe/` + `docs/09`）。**

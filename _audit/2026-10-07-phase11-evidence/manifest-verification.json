@@ -1,0 +1,74 @@
+﻿[
+    {
+        "run":  "run04-census-final",
+        "entriesField":  "array",
+        "entries":  61,
+        "ok":  61,
+        "missing":  0,
+        "mismatch":  0,
+        "bad":  ""
+    },
+    {
+        "run":  "run05-h2-suppression",
+        "entriesField":  "array",
+        "entries":  61,
+        "ok":  61,
+        "missing":  0,
+        "mismatch":  0,
+        "bad":  ""
+    },
+    {
+        "run":  "run06-h2-coverage",
+        "entriesField":  "array",
+        "entries":  61,
+        "ok":  61,
+        "missing":  0,
+        "mismatch":  0,
+        "bad":  ""
+    },
+    {
+        "run":  "run07-h3-route-b",
+        "entriesField":  "array",
+        "entries":  61,
+        "ok":  61,
+        "missing":  0,
+        "mismatch":  0,
+        "bad":  ""
+    },
+    {
+        "run":  "run08-rel-none",
+        "entriesField":  "array",
+        "entries":  62,
+        "ok":  62,
+        "missing":  0,
+        "mismatch":  0,
+        "bad":  ""
+    },
+    {
+        "run":  "run09-rel-reapply",
+        "entriesField":  "array",
+        "entries":  62,
+        "ok":  62,
+        "missing":  0,
+        "mismatch":  0,
+        "bad":  ""
+    },
+    {
+        "run":  "run10-rel-reapply-resetweights",
+        "entriesField":  "array",
+        "entries":  61,
+        "ok":  61,
+        "missing":  0,
+        "mismatch":  0,
+        "bad":  ""
+    },
+    {
+        "run":  "run11-rel-after-release",
+        "entriesField":  "array",
+        "entries":  62,
+        "ok":  62,
+        "missing":  0,
+        "mismatch":  0,
+        "bad":  ""
+    }
+]
